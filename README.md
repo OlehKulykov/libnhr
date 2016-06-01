@@ -17,7 +17,7 @@
 > Use (install or update) latest [CMake] build system, need version 2.8 or later.
 
 ```sh
-cd FayeCpp
+cd libnhr
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..

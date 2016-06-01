@@ -84,7 +84,7 @@ typedef struct _nhr_request_struct {
 	nhr_on_request_error on_error;
 
 	nhr_mutex work_mutex;
-	nhr_mutex send_mutex;
+	nhr_mutex command_mutex;
 
 	_nhr_response * responce;
 } _nhr_request;
@@ -110,6 +110,10 @@ void nhr_request_delete(_nhr_request * r);
 void nhr_request_set_option(nhr_socket_t s, int option, int value);
 
 nhr_bool nhr_request_check_timeout(_nhr_request * r);
+
+void nhr_request_set_command(_nhr_request * r, const int command);
+
+int nhr_request_get_command(_nhr_request * r);
 
 #define NHR_COMMAND_IDLE -1
 #define NHR_COMMAND_NONE 0

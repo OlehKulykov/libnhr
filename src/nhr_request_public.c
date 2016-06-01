@@ -47,6 +47,7 @@ nhr_request nhr_request_create(void) {
 	r->socket = NHR_INVALID_SOCKET;
 	r->command = NHR_COMMAND_NONE;
 	r->work_mutex = nhr_mutex_create_recursive();
+	r->command_mutex = nhr_mutex_create_recursive();
 	r->timeout = 30;
 
 	return r;
@@ -81,13 +82,12 @@ nhr_bool nhr_request_send(nhr_request request) {
 	_nhr_request * r = (_nhr_request *)request;
 	if (!r) return nhr_false;
 
-	if (!r->scheme || !r->host || !r->path || !r->method) {
+	if (!r->scheme || !r->host || !r->path || !r->method || !r->on_recvd_responce || !r->on_error) {
 		r->error_code = nhr_error_code_missed_parameter;
 		return nhr_false;
 	}
 
 	r->error_code = nhr_error_code_none;
-
 	return nhr_request_create_start_work_thread(r);
 }
 
@@ -171,4 +171,17 @@ void nhr_request_set_timeout(nhr_request request, const unsigned int seconds) {
 unsigned int nhr_request_get_timeout(nhr_request request) {
 	_nhr_request * r = (_nhr_request *)request;
 	return r ? (unsigned int)r->timeout	: 0;
+}
+
+void nhr_request_cancel(nhr_request request) {
+	_nhr_request * r = (_nhr_request *)request;
+	if (!r) return;
+
+	if (r->work_thread) {
+		nhr_request_set_command(r, NHR_COMMAND_END);
+		return; // automaticaly deleted before exit work thread function.
+	}
+
+	nhr_request_close(r);
+	nhr_request_delete(r);
 }

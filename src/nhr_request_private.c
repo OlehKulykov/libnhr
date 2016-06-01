@@ -25,6 +25,7 @@
 
 #define NHR_CONNECT_RETRY_DELAY 200
 #define NHR_CONNECT_ATTEMPS 5
+#define NHR_WORK_THREAD_DELAY 5
 
 #ifndef NHR_OS_WINDOWS
 #define	WSAEWOULDBLOCK	EAGAIN
@@ -33,9 +34,10 @@
 
 static void nhr_request_work_th_func(void * user_object) {
 	_nhr_request * r = (_nhr_request *)user_object;
-	while (r->command < NHR_COMMAND_END) {
+
+	while (nhr_request_get_command(r) < NHR_COMMAND_END) {
 		nhr_mutex_lock(r->work_mutex);
-		switch (r->command) {
+		switch (nhr_request_get_command(r)) {
 			case NHR_COMMAND_CONNECT_TO_HOST: nhr_request_connect_to_host(r); break;
 			case NHR_COMMAND_SEND_RAW_REQUEST: nhr_request_send_raw_request(r); break;
 			case NHR_COMMAND_START_WAITING_RAW_RESPONCE: nhr_request_start_waiting_raw_responce(r); break;
@@ -44,23 +46,23 @@ static void nhr_request_work_th_func(void * user_object) {
 		}
 		nhr_mutex_unlock(r->work_mutex);
 
-		switch (r->command) {
+		switch (nhr_request_get_command(r)) {
 			case NHR_COMMAND_INFORM_RESPONCE:
+				nhr_request_set_command(r,NHR_COMMAND_END);
 				if (r->on_recvd_responce) r->on_recvd_responce(r, r->responce);
-				r->command = NHR_COMMAND_END;
 				break;
 			case NHR_COMMAND_INFORM_ERROR:
+				nhr_request_set_command(r, NHR_COMMAND_END);
 				if (r->on_error) r->on_error(r, r->error_code);
-				r->command = NHR_COMMAND_END;
 				break;
 			default: break;
 		}
 
-		nhr_thread_sleep(5);
+		nhr_thread_sleep(NHR_WORK_THREAD_DELAY);
 	}
 
-	nhr_request_close(r);
 	r->work_thread = NULL;
+	nhr_request_close(r);
 	nhr_request_delete(r);
 }
 
@@ -94,24 +96,23 @@ nhr_bool nhr_request_recv(_nhr_request * r) {
 
 void nhr_request_wait_raw_responce(_nhr_request * r) {
 	if (nhr_request_recv(r)) {
-		if (nhr_response_is_finished(r->responce)) r->command = NHR_COMMAND_INFORM_RESPONCE;
+		if (nhr_response_is_finished(r->responce)) nhr_request_set_command(r, NHR_COMMAND_INFORM_RESPONCE);
 		if (!nhr_request_check_timeout(r)) return; // error already exists
 	} else if (r) {
-		r->command = NHR_COMMAND_INFORM_RESPONCE;
+		nhr_request_set_command(r, NHR_COMMAND_INFORM_RESPONCE);
 	} else {
 		r->error_code = nhr_error_code_failed_connect_to_host;
-		r->command = NHR_COMMAND_INFORM_ERROR;
+		nhr_request_set_command(r, NHR_COMMAND_INFORM_ERROR);
 	}
 }
 
 void nhr_request_start_waiting_raw_responce(_nhr_request * r) {
 	r->last_time = time(NULL);
-	r->command = NHR_COMMAND_WAIT_RAW_RESPONCE;
+	nhr_request_set_command(r, NHR_COMMAND_WAIT_RAW_RESPONCE);
 }
 
 size_t nhr_request_create_header_GET(_nhr_request * r, char ** header) {
-	size_t buff_size = 0;
-	size_t writed = 0;
+	size_t buff_size = 0, writed = 0;
 	char * buff = NULL;
 
 	buff_size = strlen(r->path);
@@ -152,15 +153,13 @@ void nhr_request_send_raw_request(_nhr_request * r) {
 			break;
 	}
 
-	r->last_time = time(NULL);
-
 	if (nhr_request_send_buffer(r, header, header_size)) {
-		r->command = NHR_COMMAND_START_WAITING_RAW_RESPONCE;
+		nhr_request_set_command(r, NHR_COMMAND_START_WAITING_RAW_RESPONCE);
 	} else {
 		nhr_request_close(r);
 		if (nhr_request_check_timeout(r)) {
 			r->error_code = nhr_error_code_failed_connect_to_host;
-			r->command = NHR_COMMAND_INFORM_ERROR;
+			nhr_request_set_command(r, NHR_COMMAND_INFORM_ERROR);
 		}
 	}
 	nhr_free(header);
@@ -193,7 +192,7 @@ struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r) {
 	memset(&wsa, 0, sizeof(WSADATA));
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
 		r->error_code = nhr_error_code_failed_connect_to_host;
-		r->command = NHR_COMMAND_INFORM_ERROR;
+		nhr_request_set_command(r, NHR_COMMAND_INFORM_ERROR);
 		return NULL;
 	}
 #endif
@@ -218,7 +217,7 @@ struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r) {
 #endif
 
 	r->error_code = nhr_error_code_failed_connect_to_host;
-	r->command = NHR_COMMAND_INFORM_ERROR;
+	nhr_request_set_command(r, NHR_COMMAND_INFORM_ERROR);
 	return NULL;
 }
 
@@ -268,17 +267,17 @@ void nhr_request_connect_to_host(_nhr_request * r) {
 		WSACleanup();
 #endif
 		r->error_code = nhr_error_code_failed_connect_to_host;
-		r->command = NHR_COMMAND_INFORM_ERROR;
+		nhr_request_set_command(r, NHR_COMMAND_INFORM_ERROR);
 	} else {
-		r->command = NHR_COMMAND_SEND_RAW_REQUEST;
+		nhr_request_set_command(r, NHR_COMMAND_SEND_RAW_REQUEST);
 	}
 }
 
 nhr_bool nhr_request_create_start_work_thread(_nhr_request * r) {
-	r->command = NHR_COMMAND_NONE;
+	nhr_request_set_command(r, NHR_COMMAND_NONE);
 	r->work_thread = nhr_thread_create(&nhr_request_work_th_func, r);
 	if (r->work_thread) {
-		r->command = NHR_COMMAND_CONNECT_TO_HOST;
+		nhr_request_set_command(r, NHR_COMMAND_CONNECT_TO_HOST);
 		return nhr_true;
 	}
 	return nhr_false;
@@ -305,7 +304,7 @@ void nhr_request_delete(_nhr_request * r) {
 	nhr_string_delete_clean(&r->parameters);
 
 	nhr_mutex_delete(r->work_mutex);
-	nhr_mutex_delete(r->send_mutex);
+	nhr_mutex_delete(r->command_mutex);
 
 	nhr_response_delete(r->responce);
 
@@ -319,6 +318,21 @@ void nhr_request_set_option(nhr_socket_t s, int option, int value) {
 nhr_bool nhr_request_check_timeout(_nhr_request * r) {
 	if (time(NULL) - r->last_time < r->timeout) return nhr_true;
 	r->error_code = nhr_error_code_timeout;
-	r->command = NHR_COMMAND_INFORM_ERROR;
+	nhr_request_set_command(r, NHR_COMMAND_INFORM_ERROR);
 	return nhr_false;
 }
+
+void nhr_request_set_command(_nhr_request * r, const int command) {
+	nhr_mutex_lock(r->command_mutex);
+	r->command = command;
+	nhr_mutex_unlock(r->command_mutex);
+}
+
+int nhr_request_get_command(_nhr_request * r) {
+	int comand = NHR_COMMAND_NONE;
+	nhr_mutex_lock(r->command_mutex);
+	comand = r->command;
+	nhr_mutex_unlock(r->command_mutex);
+	return comand;
+}
+

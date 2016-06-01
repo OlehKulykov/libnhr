@@ -127,6 +127,8 @@ typedef nhr_handle nhr_thread;
 
 /**
  @brief Callback type on request reveiced responce.
+ @warning After trigering callback, request object will be automaticaly released.
+ It's recommened set to `NULL` request variable in your logic.
  @param request Request object.
  @param responce Responce object.
  */
@@ -174,6 +176,8 @@ typedef enum _nhr_method
 
 /**
  @brief Callback type on socket receive binary frame.
+ @warning After trigering callback, request object will be automaticaly released.
+ It's recommened set to `NULL` request variable in your logic.
  @param request Request object.
  @param responce Responce object.
  */
@@ -234,7 +238,9 @@ NHR_API(void) nhr_request_set_method(nhr_request request, nhr_method method);
 
 
 /**
- @brief Set on request received responce callback. 
+ @brief Set on request received responce callback.
+ @warning After trigering callback, request object will be automaticaly released.
+ It's recommened set to `NULL` request variable in your logic.
  Called from non main thread.
  @param request The Request object.
  */
@@ -243,6 +249,8 @@ NHR_API(void) nhr_request_set_on_recvd_responce(nhr_request request, nhr_on_requ
 
 /**
  @brief Set on request error ocupared callback.
+ @warning After trigering callback, request object will be automaticaly released.
+ It's recommened set to `NULL` request variable in your logic.
  Called from non main thread.
  @param request The Request object.
  */
@@ -291,6 +299,16 @@ NHR_API(void) nhr_request_set_timeout(nhr_request request, const unsigned int se
  @return Request timeout interval in seconds, or `0` if request is NULL.
  */
 NHR_API(unsigned int) nhr_request_get_timeout(nhr_request request);
+
+
+/**
+ @brief Cancel request. 
+ Thread safe method.
+ @warning Do not use request variable any more.
+ Do not call `cancel` after callbacks was trigered.
+ */
+NHR_API(void) nhr_request_cancel(nhr_request request);
+
 
 
 // response

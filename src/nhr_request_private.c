@@ -31,23 +31,20 @@
 #define	WSAEINPROGRESS	EINPROGRESS
 #endif
 
-static void nhr_request_work_th_func(void * user_object)
-{
+static void nhr_request_work_th_func(void * user_object) {
 	_nhr_request * r = (_nhr_request *)user_object;
-	while (r->command < NHR_COMMAND_END)
-	{
+	while (r->command < NHR_COMMAND_END) {
 		nhr_mutex_lock(r->work_mutex);
-		switch (r->command)
-		{
+		switch (r->command) {
 			case NHR_COMMAND_CONNECT_TO_HOST: nhr_request_connect_to_host(r); break;
 			case NHR_COMMAND_SEND_RAW_REQUEST: nhr_request_send_raw_request(r); break;
+			case NHR_COMMAND_START_WAITING_RAW_RESPONCE: nhr_request_start_waiting_raw_responce(r); break;
 			case NHR_COMMAND_WAIT_RAW_RESPONCE: nhr_request_wait_raw_responce(r); break;
 			default: break;
 		}
 		nhr_mutex_unlock(r->work_mutex);
 
-		switch (r->command)
-		{
+		switch (r->command) {
 			case NHR_COMMAND_INFORM_RESPONCE:
 				if (r->on_recvd_responce) r->on_recvd_responce(r, r->responce);
 				r->command = NHR_COMMAND_END;
@@ -70,63 +67,49 @@ static void nhr_request_work_th_func(void * user_object)
 // c89 standard
 #define NHR_RECV_BUFF_SIZE (1 << 16)
 
-nhr_bool nhr_request_recv(_nhr_request * r)
-{
-	int is_reading = 1, error_number = -1, len = -1;
+nhr_bool nhr_request_recv(_nhr_request * r) {
+	int error_number = -1, len = -1;
 	char buff[NHR_RECV_BUFF_SIZE];
 
-	while (is_reading)
-	{
+	do {
 		len = (int)recv(r->socket, buff, NHR_RECV_BUFF_SIZE, 0);
 #if defined(NHR_OS_WINDOWS)
 		error_number = WSAGetLastError();
 #else
 		error_number = errno;
 #endif
-		if (len > 0)
-		{
+		if (len > 0) {
+			r->last_time = time(NULL);
 			if (r->responce) nhr_response_append(r->responce, buff, len);
 			else r->responce = nhr_response_create(buff, len);
 		}
-		else
-		{
-			is_reading = 0;
-		}
-	}
+	} while (len > 0);
 
-	if (error_number != WSAEWOULDBLOCK && error_number != WSAEINPROGRESS)
-	{
+	if (error_number != WSAEWOULDBLOCK && error_number != WSAEINPROGRESS) {
 		nhr_request_close(r);
 		return nhr_false;
 	}
 	return nhr_true;
 }
 
-void nhr_request_wait_raw_responce(_nhr_request * r)
-{
-	if (nhr_request_recv(r))
-	{
-		if (nhr_response_is_finished(r->responce))
-		{
-			r->command = NHR_COMMAND_INFORM_RESPONCE;
-		}
-	}
-	else
-	{
-		if (r)
-		{
-			r->command = NHR_COMMAND_INFORM_RESPONCE;
-		}
-		else
-		{
-			r->error_code = nhr_error_code_failed_connect_to_host;
-			r->command = NHR_COMMAND_INFORM_ERROR;
-		}
+void nhr_request_wait_raw_responce(_nhr_request * r) {
+	if (nhr_request_recv(r)) {
+		if (nhr_response_is_finished(r->responce)) r->command = NHR_COMMAND_INFORM_RESPONCE;
+		if (!nhr_request_check_timeout(r)) return; // error already exists
+	} else if (r) {
+		r->command = NHR_COMMAND_INFORM_RESPONCE;
+	} else {
+		r->error_code = nhr_error_code_failed_connect_to_host;
+		r->command = NHR_COMMAND_INFORM_ERROR;
 	}
 }
 
-size_t nhr_request_create_header_GET(_nhr_request * r, char ** header)
-{
+void nhr_request_start_waiting_raw_responce(_nhr_request * r) {
+	r->last_time = time(NULL);
+	r->command = NHR_COMMAND_WAIT_RAW_RESPONCE;
+}
+
+size_t nhr_request_create_header_GET(_nhr_request * r, char ** header) {
 	size_t buff_size = 0;
 	size_t writed = 0;
 	char * buff = NULL;
@@ -145,12 +128,9 @@ size_t nhr_request_create_header_GET(_nhr_request * r, char ** header)
 	if (r->port == 80) writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
 	else writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
 
-	if (r->http_headers)
-	{
+	if (r->http_headers) {
 		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", r->http_headers);
-	}
-	else
-	{
+	} else {
 		memcpy(buff + writed, k_nhr_CRLF, k_nhr_CRLF_length);
 		writed += k_nhr_CRLF_length;
 	}
@@ -159,12 +139,10 @@ size_t nhr_request_create_header_GET(_nhr_request * r, char ** header)
 	return writed;
 }
 
-void nhr_request_send_raw_request(_nhr_request * r)
-{
+void nhr_request_send_raw_request(_nhr_request * r) {
 	char * header = NULL;
 	size_t header_size = 0;
-	switch (r->method)
-	{
+	switch (r->method) {
 		case nhr_method_GET:
 			header_size = nhr_request_create_header_GET(r, &header);
 			break;
@@ -174,25 +152,24 @@ void nhr_request_send_raw_request(_nhr_request * r)
 			break;
 	}
 
-	if (nhr_request_send_buffer(r, header, header_size))
-	{
-		r->command = NHR_COMMAND_WAIT_RAW_RESPONCE;
-	}
-	else
-	{
+	r->last_time = time(NULL);
+
+	if (nhr_request_send_buffer(r, header, header_size)) {
+		r->command = NHR_COMMAND_START_WAITING_RAW_RESPONCE;
+	} else {
 		nhr_request_close(r);
-		r->error_code = nhr_error_code_failed_connect_to_host;
-		r->command = NHR_COMMAND_INFORM_ERROR;
+		if (nhr_request_check_timeout(r)) {
+			r->error_code = nhr_error_code_failed_connect_to_host;
+			r->command = NHR_COMMAND_INFORM_ERROR;
+		}
 	}
 	nhr_free(header);
 }
 
-nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size_t data_size)
-{
+nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size_t data_size) {
 	int sended = -1, error_number = -1;
 	r->error_code = nhr_error_code_none;
 
-	//errno = -1;
 #if defined(NHR_OS_WINDOWS)
 	sended = send(r->socket, (const char *)data, data_size, 0);
 	error_number = WSAGetLastError();
@@ -202,32 +179,27 @@ nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size
 #endif
 
 	if (sended > 0) return nhr_true;
-
 	if (error_number > 0) return nhr_false;
-
 	return nhr_true;
 }
 
-struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r)
-{
+struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r) {
 	struct addrinfo hints;
-	char portstr[16];
+	char portstr[12];
 	struct addrinfo * result = NULL;
 	int ret = 0, retry_number = 0, last_ret = 0;
 #if defined(NHR_OS_WINDOWS)
 	WSADATA wsa;
 	memset(&wsa, 0, sizeof(WSADATA));
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-	{
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
 		r->error_code = nhr_error_code_failed_connect_to_host;
 		r->command = NHR_COMMAND_INFORM_ERROR;
 		return NULL;
 	}
 #endif
 
-	nhr_sprintf(portstr, 16, "%i", r->port);
-	while (++retry_number < NHR_CONNECT_ATTEMPS)
-	{
+	nhr_sprintf(portstr, 12, "%i", r->port);
+	while (++retry_number < NHR_CONNECT_ATTEMPS) {
 		result = NULL;
 		memset(&hints, 0, sizeof(hints));
 		hints.ai_family = AF_UNSPEC;
@@ -250,8 +222,7 @@ struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r)
 	return NULL;
 }
 
-void nhr_request_connect_to_host(_nhr_request * r)
-{
+void nhr_request_connect_to_host(_nhr_request * r) {
 	struct addrinfo * result = NULL;
 	struct addrinfo * p = NULL;
 	nhr_socket_t sock = NHR_INVALID_SOCKET;
@@ -260,25 +231,23 @@ void nhr_request_connect_to_host(_nhr_request * r)
 	unsigned long iMode = 0;
 #endif
 
+	r->last_time = time(NULL);
 	result = nhr_request_connect_getaddr_info(r);
-	if (!result) return;
+	if (!nhr_request_check_timeout(r)) return; // error already exists
+	if (!result) return; // error already exists
 
-	while ((++retry_number < NHR_CONNECT_ATTEMPS) && (sock == NHR_INVALID_SOCKET))
-	{
-		for (p = result; p != NULL; p = p->ai_next)
-		{
+	while ((++retry_number < NHR_CONNECT_ATTEMPS) && (sock == NHR_INVALID_SOCKET)) {
+		for (p = result; p != NULL; p = p->ai_next) {
+			r->last_time = time(NULL);
 			sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-			if (sock != NHR_INVALID_SOCKET)
-			{
+			if (sock != NHR_INVALID_SOCKET) {
 				nhr_request_set_option(sock, SO_ERROR, 1); // When an error occurs on a socket, set error variable so_error and notify process
 				nhr_request_set_option(sock, SO_KEEPALIVE, 1); // Periodically test if connection is alive
 
-				if (connect(sock, p->ai_addr, p->ai_addrlen) == 0)
-				{
+				if (connect(sock, p->ai_addr, p->ai_addrlen) == 0) {
 					r->socket = sock;
 #if defined(NHR_OS_WINDOWS)
-					// If iMode != 0, non-blocking mode is enabled.
-					iMode = 1;
+					iMode = 1; // If iMode != 0, non-blocking mode is enabled.
 					ioctlsocket(r->socket, FIONBIO, &iMode);
 #else
 					fcntl(r->socket, F_SETFL, O_NONBLOCK);
@@ -287,42 +256,36 @@ void nhr_request_connect_to_host(_nhr_request * r)
 				}
 				NHR_SOCK_CLOSE(sock);
 			}
+			if (!nhr_request_check_timeout(r)) return; // error already exists
 		}
 		if (sock == NHR_INVALID_SOCKET) nhr_thread_sleep(NHR_CONNECT_RETRY_DELAY);
 	}
 
 	freeaddrinfo(result);
 
-	if (r->socket == NHR_INVALID_SOCKET)
-	{
+	if (r->socket == NHR_INVALID_SOCKET) {
 #if defined(NHR_OS_WINDOWS)
 		WSACleanup();
 #endif
 		r->error_code = nhr_error_code_failed_connect_to_host;
 		r->command = NHR_COMMAND_INFORM_ERROR;
-	}
-	else
-	{
+	} else {
 		r->command = NHR_COMMAND_SEND_RAW_REQUEST;
 	}
 }
 
-nhr_bool nhr_request_create_start_work_thread(_nhr_request * r)
-{
+nhr_bool nhr_request_create_start_work_thread(_nhr_request * r) {
 	r->command = NHR_COMMAND_NONE;
 	r->work_thread = nhr_thread_create(&nhr_request_work_th_func, r);
-	if (r->work_thread)
-	{
+	if (r->work_thread) {
 		r->command = NHR_COMMAND_CONNECT_TO_HOST;
 		return nhr_true;
 	}
 	return nhr_false;
 }
 
-void nhr_request_close(_nhr_request * r)
-{
-	if (r->socket != NHR_INVALID_SOCKET)
-	{
+void nhr_request_close(_nhr_request * r) {
+	if (r->socket != NHR_INVALID_SOCKET) {
 		NHR_SOCK_CLOSE(r->socket);
 		r->socket = NHR_INVALID_SOCKET;
 #if defined(NHR_OS_WINDOWS)
@@ -331,8 +294,7 @@ void nhr_request_close(_nhr_request * r)
 	}
 }
 
-void nhr_request_delete(_nhr_request * r)
-{
+void nhr_request_delete(_nhr_request * r) {
 	nhr_request_close(r);
 
 	nhr_string_delete_clean(&r->scheme);
@@ -350,7 +312,13 @@ void nhr_request_delete(_nhr_request * r)
 	nhr_free(r);
 }
 
-void nhr_request_set_option(nhr_socket_t s, int option, int value)
-{
+void nhr_request_set_option(nhr_socket_t s, int option, int value) {
 	setsockopt(s, SOL_SOCKET, option, (char *)&value, sizeof(int));
+}
+
+nhr_bool nhr_request_check_timeout(_nhr_request * r) {
+	if (time(NULL) - r->last_time < r->timeout) return nhr_true;
+	r->error_code = nhr_error_code_timeout;
+	r->command = NHR_COMMAND_INFORM_ERROR;
+	return nhr_false;
 }

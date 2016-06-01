@@ -140,14 +140,6 @@ typedef void (*nhr_on_request_recvd_responce)(nhr_request request, nhr_response 
 typedef void (*nhr_thread_funct)(void * user_object);
 
 
-
-/**
- @brief Create new request.
- @return Request handler or NULL on error.
- */
-NHR_API(nhr_request) nhr_request_create(void);
-
-
 /**
  @brief Error codes.
  */
@@ -157,8 +149,9 @@ typedef enum _nhr_error_code
 
 	nhr_error_code_missed_parameter,
 
-	nhr_error_code_failed_connect_to_host
+	nhr_error_code_failed_connect_to_host,
 
+	nhr_error_code_timeout
 } nhr_error_code;
 
 
@@ -192,6 +185,13 @@ NHR_EXTERN const char * k_nhr_GET;
 
 
 // request
+
+/**
+ @brief Create new request.
+ @return Request handler or NULL on error.
+ */
+NHR_API(nhr_request) nhr_request_create(void);
+
 
 /**
  @brief Set request connect URL.
@@ -278,6 +278,19 @@ NHR_API(void) nhr_request_set_user_object(nhr_request request, void * user_objec
  */
 NHR_API(void*) nhr_request_get_user_object(nhr_request request);
 
+
+/**
+ @brief Set request timeout interval in seconds.
+ */
+NHR_API(void) nhr_request_set_timeout(nhr_request request, const unsigned int seconds);
+
+
+/**
+ @brief Get request timeout interval in seconds.
+ Default value is `30` seconds.
+ @return Request timeout interval in seconds, or `0` if request is NULL.
+ */
+NHR_API(unsigned int) nhr_request_get_timeout(nhr_request request);
 
 
 // response

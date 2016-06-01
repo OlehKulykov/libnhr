@@ -9,13 +9,11 @@
 
 @implementation ViewController
 
-static void onError(nhr_request request, nhr_error_code error_code)
-{
+static void onError(nhr_request request, nhr_error_code error_code) {
 
 }
 
-static void onResponse(nhr_request request, nhr_response responce)
-{
+static void onResponse(nhr_request request, nhr_response responce) {
 	char * body = nhr_response_get_body(responce);
 	unsigned int bodyLength = nhr_response_get_body_length(responce);
 	if (body && bodyLength)
@@ -32,8 +30,8 @@ static void onResponse(nhr_request request, nhr_response responce)
 
 //	nhr_request_set_url(request, "http", "api.ipify.org", "/", 80);
 	nhr_request_set_url(request, "http", "isithackday.com", "/arrpi.php", 80);
+//	nhr_request_set_url(request, "http", "www.tutorialspoint.com", "/http/http_header_fields.htm", 80);
 
-//	nhr_request_set_url(request, "http", "www.tutorialspoint.com", 80, "/http/http_header_fields.htm");
 	nhr_request_set_method(request, nhr_method_GET);
 	nhr_request_add_header_field(request, "Cache-control", "no-cache");
 	nhr_request_add_header_field(request, "User-Agent", "iOS");

@@ -27,8 +27,7 @@
 #include "../libnhr.h"
 #include "nhr_common.h"
 
-typedef struct _nhr_response_struct
-{
+typedef struct _nhr_response_struct {
 	size_t content_length;
 	unsigned short status_code;
 	unsigned char transfer_encoding;

@@ -35,8 +35,7 @@
 #include <unistd.h>
 #endif
 
-typedef struct _nhr_thread_struct
-{
+typedef struct _nhr_thread_struct {
 	nhr_thread_funct thread_function;
 	void * user_object;
 
@@ -47,15 +46,14 @@ typedef struct _nhr_thread_struct
 #endif
 } _nhr_thread;
 
-typedef struct _nhr_threads_joiner_struct
-{
+typedef struct _nhr_threads_joiner_struct {
 	_nhr_thread * thread;
 	nhr_mutex mutex;
 } _nhr_threads_joiner;
 
 static _nhr_threads_joiner * _threads_joiner = NULL;
-static void nhr_threads_joiner_clean(void) // private
-{
+
+static void nhr_threads_joiner_clean(void) { // private
 	_nhr_thread * t = _threads_joiner->thread;
 #if defined(NHR_OS_WINDOWS)
 	DWORD dwExitCode = 0;
@@ -79,16 +77,14 @@ static void nhr_threads_joiner_clean(void) // private
 	nhr_free(t);
 }
 
-static void nhr_threads_joiner_add(_nhr_thread * thread) // public
-{
+static void nhr_threads_joiner_add(_nhr_thread * thread) { // public
 	nhr_mutex_lock(_threads_joiner->mutex);
 	nhr_threads_joiner_clean();
 	_threads_joiner->thread = thread;
 	nhr_mutex_unlock(_threads_joiner->mutex);
 }
 
-static void nhr_threads_joiner_create_ifneed(void)
-{
+static void nhr_threads_joiner_create_ifneed(void) {
 	if (_threads_joiner) return;
 	_threads_joiner = (_nhr_threads_joiner *)nhr_malloc_zero(sizeof(_nhr_threads_joiner));
 	_threads_joiner->mutex = nhr_mutex_create_recursive();
@@ -111,8 +107,7 @@ static void * nhr_thread_func_priv(void * some_pointer)
 #endif
 }
 
-nhr_thread nhr_thread_create(nhr_thread_funct thread_function, void * user_object)
-{
+nhr_thread nhr_thread_create(nhr_thread_funct thread_function, void * user_object) {
 	_nhr_thread * t = NULL;
 	int res = -1;
 #if !defined(NHR_OS_WINDOWS)
@@ -144,8 +139,7 @@ nhr_thread nhr_thread_create(nhr_thread_funct thread_function, void * user_objec
 	return t;
 }
 
-void nhr_thread_sleep(const unsigned int millisec)
-{
+void nhr_thread_sleep(const unsigned int millisec) {
 #if defined(NHR_OS_WINDOWS)
 	Sleep(millisec); // 1s = 1'000 millisec.
 #else
@@ -153,8 +147,7 @@ void nhr_thread_sleep(const unsigned int millisec)
 #endif
 }
 
-nhr_mutex nhr_mutex_create_recursive(void)
-{
+nhr_mutex nhr_mutex_create_recursive(void) {
 #if defined(NHR_OS_WINDOWS)
 	CRITICAL_SECTION * mutex = (CRITICAL_SECTION *)nhr_malloc_zero(sizeof(CRITICAL_SECTION));
 	InitializeCriticalSection((LPCRITICAL_SECTION)mutex);
@@ -163,8 +156,7 @@ nhr_mutex nhr_mutex_create_recursive(void)
 	pthread_mutex_t * mutex = (pthread_mutex_t *)nhr_malloc_zero(sizeof(pthread_mutex_t));
 	int res = -1;
 	pthread_mutexattr_t attr;
-	if (pthread_mutexattr_init(&attr) == 0)
-	{
+	if (pthread_mutexattr_init(&attr) == 0) {
 		if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) == 0)
 			res = pthread_mutex_init(mutex, &attr);
 		pthread_mutexattr_destroy(&attr);
@@ -174,8 +166,7 @@ nhr_mutex nhr_mutex_create_recursive(void)
 #endif
 }
 
-void nhr_mutex_lock(nhr_mutex mutex)
-{
+void nhr_mutex_lock(nhr_mutex mutex) {
 #if defined(NHR_OS_WINDOWS)
 	if (mutex) TryEnterCriticalSection((LPCRITICAL_SECTION)mutex);
 #else
@@ -183,8 +174,7 @@ void nhr_mutex_lock(nhr_mutex mutex)
 #endif
 }
 
-void nhr_mutex_unlock(nhr_mutex mutex)
-{
+void nhr_mutex_unlock(nhr_mutex mutex) {
 #if defined(NHR_OS_WINDOWS)
 	if (mutex) LeaveCriticalSection((LPCRITICAL_SECTION)mutex);
 #else
@@ -192,10 +182,8 @@ void nhr_mutex_unlock(nhr_mutex mutex)
 #endif
 }
 
-void nhr_mutex_delete(nhr_mutex mutex)
-{
-	if (mutex)
-	{
+void nhr_mutex_delete(nhr_mutex mutex) {
+	if (mutex) {
 #if defined(NHR_OS_WINDOWS)
 		DeleteCriticalSection((LPCRITICAL_SECTION)mutex);
 #else

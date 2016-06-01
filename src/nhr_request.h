@@ -45,6 +45,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <time.h>
 
 #if defined(NHR_OS_WINDOWS)
 typedef SOCKET nhr_socket_t;
@@ -57,8 +58,7 @@ typedef int nhr_socket_t;
 #endif
 
 
-typedef struct _nhr_request_struct
-{
+typedef struct _nhr_request_struct {
 	unsigned short port;
 
 	nhr_socket_t socket;
@@ -70,6 +70,8 @@ typedef struct _nhr_request_struct
 	nhr_thread work_thread;
 
 	int command;
+	time_t timeout;
+	time_t last_time; // last succesful action time
 
 	nhr_error_code error_code;
 
@@ -89,6 +91,8 @@ typedef struct _nhr_request_struct
 
 nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size_t data_size);
 
+void nhr_request_start_waiting_raw_responce(_nhr_request * r);
+
 void nhr_request_wait_raw_responce(_nhr_request * r);
 
 void nhr_request_send_raw_request(_nhr_request * r);
@@ -105,14 +109,17 @@ void nhr_request_delete(_nhr_request * r);
 
 void nhr_request_set_option(nhr_socket_t s, int option, int value);
 
+nhr_bool nhr_request_check_timeout(_nhr_request * r);
+
 #define NHR_COMMAND_IDLE -1
 #define NHR_COMMAND_NONE 0
 #define NHR_COMMAND_CONNECT_TO_HOST 1
 #define NHR_COMMAND_SEND_RAW_REQUEST 2
-#define NHR_COMMAND_WAIT_RAW_RESPONCE 3
+#define NHR_COMMAND_START_WAITING_RAW_RESPONCE 3
+#define NHR_COMMAND_WAIT_RAW_RESPONCE 4
 
-#define NHR_COMMAND_INFORM_RESPONCE 4
-#define NHR_COMMAND_INFORM_ERROR 5
+#define NHR_COMMAND_INFORM_RESPONCE 5
+#define NHR_COMMAND_INFORM_ERROR 6
 
 #define NHR_COMMAND_END 9999
 

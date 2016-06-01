@@ -24,16 +24,13 @@
 #include "nhr_string.h"
 #include "nhr_memory.h"
 
-char * nhr_string_copy(const char * str)
-{
+char * nhr_string_copy(const char * str) {
 	return str ? nhr_string_copy_len(str, strlen(str)) : NULL;
 }
 
-char * nhr_string_copy_len(const char * str, const size_t len)
-{
+char * nhr_string_copy_len(const char * str, const size_t len) {
 	char * s = (str && len > 0) ? (char *)nhr_malloc(len + 1) : NULL;
-	if (s)
-	{
+	if (s) {
 		memcpy(s, str, len);
 		s[len] = 0;
 		return s;
@@ -41,36 +38,30 @@ char * nhr_string_copy_len(const char * str, const size_t len)
 	return NULL;
 }
 
-char * nhr_string_extend(const char * str, const size_t len)
-{
-	size_t srcLen = 0;
+char * nhr_string_extend(const char * str, const size_t len) {
+	size_t src_len = 0;
 	char * newStr = NULL;
-	if (len > 0)
-	{
-		srcLen = str ? strlen(str) : 0;
-		newStr = (char *)nhr_malloc(srcLen + len + 1);
-		if (srcLen > 0) memcpy(newStr, str, srcLen);
-		newStr[srcLen + len] = 0;
+	if (len > 0) {
+		src_len = str ? strlen(str) : 0;
+		newStr = (char *)nhr_malloc(src_len + len + 1);
+		if (src_len > 0) memcpy(newStr, str, src_len);
+		newStr[src_len + len] = 0;
 		return newStr;
 	}
 	return newStr;
 }
 
-char nhr_string_last_char(const char * str)
-{
+char nhr_string_last_char(const char * str) {
 	const size_t len = str ? strlen(str) : 0;
 	return len > 0 ? str[len - 1] : 0;
 }
 
-void nhr_string_delete(char * str)
-{
+void nhr_string_delete(char * str) {
 	nhr_free(str);
 }
 
-void nhr_string_delete_clean(char ** str)
-{
-	if (str)
-	{
+void nhr_string_delete_clean(char ** str) {
+	if (str) {
 		nhr_free(*str);
 		*str = NULL;
 	}

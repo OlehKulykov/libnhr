@@ -26,6 +26,10 @@
 #include "nhr_memory.h"
 #include "nhr_string.h"
 
+#if !defined(RWS_OS_WINDOWS)
+#include <signal.h>
+#endif
+
 #if !defined(NHR_OS_WINDOWS)
 void nhr_request_handle_sigpipe(int signal_number)
 {

@@ -67,15 +67,17 @@ static void nhr_request_work_th_func(void * user_object)
 	nhr_request_delete(r);
 }
 
+// c89 standard
+#define NHR_RECV_BUFF_SIZE (1 << 16)
+
 nhr_bool nhr_request_recv(_nhr_request * r)
 {
 	int is_reading = 1, error_number = -1, len = -1;
-	const size_t maxBuffSize = 1 << 16;
-	char buff[maxBuffSize];
+	char buff[NHR_RECV_BUFF_SIZE];
 
 	while (is_reading)
 	{
-		len = (int)recv(r->socket, buff, maxBuffSize, 0);
+		len = (int)recv(r->socket, buff, NHR_RECV_BUFF_SIZE, 0);
 #if defined(RWS_OS_WINDOWS)
 		error_number = WSAGetLastError();
 #else
@@ -217,7 +219,8 @@ struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r)
 	memset(&wsa, 0, sizeof(WSADATA));
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 	{
-		r->command = COMMAND_INFORM_DISCONNECTED;
+		r->error_code = nhr_error_code_failed_connect_to_host;
+		r->command = COMMAND_INFORM_ERROR;
 		return NULL;
 	}
 #endif

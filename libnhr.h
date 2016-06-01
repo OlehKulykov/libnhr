@@ -29,7 +29,7 @@
 
 
 #define NHR_VERSION_MAJOR 0
-#define NHR_VERSION_MINOR 1
+#define NHR_VERSION_MINOR 2
 #define NHR_VERSION_PATCH 0
 
 

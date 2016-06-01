@@ -265,6 +265,19 @@ NHR_API(void) nhr_request_add_header_field(nhr_request request, const char * nam
 NHR_API(void) nhr_request_add_parameter(nhr_request request, const char * name, const char * value);
 
 
+/**
+ @brief Assign some object with the request.
+ */
+NHR_API(void) nhr_request_set_user_object(nhr_request request, void * user_object);
+
+
+/**
+ @brief Get assigned user object from request.
+ */
+NHR_API(void*) nhr_request_get_user_object(nhr_request request);
+
+
+
 // response
 
 /**

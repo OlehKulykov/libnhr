@@ -25,7 +25,6 @@
 #define __NHR_COMMON_H__ 1
 
 #include <stdio.h>
-#include "../libnhr.h"
 
 /* check os */
 /* gcc -dM -E - < /dev/null */
@@ -65,6 +64,17 @@
 #define NHR_OS_ANDROID 1
 #endif
 #endif
+
+#if !defined(NHR_EXTERN)
+#if defined(__cplusplus) || defined(_cplusplus)
+#define NHR_EXTERN extern "C"
+#else
+#define NHR_EXTERN extern
+#endif
+#endif
+
+
+// internal constants
 
 NHR_EXTERN const char * k_nhr_request_http_ver; // "1.1"
 NHR_EXTERN const char * k_nhr_content_type; // "Content-Type"

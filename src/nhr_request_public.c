@@ -22,6 +22,7 @@
 
 
 #include "nhr_request.h"
+#include "nhr_common.h"
 #include "nhr_memory.h"
 #include "nhr_string.h"
 
@@ -160,4 +161,16 @@ nhr_error_code nhr_request_get_error_code(nhr_request request)
 {
 	_nhr_request * r = (_nhr_request *)request;
 	return r ? r->error_code : nhr_error_code_none;
+}
+
+void nhr_request_set_user_object(nhr_request request, void * user_object)
+{
+	_nhr_request * r = (_nhr_request *)request;
+	if (r) r->user_object = user_object;
+}
+
+void* nhr_request_get_user_object(nhr_request request)
+{
+	_nhr_request * r = (_nhr_request *)request;
+	return r ? r->user_object : NULL;
 }

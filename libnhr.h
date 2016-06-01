@@ -213,6 +213,8 @@ NHR_API(void) nhr_request_set_url(nhr_request request,
 /**
  @brief Send request.
  @param request The Request object.
+ @return `nhr_true` if request exists, scheme, host, path, method are setted and request sucessfully started,
+ otherwice `nhr_false`
  */
 NHR_API(nhr_bool) nhr_request_send(nhr_request request);
 

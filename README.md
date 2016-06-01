@@ -38,13 +38,13 @@ cd <path_to_Android_NDK>
 
 
 #### Use directly source
-Without build sustem, just use single header ```libnhr.h``` and all content from source folder ```src``` in your IDE.
+Without build system, just use single header ```libnhr.h``` and all content from source folder ```src```.
 
 
 #### Example
 ##### Create and store request object handle
 ```c
-// Define variable or field for request handle
+// Define variable or field for the request
 nhr_request _request = NULL;
 ............
 // Create request object
@@ -55,17 +55,20 @@ _request = nhr_request_create();
 ```c
 // Combined url: "http://api.ipify.org"
 nhr_request_set_url(_request, "http", "api.ipify.org", "/", 80);
+// or
 // Combined url: "http://isithackday.com/arrpi.php"
 nhr_request_set_url(_request, "http", "isithackday.com", "/arrpi.php", 80);
 
 nhr_request_set_method(_request, nhr_method_GET);
 ```
 
-##### Optionaly set HTTP headers and/or parameters
+##### Optionally add HTTP headers and/or parameters
 ```c
+// Add HTTP headers
 nhr_request_add_header_field(_request, "Cache-control", "no-cache");
 nhr_request_add_header_field(_request, "Accept-Charset", "utf-8");
 ............
+// Add request parameters
 nhr_request_add_parameter(_request, "format", "json");
 nhr_request_add_parameter(_request, "text", "Hello%20world");
 ```

@@ -53,7 +53,7 @@ include(CheckCXXCompilerFlag)
 # COMMAND LINE OPTIONS
 option(NHR_OPT_SHARED "Build shared lib" ON)
 option(NHR_OPT_STATIC "Build static lib" ON)
-
+option(NHR_OPT_TESTS "Build libnhr tests" ON)
 
 option(NHR_OPT_APPVEYOR_CI "Build with appveyor ci" OFF)
 
@@ -197,7 +197,7 @@ install(FILES libnhr.h
 
 if(NHR_OPT_TESTS)
 	enable_testing()
-	add_subdirectory(test)
+	add_subdirectory(tests)
 
 	# This must always be last!
 	include(CPack)

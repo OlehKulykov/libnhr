@@ -1,6 +1,7 @@
 
 
 #import <XCTest/XCTest.h>
+#include "libnhr_public_tests.h"
 
 @interface libnhrTests : XCTestCase
 

@@ -56,8 +56,6 @@ typedef int nhr_socket_t;
 #define NHR_SOCK_CLOSE(sock) close(sock)
 #endif
 
-//static const char * k_rws_socket_min_http_ver = "1.1";
-//static const char * k_rws_socket_sec_websocket_accept = "Sec-WebSocket-Accept";
 
 typedef struct _nhr_request_struct
 {
@@ -107,16 +105,16 @@ void nhr_request_delete(_nhr_request * r);
 
 void nhr_request_set_option(nhr_socket_t s, int option, int value);
 
-#define COMMAND_IDLE -1
-#define COMMAND_NONE 0
-#define COMMAND_CONNECT_TO_HOST 1
-#define COMMAND_SEND_RAW_REQUEST 2
-#define COMMAND_WAIT_RAW_RESPONCE 3
+#define NHR_COMMAND_IDLE -1
+#define NHR_COMMAND_NONE 0
+#define NHR_COMMAND_CONNECT_TO_HOST 1
+#define NHR_COMMAND_SEND_RAW_REQUEST 2
+#define NHR_COMMAND_WAIT_RAW_RESPONCE 3
 
-#define COMMAND_INFORM_RESPONCE 4
-#define COMMAND_INFORM_ERROR 5
+#define NHR_COMMAND_INFORM_RESPONCE 4
+#define NHR_COMMAND_INFORM_ERROR 5
 
-#define COMMAND_END 9999
+#define NHR_COMMAND_END 9999
 
 #endif
 

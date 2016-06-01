@@ -39,6 +39,7 @@ typedef struct _nhr_thread_struct
 {
 	nhr_thread_funct thread_function;
 	void * user_object;
+
 #if defined(NHR_OS_WINDOWS)
 	HANDLE thread;
 #else

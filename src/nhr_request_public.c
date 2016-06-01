@@ -26,7 +26,7 @@
 #include "nhr_memory.h"
 #include "nhr_string.h"
 
-#if !defined(RWS_OS_WINDOWS)
+#if !defined(NHR_OS_WINDOWS)
 #include <signal.h>
 #endif
 
@@ -47,7 +47,7 @@ nhr_request nhr_request_create(void)
 #endif
 
 	r->socket = NHR_INVALID_SOCKET;
-	r->command = COMMAND_NONE;
+	r->command = NHR_COMMAND_NONE;
 	r->work_mutex = nhr_mutex_create_recursive();
 
 	return r;

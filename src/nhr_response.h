@@ -52,7 +52,7 @@ void nhr_response_delete(_nhr_response * r);
 
 nhr_bool nhr_response_is_finished(_nhr_response * r);
 
-#define TRANSFER_ENCODING_CHUNKED 1
+#define NHR_TRANSFER_ENCODING_CHUNKED 1
 
 
 #endif

@@ -71,7 +71,7 @@ void nhr_response_read_chunks(_nhr_response * r, char * str, long received_len)
 
 void nhr_response_parse_body(_nhr_response * r, char * received, const size_t received_len)
 {
-	printf("\n------HEADER---------\n%s\n---------------------\n", received);
+//	printf("\n------HEADER---------\n%s\n---------------------\n", received);
 	char * sub = strstr(received, k_nhr_double_CRLF);
 	if (!sub) return;
 
@@ -80,7 +80,7 @@ void nhr_response_parse_body(_nhr_response * r, char * received, const size_t re
 	{
 		sub += k_nhr_double_CRLF_length;
 		skiped -= k_nhr_double_CRLF_length;
-		if (r->transfer_encoding == TRANSFER_ENCODING_CHUNKED)
+		if (r->transfer_encoding == NHR_TRANSFER_ENCODING_CHUNKED)
 		{
 #if !defined(NHR_NO_CHUNKED_ENCODING)
 			nhr_response_read_chunks(r, sub, (long)received_len);
@@ -125,7 +125,7 @@ void nhr_response_parse_transfer_encoding(_nhr_response * r, char * received)
 #if defined(NHR_NO_CHUNKED_ENCODING)
 		printf("WARNING: libnhr located chucked encoding, but functionality is disabled");
 #else
-		r->transfer_encoding = TRANSFER_ENCODING_CHUNKED;
+		r->transfer_encoding = NHR_TRANSFER_ENCODING_CHUNKED;
 #endif
 	}
 }
@@ -167,7 +167,7 @@ void nhr_response_add_body_data(_nhr_response * r, void * data, const size_t dat
 
 void nhr_response_append(_nhr_response * r, void * received, const size_t received_len)
 {
-	if (r->transfer_encoding == TRANSFER_ENCODING_CHUNKED)
+	if (r->transfer_encoding == NHR_TRANSFER_ENCODING_CHUNKED)
 	{
 #if !defined(NHR_NO_CHUNKED_ENCODING)
 		nhr_response_read_chunks(r, (char *)received, (long)received_len);
@@ -212,7 +212,7 @@ nhr_bool nhr_response_is_finished(_nhr_response * r)
 	if (!r) return nhr_false;
 
 #if !defined(NHR_NO_CHUNKED_ENCODING)
-	if (r->transfer_encoding == TRANSFER_ENCODING_CHUNKED)
+	if (r->transfer_encoding == NHR_TRANSFER_ENCODING_CHUNKED)
 	{
 		return r->is_all_chunks_processed;
 	}

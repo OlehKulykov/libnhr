@@ -31,3 +31,4 @@ const char * k_nhr_double_CRLF = "\r\n\r\n";
 const char * k_nhr_content_length = "Content-Length";
 const char * k_nhr_chunked = "chunked";
 const char * k_nhr_GET = "GET";
+const char * k_nhr_POST = "POST";

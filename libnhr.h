@@ -163,10 +163,10 @@ typedef enum _nhr_error_code
 typedef enum _nhr_method
 {
 	nhr_method_GET = 1,
-//	nhr_method_HEAD,
-//	nhr_method_POST,
+	nhr_method_POST = 2,
 //	nhr_method_PUT,
 //	nhr_method_DELETE,
+//	nhr_method_HEAD,
 //	nhr_method_CONNECT,
 //	nhr_method_OPTIONS,
 //	nhr_method_TRACE,
@@ -184,8 +184,12 @@ typedef enum _nhr_method
 typedef void (*nhr_on_request_error)(nhr_request request, nhr_error_code error_code);
 
 
-// "GET"
+// String constant "GET"
 NHR_EXTERN const char * k_nhr_GET;
+
+
+// String constant "POST"
+NHR_EXTERN const char * k_nhr_POST;
 
 
 // request

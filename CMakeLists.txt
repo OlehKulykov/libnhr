@@ -29,11 +29,11 @@ project(libnhr)
 set(PACKAGE "libnhr")
 set(CPACK_PACKAGE_NAME "${PACKAGE}")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
-set(CPACK_PACKAGE_VERSION_MINOR "2")
+set(CPACK_PACKAGE_VERSION_MINOR "3")
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
 set(CPACK_PACKAGE_VENDOR "info@resident.name")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE} ${PACKAGE_VERSION}")
-set(SOVERSION "0.2.0")
+set(SOVERSION "0.3.0")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 set(VERSION "${CPACK_PACKAGE_VERSION}")
 
@@ -141,6 +141,7 @@ include_directories(${PROJECT_BINARY_DIR})
 
 
 set(LIBNHR_SOURCES src/nhr_common.c
+		src/nhr_map.c
 		src/nhr_memory.c
 		src/nhr_request_private.c
 		src/nhr_request_public.c

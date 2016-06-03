@@ -3,6 +3,7 @@ LOCAL_PATH:= $(call my-dir)
 
 ALL_SOURCES := \
 	../../../src/nhr_common.c \
+	../../../src/nhr_map.c \
 	../../../src/nhr_memory.c \
 	../../../src/nhr_request_private.c \
 	../../../src/nhr_request_public.c \

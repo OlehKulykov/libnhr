@@ -109,19 +109,11 @@ void nhr_request_add_header_field(nhr_request request, const char * name, const 
 	const size_t value_len = value ? strlen(value) : 0;
 	if (name_len == 0 || value_len == 0) return;
 
-	const size_t headers_len = r->http_headers ? strlen(r->http_headers) : 0;
-
-	char * headers = nhr_string_extend(r->http_headers, name_len + value_len + 4);
-	nhr_string_delete(r->http_headers);
-	r->http_headers = headers;
-
-	if (headers_len > 0) {
-		headers += headers_len;
-		headers += nhr_sprintf(headers, name_len + value_len, "\r\n%s: %s", name, value);
-	} else {
-		headers += nhr_sprintf(headers, name_len + value_len, "%s: %s", name, value);
-	}
-	*headers = 0;
+	if (!r->http_headers) r->http_headers = nhr_map_create();
+	_nhr_map_node * last = nhr_map_append(r->http_headers);
+	last->key = nhr_string_copy(name);
+	last->value.string = nhr_string_copy(value);
+	last->value_type = NHR_MAP_VALUE_STRING;
 }
 
 void nhr_request_add_parameter(nhr_request request, const char * name, const char * value) {
@@ -134,18 +126,11 @@ void nhr_request_add_parameter(nhr_request request, const char * name, const cha
 
 	assert(r->method); //!!! set method
 
-	const size_t parametersLen = r->parameters ? strlen(r->parameters) : 0;
-	char * parameters = nhr_string_extend(r->parameters, name_len + value_len + 4);
-	nhr_string_delete(r->parameters);
-	r->parameters = parameters;
-
-	if (parametersLen > 0) {
-		parameters += parametersLen;
-		parameters += nhr_sprintf(parameters, name_len + value_len, "&%s=%s", name, value);
-	} else {
-		parameters += nhr_sprintf(parameters, name_len + value_len, "%s=%s", name, value);
-	}
-	*parameters = 0;
+	if (!r->parameters) r->parameters = nhr_map_create();
+	_nhr_map_node * last = nhr_map_append(r->parameters);
+	last->key = nhr_string_copy(name);
+	last->value.string = nhr_string_copy(value);
+	last->value_type = NHR_MAP_VALUE_STRING;
 }
 
 nhr_error_code nhr_request_get_error_code(nhr_request request) {

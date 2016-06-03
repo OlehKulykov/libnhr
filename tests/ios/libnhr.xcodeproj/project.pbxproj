@@ -21,6 +21,7 @@
 		3D0BD65B1CFD8DBD00C91654 /* nhr_request_public.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D0BD65A1CFD8DBD00C91654 /* nhr_request_public.c */; };
 		3D0BD65D1CFD8DCA00C91654 /* nhr_request_private.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D0BD65C1CFD8DCA00C91654 /* nhr_request_private.c */; };
 		3D0BD66A1CFDE93500C91654 /* nhr_response.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D0BD6681CFDE93500C91654 /* nhr_response.c */; };
+		3DE8C69F1D01CBE40011D974 /* nhr_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DE8C69D1D01CBE40011D974 /* nhr_map.c */; };
 		3DEAD2791CFF10E2008996B5 /* test_libnhr_creation.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAD2751CFF0F40008996B5 /* test_libnhr_creation.c */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,8 @@
 		3D0BD65E1CFD8E4900C91654 /* nhr_request.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nhr_request.h; sourceTree = "<group>"; };
 		3D0BD6681CFDE93500C91654 /* nhr_response.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nhr_response.c; sourceTree = "<group>"; };
 		3D0BD6691CFDE93500C91654 /* nhr_response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nhr_response.h; sourceTree = "<group>"; };
+		3DE8C69D1D01CBE40011D974 /* nhr_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nhr_map.c; sourceTree = "<group>"; };
+		3DE8C69E1D01CBE40011D974 /* nhr_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nhr_map.h; sourceTree = "<group>"; };
 		3DEAD2751CFF0F40008996B5 /* test_libnhr_creation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_libnhr_creation.c; path = ../../test_libnhr_creation.c; sourceTree = "<group>"; };
 		3DEAD27A1CFF1147008996B5 /* libnhr_public_tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = libnhr_public_tests.h; path = ../../libnhr_public_tests.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -155,6 +158,8 @@
 				3D0BD65C1CFD8DCA00C91654 /* nhr_request_private.c */,
 				3D0BD6691CFDE93500C91654 /* nhr_response.h */,
 				3D0BD6681CFDE93500C91654 /* nhr_response.c */,
+				3DE8C69E1D01CBE40011D974 /* nhr_map.h */,
+				3DE8C69D1D01CBE40011D974 /* nhr_map.c */,
 			);
 			name = src;
 			path = ../../src;
@@ -268,6 +273,7 @@
 				3D0BD6581CFD8BEB00C91654 /* nhr_string.c in Sources */,
 				3D0BD6281CFD8B4000C91654 /* main.m in Sources */,
 				3D0BD65D1CFD8DCA00C91654 /* nhr_request_private.c in Sources */,
+				3DE8C69F1D01CBE40011D974 /* nhr_map.c in Sources */,
 				3D0BD6571CFD8BEB00C91654 /* nhr_memory.c in Sources */,
 				3D0BD6591CFD8BEB00C91654 /* nhr_thread.c in Sources */,
 			);

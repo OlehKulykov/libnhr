@@ -30,6 +30,7 @@
 #include "nhr_memory.h"
 #include "nhr_string.h"
 #include "nhr_response.h"
+#include "nhr_map.h"
 
 #if defined(NHR_OS_WINDOWS)
 #include <winsock2.h>
@@ -77,8 +78,8 @@ typedef struct _nhr_request_struct {
 
 	void * user_object;
 
-	char * http_headers;
-	char * parameters;
+	_nhr_map_node * http_headers;
+	_nhr_map_node * parameters;
 
 	nhr_on_request_recvd_responce on_recvd_responce;
 	nhr_on_request_error on_error;

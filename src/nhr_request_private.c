@@ -111,43 +111,102 @@ void nhr_request_start_waiting_raw_responce(_nhr_request * r) {
 	nhr_request_set_command(r, NHR_COMMAND_WAIT_RAW_RESPONCE);
 }
 
-size_t nhr_request_create_header_GET(_nhr_request * r, char ** header) {
-	size_t buff_size = 0, writed = 0;
-	char * buff = NULL;
+size_t nhr_request_map_strings_length(_nhr_map_node * map, const size_t iteration_increment) {
+	size_t len = 0;
+	_nhr_map_node *cur = map;
+	while(cur) {
+		len += strlen(cur->key) + strlen(cur->value.string) + iteration_increment;
+		cur = cur->next;
+	}
+	return len;
+}
+
+char * nhr_request_http_headers(_nhr_map_node * map, size_t * length) {
+	const size_t buff_size = nhr_request_map_strings_length(map, 4); // "\r\n" + ": "
+	if (buff_size == 0) return NULL;
+	char * buff = (char *)nhr_malloc(buff_size); // null terminated included
+	size_t writed = 0;
+	_nhr_map_node * cur = map;
+	while (cur) {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, writed > 0 ? "\r\n%s: %s" : "%s: %s", cur->key, cur->value.string);
+		cur = cur->next;
+	}
+	assert(writed < buff_size);
+	buff[writed] = 0;
+	*length = writed;
+	return buff;
+}
+
+char * nhr_request_url_encoded_parameters(_nhr_map_node * map, size_t * length) {
+	size_t buff_size = nhr_request_map_strings_length(map, 2); // `&` + `=`
+	if (buff_size == 0) return NULL;
+	char * buff = (char *)nhr_malloc(buff_size); // null terminated included
+	size_t writed = 0;
+	_nhr_map_node * cur = map;
+	while (cur) {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, writed > 0 ? "&%s=%s" : "%s=%s", cur->key, cur->value.string);
+		cur = cur->next;
+	}
+	buff[writed] = 0;
+	*length = writed;
+	return buff;
+}
+
+char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size) {
+	size_t buff_size = 0, writed = 0, headers_len = 0, parameters_len = 0;
+	char * buff = NULL, *headers = NULL, *parameters = NULL;
 
 	buff_size = strlen(r->path);
 	buff_size += strlen(r->host);
-	if (r->http_headers) buff_size += strlen(r->http_headers);
-	if (r->parameters) buff_size += strlen(r->parameters);
-	buff_size += 1 << 8; // extra size for formatting strings
 
+	headers = r->http_headers ? nhr_request_http_headers(r->http_headers, &headers_len) : NULL;
+	if (headers) buff_size += headers_len;
+
+	parameters = r->parameters ? nhr_request_url_encoded_parameters(r->parameters, &parameters_len) : NULL;
+	if (parameters) buff_size += parameters_len;
+
+	buff_size += 1 << 8; // extra size for formatting strings
 	buff = (char *)nhr_malloc(buff_size);
 
-	if (r->parameters) writed = nhr_sprintf(buff, buff_size, "%s %s?%s HTTP/%s\r\n", k_nhr_GET, r->path, r->parameters, k_nhr_request_http_ver);
+	if (parameters) writed = nhr_sprintf(buff, buff_size, "%s %s?%s HTTP/%s\r\n", k_nhr_GET, r->path, parameters, k_nhr_request_http_ver);
 	else writed = nhr_sprintf(buff, buff_size, "%s %s HTTP/%s\r\n", k_nhr_GET, r->path, k_nhr_request_http_ver);
 
 	if (r->port == 80) writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
 	else writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
 
-	if (r->http_headers) {
-		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", r->http_headers);
+	if (headers) {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", headers);
 	} else {
 		memcpy(buff + writed, k_nhr_CRLF, k_nhr_CRLF_length);
 		writed += k_nhr_CRLF_length;
 	}
 
-	*header = buff;
-	return writed;
+	nhr_free(headers);
+	nhr_free(parameters);
+	buff[writed] = 0;
+	*header_size = writed;
+	return buff;
 }
 
-size_t nhr_request_create_header_POST(_nhr_request * r, char ** header) {
-	size_t buff_size = 0, writed = 0;
-	char * buff = NULL;
+char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
+	size_t buff_size = 0, writed = 0, headers_len = 0, parameters_len = 0;
+	char * buff = NULL, *headers = NULL, *parameters = NULL;
+	char content_length[24];
 
 	buff_size = strlen(r->path);
 	buff_size += strlen(r->host);
-	if (r->http_headers) buff_size += strlen(r->http_headers);
-	if (r->parameters) buff_size += strlen(r->parameters);
+
+	parameters = r->parameters ? nhr_request_url_encoded_parameters(r->parameters, &parameters_len) : NULL;
+	if (parameters) {
+		buff_size += parameters_len;
+		nhr_sprintf(content_length, 24, "%lu", (unsigned long)parameters_len);
+		nhr_request_add_header_field(r, k_nhr_content_type, "application/x-www-form-urlencoded");
+		nhr_request_add_header_field(r, k_nhr_content_length, content_length);
+	}
+
+	headers = r->http_headers ? nhr_request_http_headers(r->http_headers, &headers_len) : NULL;
+	if (headers) buff_size += headers_len;
+
 	buff_size += 1 << 8; // extra size for formatting strings
 
 	buff = (char *)nhr_malloc(buff_size);
@@ -157,26 +216,28 @@ size_t nhr_request_create_header_POST(_nhr_request * r, char ** header) {
 	if (r->port == 80) writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
 	else writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
 
-//	nhr_request_add_header_field(r, "Content-Type", "application/x-www-form-urlencoded");
-//	nhr_request_add_header_field(r, "Content-Length", "32");
-
-	if (r->http_headers) {
-		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", r->http_headers);
+	if (headers) {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", headers);
 	} else {
 		memcpy(buff + writed, k_nhr_CRLF, k_nhr_CRLF_length);
 		writed += k_nhr_CRLF_length;
 	}
 
-	*header = buff;
-	return writed;
+	if (parameters) writed += nhr_sprintf(buff + writed, buff_size, "%s\r\n\r\n", parameters);
+
+	nhr_free(headers);
+	nhr_free(parameters);
+	buff[writed] = 0;
+	*header_size = writed;
+	return buff;
 }
 
 void nhr_request_send_raw_request(_nhr_request * r) {
 	char * header = NULL;
 	size_t header_size = 0;
 	switch (r->method) {
-		case nhr_method_GET: header_size = nhr_request_create_header_GET(r, &header); break;
-		case nhr_method_POST: header_size = nhr_request_create_header_POST(r, &header); break;
+		case nhr_method_GET: header = nhr_request_create_header_GET(r, &header_size); break;
+		case nhr_method_POST: header = nhr_request_create_header_POST(r, &header_size); break;
 		default:
 			assert(0); //TODO: unsupported method
 			break;
@@ -329,8 +390,8 @@ void nhr_request_delete(_nhr_request * r) {
 	nhr_string_delete_clean(&r->host);
 	nhr_string_delete_clean(&r->path);
 
-	nhr_string_delete_clean(&r->http_headers);
-	nhr_string_delete_clean(&r->parameters);
+	nhr_map_delete_clean(&r->http_headers);
+	nhr_map_delete_clean(&r->parameters);
 
 	nhr_mutex_delete(r->work_mutex);
 	nhr_mutex_delete(r->command_mutex);

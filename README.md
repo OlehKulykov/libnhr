@@ -59,7 +59,9 @@ nhr_request_set_url(_request, "http", "api.ipify.org", "/", 80);
 // Combined url: "http://isithackday.com/arrpi.php"
 nhr_request_set_url(_request, "http", "isithackday.com", "/arrpi.php", 80);
 
-nhr_request_set_method(_request, nhr_method_GET);
+nhr_request_set_method(_request, nhr_method_GET); // GET
+// or
+//nhr_request_set_method(_request, nhr_method_POST); // POST
 ```
 
 ##### Optionally add HTTP headers and/or parameters

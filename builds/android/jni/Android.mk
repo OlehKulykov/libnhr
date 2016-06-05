@@ -20,6 +20,7 @@ ALL_INCLUDES := $(LOCAL_PATH)/../../../
 ALL_CFLAGS := \
 #	-DNHR_NO_GET=1 \
 #	-DNHR_NO_POST=1 \
+#	-DNHR_NO_CHUNKED=1 \
 	-w
 	
 

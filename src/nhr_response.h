@@ -36,7 +36,7 @@ typedef struct _nhr_response_struct {
 	size_t body_len; // stored
 	size_t body_size; // allocated
 
-#if !defined(NHR_NO_CHUNKED_ENCODING)
+#if !defined(NHR_NO_CHUNKED)
 	nhr_bool is_all_chunks_processed;
 #endif
 } _nhr_response;

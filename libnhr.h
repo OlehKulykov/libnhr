@@ -128,7 +128,7 @@ typedef nhr_handle nhr_thread;
 /**
  @brief Callback type on request reveiced responce.
  @warning After trigering callback, request object will be automaticaly released.
- It's recommened set to `NULL` request variable in your logic.
+ It's recommened set to `NULL` request variable inside this callback.
  @param request Request object.
  @param responce Responce object.
  */
@@ -213,7 +213,7 @@ NHR_API(nhr_request) nhr_request_create(void);
 
 /**
  @brief Set request connect URL.
- @param request The Request object.
+ @param request The request object. If request is `NULL` do nothing.
  @param scheme Connect URL scheme, "http"
  @param scheme Connect URL host, "api.ipify.org"
  @param scheme Connect URL path started with '/' character, "/" - for empty, "/path"
@@ -230,7 +230,7 @@ NHR_API(void) nhr_request_set_url(nhr_request request,
 
 /**
  @brief Send request.
- @param request The Request object.
+ @param request The request object. If request is `NULL` returns `nhr_false`.
  @return `nhr_true` if request exists, scheme, host, path, method are setted and request sucessfully started,
  otherwice `nhr_false`
  */
@@ -239,14 +239,14 @@ NHR_API(nhr_bool) nhr_request_send(nhr_request request);
 
 /**
  @brief Get error code from request.
- @param request The Request object.
+ @param request The request object. If request is `NULL` returns `nhr_error_code_none`.
  */
 NHR_API(nhr_error_code) nhr_request_get_error_code(nhr_request request);
 
 
 /**
  @brief Set request method.
- @param request The Request object.
+ @param request The request object. If request is `NULL` do nothing.
  */
 NHR_API(void) nhr_request_set_method(nhr_request request, nhr_method method);
 
@@ -254,9 +254,10 @@ NHR_API(void) nhr_request_set_method(nhr_request request, nhr_method method);
 /**
  @brief Set on request received responce callback.
  @warning After trigering callback, request object will be automaticaly released.
- It's recommened set to `NULL` request variable in your logic.
- Called from non main thread.
- @param request The Request object.
+ It's recommened set to `NULL` request variable inside this callback.
+ Called from non `main` thread.
+ @param request The request object. If request is `NULL` do nothing.
+ @param callback On request received responce callback. Called from non `main` thread.
  */
 NHR_API(void) nhr_request_set_on_recvd_responce(nhr_request request, nhr_on_request_recvd_responce callback);
 
@@ -264,26 +265,29 @@ NHR_API(void) nhr_request_set_on_recvd_responce(nhr_request request, nhr_on_requ
 /**
  @brief Set on request error ocupared callback.
  @warning After trigering callback, request object will be automaticaly released.
- It's recommened set to `NULL` request variable in your logic.
- Called from non main thread.
- @param request The Request object.
+ It's recommened set to `NULL` request variable inside this callback.
+ Called from non `main` thread.
+ @param request The request object. If request is `NULL` do nothing.
+ @param callback On request error ocupared callback. Called from non `main` thread.
  */
 NHR_API(void) nhr_request_set_on_error(nhr_request request, nhr_on_request_error callback);
 
 
 /**
  @brief Add request HTTP header field and it's value.
- @param name HTTP header field name.
- @param value Value of the header field.
+ @param request The request object. If request is `NULL` do nothing.
+ @param name The HTTP header field name. `NULL` or empty value is ignored.
+ @param value Value of the header field. `NULL` or empty value is ignored.
  */
 NHR_API(void) nhr_request_add_header_field(nhr_request request, const char * name, const char * value);
 
 
 /**
  @brief Add request parameter and it's value.
- @param name Parameter name.
- @param value Value of the parameter. Should be URL encoded.
- @warning Add parameters only after method was setted via `nhr_request_set_method`
+ @param request The request object. If request is `NULL` do nothing.
+ @param name Parameter name. `NULL` or empty value is ignored.
+ @param value Value of the parameter. Should be URL encoded. `NULL` or empty value is ignored.
+ @warning Add parameters only after method was setted via `nhr_request_set_method`.
  @warning Value should be URL encoded.
  */
 NHR_API(void) nhr_request_add_parameter(nhr_request request, const char * name, const char * value);
@@ -291,18 +295,24 @@ NHR_API(void) nhr_request_add_parameter(nhr_request request, const char * name, 
 
 /**
  @brief Assign some object with the request.
+ @param request The request object. If request is `NULL` do nothing.
+ @param user_object Any pointer.
  */
 NHR_API(void) nhr_request_set_user_object(nhr_request request, void * user_object);
 
 
 /**
  @brief Get assigned user object from request.
+ @param request The request object. If request is `NULL` returns `NULL`.
+ @return Pointer assigned by the `nhr_request_set_user_object` function or `NULL`.
  */
 NHR_API(void*) nhr_request_get_user_object(nhr_request request);
 
 
 /**
  @brief Set request timeout interval in seconds.
+ @param request The request object. If request is `NULL` do nothing.
+ @param seconds The timeout interval in seconds.
  */
 NHR_API(void) nhr_request_set_timeout(nhr_request request, const unsigned int seconds);
 
@@ -310,16 +320,18 @@ NHR_API(void) nhr_request_set_timeout(nhr_request request, const unsigned int se
 /**
  @brief Get request timeout interval in seconds.
  Default value is `30` seconds.
+ @param request The request object. If request is `NULL` returns `0`.
  @return Request timeout interval in seconds, or `0` if request is NULL.
  */
 NHR_API(unsigned int) nhr_request_get_timeout(nhr_request request);
 
 
 /**
- @brief Cancel request. 
+ @brief Cancel request.
  Thread safe method.
+ @param request The request object. If request is `NULL` do nothing.
  @warning Do not use request variable any more.
- Do not call `cancel` after callbacks was trigered.
+ Do not call `cancel` after any callback was trigered.
  */
 NHR_API(void) nhr_request_cancel(nhr_request request);
 
@@ -329,18 +341,26 @@ NHR_API(void) nhr_request_cancel(nhr_request request);
 
 /**
  @brief Get HTTP status code of the responce.
+ @param responce The responce object. If responce is `NULL` returns `0`.
+ @return Status code of the request.
  */
 NHR_API(unsigned short) nhr_response_get_status_code(nhr_response responce);
 
 
 /**
  @brief Get responce received body data.
+ @note To get body data length use `nhr_response_get_body_length` function.
+ @param responce The responce object. If responce is `NULL` returns `NULL`.
+ @return Pointer to the received responce data.
  */
 NHR_API(void*) nhr_response_get_body(nhr_response responce);
 
 
 /**
  @brief Get responce received body data length.
+ @note To get body data use `nhr_response_get_body` function.
+ @param responce The responce object. If responce is `NULL` returns `0`.
+ @return Length of the received responce body data.
  */
 NHR_API(unsigned int) nhr_response_get_body_length(nhr_response responce);
 

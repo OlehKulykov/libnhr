@@ -129,7 +129,6 @@ int nhr_request_get_command(_nhr_request * r);
 #define NHR_COMMAND_END 9999
 
 
-
 // Methods
 
 #if !defined(NHR_NO_GET) || !defined(NHR_NO_POST) // common functionality

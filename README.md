@@ -13,14 +13,13 @@
 
 ### Build
 
-All available methods, like ```GET```, ```POST```, etc, are **enabled by default**.
+All features are **enabled by default**. But it's possible to **disable**. See table below:
 
-But it's possible to **disable** some method(s). See table below:
-
-| Method | Preprocessor | CMake (Boolean value) |
-|--------|--------------|-----------------------|
-| GET    | NHR_NO_GET   | NHR_OPT_NO_GET        |
-| POST   | NHR_NO_POST  | NHR_OPT_NO_POST       |
+| Preprocessor   | CMake (Boolean value) | Description                                                                                  |
+|----------------|-----------------------|----------------------------------------------------------------------------------------------|
+| NHR_NO_GET     | NHR_OPT_NO_GET        | Send GET requests.                                                                           |
+| NHR_NO_POST    | NHR_OPT_NO_POST       | Send POST requests.                                                                          |
+| NHR_NO_CHUNKED | NHR_OPT_NO_CHUNKED    | Process received responce with chunked transfer encoding, e.g. "Transfer-Encoding: chunked". |
 
 
 #### Build with CMake

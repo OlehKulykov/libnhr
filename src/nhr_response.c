@@ -45,7 +45,7 @@ char * nhr_response_find_http_field_value(char * received, const char * field) {
 }
 
 #if !defined(NHR_NO_CHUNKED)
-void nhr_response_read_chunks(_nhr_response * r, char * str, long received_len) {
+void nhr_response_read_chunks(_nhr_response * r, char * str) {
 	unsigned int chunk_len = 0;
 	while ((nhr_sscanf(str, "%X", &chunk_len) == 1) || (nhr_sscanf(str, "%x", &chunk_len) == 1)) {
 		while (isxdigit(*str)) str++;
@@ -75,7 +75,7 @@ void nhr_response_parse_body(_nhr_response * r, char * received, const size_t re
 
 		if (r->transfer_encoding == NHR_TRANSFER_ENCODING_CHUNKED) {
 #if !defined(NHR_NO_CHUNKED)
-			nhr_response_read_chunks(r, sub, (long)received_len);
+			nhr_response_read_chunks(r, sub);
 #endif
 		} else {
 			r->body_len = received_len - skiped;
@@ -151,7 +151,7 @@ void nhr_response_add_body_data(_nhr_response * r, void * data, const size_t dat
 void nhr_response_append(_nhr_response * r, void * received, const size_t received_len) {
 	if (r->transfer_encoding == NHR_TRANSFER_ENCODING_CHUNKED) {
 #if !defined(NHR_NO_CHUNKED)
-		nhr_response_read_chunks(r, (char *)received, (long)received_len);
+		nhr_response_read_chunks(r, (char *)received);
 #endif
 	} else {
 		nhr_response_add_body_data(r, received, received_len);

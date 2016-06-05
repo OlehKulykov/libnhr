@@ -132,8 +132,7 @@ int nhr_request_get_command(_nhr_request * r);
 
 // Methods
 
-#if !defined(NHR_NO_GET) || !defined(NHR_NO_POST)
-// common functionality
+#if !defined(NHR_NO_GET) || !defined(NHR_NO_POST) // common functionality
 
 size_t nhr_request_map_strings_length(_nhr_map_node * map, const size_t iteration_increment);
 
@@ -141,23 +140,21 @@ char * nhr_request_http_headers(_nhr_map_node * map, size_t * length);
 
 char * nhr_request_url_encoded_parameters(_nhr_map_node * map, size_t * length);
 
-#endif // no methods
+#endif // end of the common functionality
 
 
-#if !defined(NHR_NO_GET)
-// GET functionality
+#if !defined(NHR_NO_GET) // GET functionality
 
 char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size);
 
-#endif // no GET
+#endif // end of the GET functionality
 
 
-#if !defined(NHR_NO_POST)
-// POST functionality
+#if !defined(NHR_NO_POST) // POST functionality
 
 char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size);
 
-#endif // no POST
+#endif // end of the POST functionality
 
 #endif
 

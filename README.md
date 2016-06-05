@@ -13,7 +13,17 @@
 
 ### Build
 
-#### Build with Cmake
+All available methods, like ```GET```, ```POST```, etc, are **enabled by default**.
+
+But it's possible to **disable** some method(s). See table below:
+
+| Method | Preprocessor | CMake (Boolean value) |
+|--------|--------------|-----------------------|
+| GET    | NHR_NO_GET   | NHR_OPT_NO_GET        |
+| POST   | NHR_NO_POST  | NHR_OPT_NO_POST       |
+
+
+#### Build with CMake
 > Use (install or update) latest [CMake] build system, need version 2.8 or later.
 
 ```sh
@@ -23,6 +33,12 @@ cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
+
+> Example how to disable, for instance ```POST``` method, with CMake.
+> ```sh
+> cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_POST:BOOL=ON ..
+> ```
+
 
 ### Build for Android with [Android NDK]
  * Download and install [Android NDK].
@@ -36,6 +52,7 @@ cd <path_to_Android_NDK>
 
 > Replace ```<path_to_Android_NDK>``` and ```<path_to_libnhr>``` with actual paths.
 
+> To disable some method(s) need to add **Preprocessor** flag from table to your ```Android.mk``` or gradle ndk section.
 
 #### Use directly source
 Without build system, just use single header ```libnhr.h``` and all content from source folder ```src```.

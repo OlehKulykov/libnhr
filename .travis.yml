@@ -6,6 +6,7 @@ env:
     - nhr_env_matrix=no_get CMAKE_ARGS="-DNHR_OPT_NO_GET:BOOL=ON"
     - nhr_env_matrix=no_post CMAKE_ARGS="-DNHR_OPT_NO_POST:BOOL=ON"
     - nhr_env_matrix=no_get_post CMAKE_ARGS="-DNHR_OPT_NO_GET:BOOL=ON -DNHR_OPT_NO_POST:BOOL=ON"
+    - nhr_env_matrix=no_chunked CMAKE_ARGS="-DNHR_OPT_NO_CHUNKED:BOOL=ON"
 
 os:
   - linux

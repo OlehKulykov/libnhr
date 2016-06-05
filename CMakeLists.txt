@@ -53,8 +53,9 @@ include(CheckCXXCompilerFlag)
 # COMMAND LINE OPTIONS
 option(NHR_OPT_SHARED "Build shared lib" ON)
 option(NHR_OPT_STATIC "Build static lib" ON)
+option(NHR_OPT_NO_GET "Build without GET method support" OFF)
+option(NHR_OPT_NO_POST "Build without POST method support" OFF)
 option(NHR_OPT_TESTS "Build libnhr tests" ON)
-
 option(NHR_OPT_APPVEYOR_CI "Build with appveyor ci" OFF)
 
 # C with -fPIC
@@ -148,7 +149,27 @@ set(LIBNHR_SOURCES src/nhr_common.c
 		src/nhr_response.c
 		src/nhr_string.c
 		src/nhr_thread.c)
-				
+
+set(NHR_HAVE_ANY_METHOD FALSE)
+
+if (NHR_OPT_NO_GET)
+	add_definitions(-DNHR_NO_GET)
+else()
+	set(NHR_HAVE_ANY_METHOD TRUE)
+	list(APPEND LIBNHR_SOURCES src/nhr_request_method_get.c)
+endif()
+
+if (NHR_OPT_NO_POST)
+	add_definitions(-DNHR_NO_POST)
+else()
+	set(NHR_HAVE_ANY_METHOD TRUE)
+	list(APPEND LIBNHR_SOURCES src/nhr_request_method_post.c)
+endif()
+
+if (NHR_HAVE_ANY_METHOD)
+	list(APPEND LIBNHR_SOURCES src/nhr_request_method_common.c)
+endif()
+
 
 set(LIBNHR_HEADERS libnhr.h)
 

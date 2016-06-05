@@ -162,7 +162,17 @@ typedef enum _nhr_error_code
  */
 typedef enum _nhr_method
 {
+	/**
+	 @brief Request method `GET`.
+	 @note To disable `GET` functionality define flag `NHR_NO_GET`. By default enable.
+	 */
 	nhr_method_GET = 1,
+
+
+	/**
+	 @brief Request method `POST`.
+	 @note To disable `POST` functionality define flag `NHR_NO_POST`. By default enable.
+	 */
 	nhr_method_POST = 2,
 //	nhr_method_PUT,
 //	nhr_method_DELETE,

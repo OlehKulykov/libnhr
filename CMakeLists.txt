@@ -168,7 +168,7 @@ set(LIBNHR_SOURCES src/nhr_common.c
 		src/nhr_thread.c)
 
 set(NHR_HAVE_ANY_METHOD FALSE)
-set(NHR_REQUIRED_ZLIB FALSE)
+set(NHR_LINK_ZLIB FALSE)
 
 if (NHR_OPT_NO_GET)
 	add_definitions(-DNHR_NO_GET)
@@ -194,14 +194,12 @@ endif()
 
 if (NHR_OPT_NO_GZIP)
 	add_definitions(-DNHR_NO_GZIP)
-else()
-	set(NHR_REQUIRED_ZLIB TRUE)
+elseif (NHR_HAVE_ZLIB_H)
+	set(NHR_LINK_ZLIB TRUE)
+	add_definitions(-DNHR_HAVE_ZLIB_H)
 	list(APPEND LIBNHR_SOURCES src/nhr_gz.c)
 endif()
 
-if (NHR_HAVE_ZLIB_H AND NHR_REQUIRED_ZLIB)
-	add_definitions(-DNHR_HAVE_ZLIB_H)
-endif()
 
 set(LIBNHR_HEADERS libnhr.h)
 
@@ -229,18 +227,18 @@ endif()
 
 
 
-if(NHR_HAVE_PTHREAD_H)
+if (NHR_HAVE_PTHREAD_H)
 	target_link_libraries(nhr pthread)
-endif(NHR_HAVE_PTHREAD_H)
+endif()
 
-if(NHR_REQUIRED_ZLIB)
+if (NHR_LINK_ZLIB)
 	target_link_libraries(nhr ${ZLIB_LIBRARIES})
 endif()
 
 
 if(WIN32)
 	target_link_libraries(nhr ws2_32)
-endif(WIN32)
+endif()
 
 
 install(TARGETS nhr

@@ -52,7 +52,8 @@ void nhr_gz_write_header(unsigned char * buff) {
 	*buff++ = 0; // bit 0 set: file probably ascii text
 
 	// 4 bytes file modification time in Unix format
-	const uint32_t curr_time = (uint32_t)time(NULL);
+	// used `uLong` as unsigned 32 bit integer
+	const uLong curr_time = (uLong)time(NULL);
 	memcpy(buff, &curr_time, 4);
 	buff += 4;
 
@@ -65,16 +66,16 @@ void * nhr_gz_write_footer(void * buff,
 						   size_t writed,
 						   const void * src_buff,
 						   const size_t src_size) {
-
+	// used `uLong` as unsigned 32 bit integer
 	const size_t left = buff_size - writed;
 	if (left < 8) buff = nhr_gz_extend(buff, &buff_size, 8);
-	uint32_t * footer = buff + writed;
+	uLong * footer = buff + writed;
 
 	uLong crc = crc32(0L, Z_NULL, 0);
 	crc = crc32(crc, src_buff, (uInt)src_size);
 
-	*footer++ = (uint32_t)crc;
-	*footer = (uint32_t)src_size;
+	*footer++ = (uLong)crc;
+	*footer = (uLong)src_size;
 
 	return buff;
 }

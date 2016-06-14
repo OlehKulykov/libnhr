@@ -25,21 +25,49 @@
 
 #if !defined(NHR_NO_POST)
 
+#include "nhr_gz.h"
+
+char * nhr_request_create_parameters_POST(_nhr_request * r, size_t * parameters_len) {
+	size_t params_len = 0;
+	char * params = r->parameters ? nhr_request_url_encoded_parameters(r->parameters, &params_len) : NULL;
+	if (!params) {
+		*parameters_len = 0;
+		return NULL;
+	}
+	char content_length[24];
+
+#if defined(NHR_GZIP)
+	size_t zgip_parameters_size = 0;
+	void * zgip_parameters = NULL;
+	if (r->is_gziped) {
+		zgip_parameters = nhr_gz_compress(params, params_len, &zgip_parameters_size, 1);
+		if (zgip_parameters && zgip_parameters_size) {
+			nhr_free(params);
+			params_len = zgip_parameters_size;
+			params = zgip_parameters;
+		} else {
+			nhr_free(zgip_parameters);
+		}
+	}
+#endif
+
+	nhr_sprintf(content_length, 24, "%lu", (unsigned long)params_len);
+	nhr_request_add_header_field(r, k_nhr_content_type, k_nhr_application_x_www_form_urlencoded);
+	nhr_request_add_header_field(r, k_nhr_content_length, content_length);
+
+	*parameters_len = params_len;
+	return params;
+}
+
 char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
 	size_t buff_size = 0, writed = 0, headers_len = 0, parameters_len = 0;
 	char * buff = NULL, *headers = NULL, *parameters = NULL;
-	char content_length[24];
 
 	buff_size = strlen(r->path);
 	buff_size += strlen(r->host);
 
-	parameters = r->parameters ? nhr_request_url_encoded_parameters(r->parameters, &parameters_len) : NULL;
-	if (parameters) {
-		buff_size += parameters_len;
-		nhr_sprintf(content_length, 24, "%lu", (unsigned long)parameters_len);
-		nhr_request_add_header_field(r, k_nhr_content_type, "application/x-www-form-urlencoded");
-		nhr_request_add_header_field(r, k_nhr_content_length, content_length);
-	}
+	parameters = nhr_request_create_parameters_POST(r, &parameters_len);
+	if (parameters) buff_size += parameters_len;
 
 	headers = r->http_headers ? nhr_request_http_headers(r->http_headers, &headers_len) : NULL;
 	if (headers) buff_size += headers_len;
@@ -60,7 +88,12 @@ char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
 		writed += k_nhr_CRLF_length;
 	}
 
-	if (parameters) writed += nhr_sprintf(buff + writed, buff_size, "%s\r\n\r\n", parameters);
+	if (parameters_len > 0) {
+		memcpy(buff + writed, parameters, parameters_len);
+		writed += parameters_len;
+		memcpy(buff + writed, k_nhr_double_CRLF, k_nhr_double_CRLF_length);
+		writed += k_nhr_double_CRLF_length;
+	}
 
 	nhr_free(headers);
 	nhr_free(parameters);

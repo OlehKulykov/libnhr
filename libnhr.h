@@ -30,7 +30,7 @@
 
 #define NHR_VERSION_MAJOR 0
 #define NHR_VERSION_MINOR 3
-#define NHR_VERSION_PATCH 1
+#define NHR_VERSION_PATCH 2
 
 
 // check windows
@@ -200,6 +200,20 @@ NHR_EXTERN const char * k_nhr_GET;
 
 // String constant "POST"
 NHR_EXTERN const char * k_nhr_POST;
+
+
+/**
+ @brief String constant "Content-Encoding"
+ Can be used as HTTP header name.
+ */
+NHR_EXTERN const char * k_nhr_content_encoding;
+
+
+/**
+ @brief String constant "gzip, deflate"
+ Can be used as HTTP header value.
+ */
+NHR_EXTERN const char * k_nhr_gzip_deflate;
 
 
 // request

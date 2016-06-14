@@ -1,4 +1,4 @@
-version: 0.3.1.{build}
+version: 0.3.2.{build}
 
 
 os: Visual Studio 2015
@@ -45,6 +45,10 @@ environment:
     nhr_env_matrix: no_chunked
     CMAKE_ARGS: -G"Visual Studio 14" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_CHUNKED:BOOL=ON
 
+  - platform: x86
+    nhr_env_matrix: no_gzip
+    CMAKE_ARGS: -G"Visual Studio 14" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_GZIP:BOOL=ON
+
   - platform: x64
     nhr_env_matrix: default
     CMAKE_ARGS: -G"Visual Studio 14 Win64" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release
@@ -64,6 +68,10 @@ environment:
   - platform: x64
     nhr_env_matrix: no_chunked
     CMAKE_ARGS: -G"Visual Studio 14 Win64" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_CHUNKED:BOOL=ON
+
+  - platform: x64
+    nhr_env_matrix: no_gzip
+    CMAKE_ARGS: -G"Visual Studio 14 Win64" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_GZIP:BOOL=ON
 
 
 configuration: Release

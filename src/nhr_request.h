@@ -88,6 +88,10 @@ typedef struct _nhr_request_struct {
 	nhr_mutex command_mutex;
 
 	_nhr_response * responce;
+
+#if defined(NHR_GZIP)
+	nhr_bool is_gziped;
+#endif
 } _nhr_request;
 
 nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size_t data_size);

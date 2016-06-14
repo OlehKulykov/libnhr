@@ -21,36 +21,22 @@
  */
 
 
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
+#ifndef __NHR_GZ_H__
+#define __NHR_GZ_H__ 1
 
-#if defined(CMAKE_BUILD)
-#undef CMAKE_BUILD
+#include "nhr_common.h"
+
+#if defined(NHR_GZIP)
+
+void * nhr_gz_compress(const void * buff,
+					   const size_t buff_size,
+					   size_t * compressed_size,
+					   const unsigned char have_header);
+
+void * nhr_gz_decompress(const void * buff,
+						 const size_t buff_size,
+						 size_t * decompressed_size,
+						 const unsigned char have_header);
+
 #endif
-
-
-#if defined(XCODE)
-#include "libnhr.h"
-#include "../src/nhr_memory.h"
-#include "../src/nhr_string.h"
-#include "../src/nhr_gz.h"
-#else
-#include <libnhr.h>
-#endif
-
-
-#if defined(CMAKE_BUILD)
-#undef CMAKE_BUILD
-#endif
-
-
-// test_libnhr_creation
-
-int test_create(void);
-
-
-// test_gz_creation
-
-int test_gz_creation(void);
-
+#endif 

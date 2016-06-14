@@ -33,7 +33,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "3")
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
 set(CPACK_PACKAGE_VENDOR "info@resident.name")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE} ${PACKAGE_VERSION}")
-set(SOVERSION "0.3.1")
+set(SOVERSION "0.3.2")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 set(VERSION "${CPACK_PACKAGE_VERSION}")
 
@@ -56,6 +56,7 @@ option(NHR_OPT_STATIC "Build static lib" ON)
 option(NHR_OPT_NO_GET "Build without GET method support" OFF)
 option(NHR_OPT_NO_POST "Build without POST method support" OFF)
 option(NHR_OPT_NO_CHUNKED "Build without processing responce with chunked transfer encoding" OFF)
+option(NHR_OPT_NO_GZIP "Build without gzip encoding/decoding support" OFF)
 option(NHR_OPT_TESTS "Build libnhr tests" ON)
 option(NHR_OPT_APPVEYOR_CI "Build with appveyor ci" OFF)
 
@@ -87,11 +88,24 @@ endif(MINGW)
 
 add_definitions(-DCMAKE_BUILD)
 
-if (NHR_OPT_APPVEYOR_CI)
+if(NHR_OPT_APPVEYOR_CI)
 	add_definitions(-DNHR_APPVEYOR_CI)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+if(NOT NHR_OPT_NO_GZIP)
+	message("Looking for zlib...")
+	find_package(ZLIB QUIET)
+	if (ZLIB_FOUND)
+		include_directories(${ZLIB_INCLUDE_DIRS})
+		message("zlib include dirs: ${ZLIB_INCLUDE_DIRS}")
+		message("zlib libraries: ${ZLIB_LIBRARIES}")
+	else()
+		message("zlib not found")
+	endif(ZLIB_FOUND)
+endif()
+
 
 check_include_file("netdb.h" NHR_HAVE_NETDB_H)
 check_include_file("sys/socket.h" NHR_HAVE_SYS_SOCKET_H)
@@ -100,6 +114,10 @@ check_include_file("netinet/tcp.h" NHR_HAVE_NETINET_TCP_H)
 check_include_file("unistd.h" NHR_HAVE_UNISTD_H)
 check_include_file("fcntl.h" NHR_HAVE_FCNTL_H)
 check_include_file("pthread.h" NHR_HAVE_PTHREAD_H)
+
+if(NOT NHR_OPT_NO_GZIP)
+	check_include_file("zlib.h" NHR_HAVE_ZLIB_H)
+endif()
 
 message(CMAKE_EXTRA_INCLUDE_FILES ": " ${CMAKE_EXTRA_INCLUDE_FILES})
 
@@ -152,6 +170,7 @@ set(LIBNHR_SOURCES src/nhr_common.c
 		src/nhr_thread.c)
 
 set(NHR_HAVE_ANY_METHOD FALSE)
+set(NHR_REQUIRED_ZLIB FALSE)
 
 if (NHR_OPT_NO_GET)
 	add_definitions(-DNHR_NO_GET)
@@ -173,6 +192,17 @@ endif()
 
 if (NHR_OPT_NO_CHUNKED)
 	add_definitions(-DNHR_NO_CHUNKED)
+endif()
+
+if (NHR_OPT_NO_GZIP)
+	add_definitions(-DNHR_NO_GZIP)
+else()
+	set(NHR_REQUIRED_ZLIB TRUE)
+	list(APPEND LIBNHR_SOURCES src/nhr_gz.c)
+endif()
+
+if (NHR_HAVE_ZLIB_H AND NHR_REQUIRED_ZLIB)
+	add_definitions(-DNHR_HAVE_ZLIB_H)
 endif()
 
 set(LIBNHR_HEADERS libnhr.h)
@@ -204,6 +234,10 @@ endif()
 if(NHR_HAVE_PTHREAD_H)
 	target_link_libraries(nhr pthread)
 endif(NHR_HAVE_PTHREAD_H)
+
+if(NHR_REQUIRED_ZLIB)
+	target_link_libraries(nhr ${ZLIB_LIBRARIES})
+endif()
 
 
 if(WIN32)

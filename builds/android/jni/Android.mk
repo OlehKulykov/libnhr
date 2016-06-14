@@ -3,6 +3,7 @@ LOCAL_PATH:= $(call my-dir)
 
 ALL_SOURCES := \
 	../../../src/nhr_common.c \
+	../../../src/nhr_gz.c \
 	../../../src/nhr_map.c \
 	../../../src/nhr_memory.c \
 	../../../src/nhr_request_method_common.c \
@@ -21,6 +22,7 @@ ALL_CFLAGS := \
 #	-DNHR_NO_GET=1 \
 #	-DNHR_NO_POST=1 \
 #	-DNHR_NO_CHUNKED=1 \
+#	-DNHR_NO_GZIP=1 \
 	-w
 	
 
@@ -30,5 +32,9 @@ LOCAL_C_INCLUDES += $(ALL_INCLUDES)
 LOCAL_CFLAGS += $(ALL_CFLAGS)
 LOCAL_MODULE := libnhr
 LOCAL_LDLIBS += -llog
+
+# Link with zlib if NHR_NO_GZIP undefined.
+LOCAL_LDLIBS += -lz
+
 include $(BUILD_SHARED_LIBRARY)
 

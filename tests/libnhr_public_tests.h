@@ -49,7 +49,7 @@
 #undef CMAKE_BUILD
 #endif
 
-#include "cJSON.h"
+#include "cJSON/cJSON.h"
 
 // test_libnhr_creation
 

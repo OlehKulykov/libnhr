@@ -34,8 +34,8 @@ endif()
 
 
 # cJSON lib for test apps
-set(CJSON_SOURCES cJSON.c)
-set(CJSON_HEADERS cJSON.h)
+set(CJSON_SOURCES cJSON/cJSON.c)
+set(CJSON_HEADERS cJSON/cJSON.h)
 add_library(cJSON SHARED ${CJSON_SOURCES} ${CJSON_HEADERS})
 
 if(NOT WIN32)

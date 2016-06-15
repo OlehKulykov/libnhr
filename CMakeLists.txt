@@ -96,7 +96,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 message("Looking for zlib...")
 find_package(ZLIB)
-if (ZLIB_FOUND)
+if(ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
 	message("zlib include dirs: ${ZLIB_INCLUDE_DIRS}")
 	message("zlib libraries: ${ZLIB_LIBRARIES}")
@@ -159,31 +159,31 @@ set(LIBNHR_SOURCES src/nhr_common.c
 set(NHR_HAVE_ANY_METHOD FALSE)
 set(NHR_LINK_ZLIB FALSE)
 
-if (NHR_OPT_NO_GET)
+if(NHR_OPT_NO_GET)
 	add_definitions(-DNHR_NO_GET)
 else()
 	set(NHR_HAVE_ANY_METHOD TRUE)
 	list(APPEND LIBNHR_SOURCES src/nhr_request_method_get.c)
 endif()
 
-if (NHR_OPT_NO_POST)
+if(NHR_OPT_NO_POST)
 	add_definitions(-DNHR_NO_POST)
 else()
 	set(NHR_HAVE_ANY_METHOD TRUE)
 	list(APPEND LIBNHR_SOURCES src/nhr_request_method_post.c)
 endif()
 
-if (NHR_HAVE_ANY_METHOD)
+if(NHR_HAVE_ANY_METHOD)
 	list(APPEND LIBNHR_SOURCES src/nhr_request_method_common.c)
 endif()
 
-if (NHR_OPT_NO_CHUNKED)
+if(NHR_OPT_NO_CHUNKED)
 	add_definitions(-DNHR_NO_CHUNKED)
 endif()
 
-if (NHR_OPT_NO_GZIP)
+if(NHR_OPT_NO_GZIP)
 	add_definitions(-DNHR_NO_GZIP)
-elseif (NHR_HAVE_ZLIB_H)
+elseif(NHR_HAVE_ZLIB_H)
 	set(NHR_LINK_ZLIB TRUE)
 	add_definitions(-DNHR_HAVE_ZLIB_H)
 	list(APPEND LIBNHR_SOURCES src/nhr_gz.c)
@@ -216,11 +216,11 @@ endif()
 
 
 
-if (NHR_HAVE_PTHREAD_H)
+if(NHR_HAVE_PTHREAD_H)
 	target_link_libraries(nhr pthread)
 endif()
 
-if (NHR_LINK_ZLIB)
+if(NHR_LINK_ZLIB)
 	target_link_libraries(nhr ${ZLIB_LIBRARIES})
 endif()
 
@@ -240,10 +240,10 @@ install(FILES libnhr.h
 		DESTINATION include)
 
 
-#if(NHR_OPT_TESTS)
-#	enable_testing()
-#	add_subdirectory(tests)
-#
-#	# This must always be last!
-#	include(CPack)
-#endif()
+if(NHR_OPT_TESTS)
+	enable_testing()
+	add_subdirectory(tests)
+
+	# This must always be last!
+	include(CPack)
+endif()

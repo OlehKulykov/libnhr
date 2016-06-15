@@ -23,7 +23,7 @@
 
 #include "libnhr_public_tests.h"
 
-#if defined(XCODE)
+#if defined(NHR_GZIP)
 
 // Lorem Ipsum
 const char * test_gz_string1 = "Text files are files containing sequences of lines of text. Depending on the environment where the application runs, some special character conversion may occur in input/output operations in text mode to adapt them to a system-specific text file format. Although on some environments no conversions occur and both text files and binary files are treated the same way, using the appropriate mode improves portability"
@@ -49,7 +49,6 @@ const char * test_gz_string7 = "Lorem Ipsum ist ein einfacher Demo-Text für die
 const char * test_gz_string8 = "Lorem Ipsum，也称乱数假文或者哑元文本， 是印刷及排版领域所常用的虚拟文字。由于曾经一台匿名的打印机刻意打乱了一盒印刷字体从而造出一本字体样品书，Lorem Ipsum从西元15世纪起就被作为此领域的标准文本使用。它不仅延续了五个世纪，还通过了电子排版的挑战，其雏形却依然保存至今。在1960年代，”Leatraset”公司发布了印刷着Lorem Ipsum段落的纸张，从而广泛普及了它的使用。最近，计算机桌面出版软件”Aldus PageMaker”也通过同样的方式使Lorem Ipsum落入大众的视野。";
 
 int test_gz_creation_string(void) {
-
 	const size_t strings_count = 8;
 	const char * strings[strings_count] = {
 		test_gz_string1,
@@ -99,18 +98,67 @@ int test_gz_creation_string(void) {
 	return 0;
 }
 
-int test_gz_creation(void)
-{
-	assert(test_gz_creation_string() == 0);
+int test_gz_big_data(void) {
+	for (size_t mbts = 1; mbts < 10; mbts++) {
+		const size_t src_size = mbts * 1024 * 1024;
+		void * src = nhr_malloc(src_size); // any data inside
+
+		size_t compr_size = 0;
+		void * compr_buff = nhr_gz_compress(src, src_size, &compr_size, NHR_GZ_METHOD_DEFLATE);
+		assert(compr_buff);
+		assert(compr_size > 0);
+
+		size_t dst_size = 0;
+		char * dst = (char *)nhr_gz_decompress(compr_buff, compr_size, &dst_size, NHR_GZ_METHOD_DEFLATE);
+
+		assert(src_size == dst_size);
+		assert(memcmp(src, dst, src_size) == 0);
+
+		nhr_free(src);
+		nhr_free(dst);
+
+
+		src = nhr_malloc(src_size); // any data inside
+
+		compr_size = 0;
+		compr_buff = nhr_gz_compress(src, src_size, &compr_size, NHR_GZ_METHOD_GZIP);
+		assert(compr_buff);
+		assert(compr_size > 0);
+
+		dst_size = 0;
+		dst = (char *)nhr_gz_decompress(compr_buff, compr_size, &dst_size, NHR_GZ_METHOD_GZIP);
+
+		assert(src_size == dst_size);
+		assert(memcmp(src, dst, src_size) == 0);
+
+		nhr_free(src);
+		nhr_free(dst);
+	}
+
 	return 0;
+}
+
+int test_gz_creation(void) {
+
+	int ret = test_gz_creation_string();
+	assert(ret == 0);
+
+	ret += test_gz_big_data();
+	assert(ret == 0);
+
+	return ret;
 }
 #endif
 
 #if !defined(XCODE)
-int main(int argc, char* argv[])
-{
-//	assert(test_gz_creation() == 0);
+int main(int argc, char* argv[]) {
 
-	return 0;
+	int ret = 0;
+#if defined(NHR_GZIP)
+	ret += test_gz_creation();
+	assert(ret == 0);
+#endif
+
+	return ret;
 }
 #endif

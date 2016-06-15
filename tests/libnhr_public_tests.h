@@ -32,11 +32,16 @@
 
 #if defined(XCODE)
 #include "libnhr.h"
-#include "../src/nhr_memory.h"
-#include "../src/nhr_string.h"
-#include "../src/nhr_gz.h"
+#include "nhr_memory.h"
+#include "nhr_string.h"
+#include "nhr_gz.h"
 #else
 #include <libnhr.h>
+
+// include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+#include "src/nhr_memory.h"
+#include "src/nhr_string.h"
+#include "src/nhr_gz.h"
 #endif
 
 

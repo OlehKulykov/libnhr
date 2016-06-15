@@ -25,8 +25,8 @@
 
 nhr_request _request = NULL;
 
-int test_create(void)
-{
+int test_create(void) {
+
 	_request = nhr_request_create();
 	assert(_request);
 
@@ -34,10 +34,11 @@ int test_create(void)
 }
 
 #if !defined(XCODE)
-int main(int argc, char* argv[])
-{
-	assert(test_create() == 0);
+int main(int argc, char* argv[]) {
 
-	return 0;
+	int ret = test_create();
+	assert(ret == 0);
+
+	return ret;
 }
 #endif

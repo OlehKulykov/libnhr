@@ -191,7 +191,7 @@ _nhr_response * nhr_response_create(void * received, const size_t received_len) 
 
 	nhr_response_parse_status_code(r, received);
 
-	if (r->status_code == 200) {
+	if (r->status_code != 0) {
 		nhr_response_parse_content_length(r, received);
 		nhr_response_parse_transfer_encoding(r, received);
 		nhr_response_parse_content_encoding(r, received);

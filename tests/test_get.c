@@ -155,7 +155,7 @@ static int test_get_number(unsigned long number) {
 
 		case 5:
 			// chunked, total 1024, chunk_size 375, delay 1
-			nhr_request_set_timeout(test_get_request, 10 + 1024/375); // increase default delay
+			nhr_request_set_timeout(test_get_request, 20); // increase default delay
 			nhr_request_add_parameter(test_get_request, "duration", "1");
 			nhr_request_add_parameter(test_get_request, "chunk_size", "375");
 		default:

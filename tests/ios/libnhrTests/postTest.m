@@ -21,49 +21,18 @@
  */
 
 
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
+#import <XCTest/XCTest.h>
+#include "libnhr_public_tests.h"
 
-#if defined(CMAKE_BUILD)
-#undef CMAKE_BUILD
-#endif
+@interface postTest : XCTestCase
 
+@end
 
-#if defined(XCODE)
-#include "libnhr.h"
-#include "nhr_memory.h"
-#include "nhr_string.h"
-#include "nhr_gz.h"
-#else
-#include <libnhr.h>
+@implementation postTest
 
-// include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-#include "src/nhr_memory.h"
-#include "src/nhr_string.h"
-#include "src/nhr_gz.h"
-#endif
+- (void) testPOST {
+	test_post();
+}
 
 
-#if defined(CMAKE_BUILD)
-#undef CMAKE_BUILD
-#endif
-
-#include "cJSON/cJSON.h"
-
-// test_libnhr_creation
-
-NHR_API(int) test_create(void);
-
-
-// test_gz_creation
-
-NHR_API(int) test_gz_creation(void);
-
-
-// test_get
-NHR_API(int) test_get(void);
-
-
-// test_post
-NHR_API(int) test_post(void);
+@end

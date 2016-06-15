@@ -80,16 +80,30 @@ add_test(test_get_static test_get_static)
 
 
 
+add_executable(test_post test_post.c)
+target_link_libraries(test_post nhr)
+target_link_libraries(test_post cJSON)
+add_test(test_post test_post)
+
+add_executable(test_post_static test_get.c)
+target_link_libraries(test_post_static nhr_static)
+target_link_libraries(test_post_static cJSON)
+add_test(test_post_static test_post_static)
+
+
+
 if(NHR_HAVE_PTHREAD_H)
 	target_link_libraries(test_libnhr_creation_static pthread)
 	target_link_libraries(test_gz_creation_static pthread)
 	target_link_libraries(test_get_static pthread)
+	target_link_libraries(test_post_static pthread)
 endif()
 
 if(NHR_LINK_ZLIB)
 	target_link_libraries(test_libnhr_creation_static ${ZLIB_LIBRARIES})
 	target_link_libraries(test_gz_creation_static ${ZLIB_LIBRARIES})
 	target_link_libraries(test_get_static ${ZLIB_LIBRARIES})
+	target_link_libraries(test_post_static ${ZLIB_LIBRARIES})
 endif()
 
 #install(TARGETS test_libnhr_creation DESTINATION bin)

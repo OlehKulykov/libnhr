@@ -23,7 +23,7 @@
 
 #include "libnhr_public_tests.h"
 
-nhr_request _request = NULL;
+static nhr_request _request = NULL;
 
 int test_create(void) {
 

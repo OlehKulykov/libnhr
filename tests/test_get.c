@@ -25,11 +25,11 @@
 
 #if !defined(NHR_NO_GET)
 
-nhr_request test_get_request = NULL;
-const char * test_get_param_name1 = "test_get_param_name1";
-const char * test_get_param_value1 = "test_get_param_value1";
-int test_get_error = 0;
-nhr_bool test_get_working = 0;
+static nhr_request test_get_request = NULL;
+static const char * test_get_param_name1 = "test_get_param_name1";
+static const char * test_get_param_value1 = "test_get_param_value1";
+static int test_get_error = 0;
+static nhr_bool test_get_working = 0;
 
 static void test_get_on_error(nhr_request request, nhr_error_code error_code) {
 	printf("\nResponce error: %i", (int)error_code);
@@ -37,31 +37,52 @@ static void test_get_on_error(nhr_request request, nhr_error_code error_code) {
 	test_get_working = nhr_false;
 }
 
-static int test_get_parse_body(const char * body) {
+static int test_get_parse_body(const char * body, unsigned long test_number) {
 	cJSON * json = cJSON_ParseWithOpts(body, NULL, 0);
 	cJSON * args = json ? cJSON_GetObjectItem(json, "args") : NULL;
 	cJSON * headers = json ? cJSON_GetObjectItem(json, "headers") : NULL;
-	cJSON * param1 = NULL;
-	if (args && headers && (args->type & cJSON_Object) && (headers->type & cJSON_Object)) {
-		param1 = cJSON_GetObjectItem(args, test_get_param_name1);
-		if (!param1 || !(param1->type & cJSON_String) || !param1->valuestring) return 8;
-		if (strcmp(test_get_param_value1, param1->valuestring) != 0) return 9;
-	} else {
-		return 7;
+	cJSON * param1 = args ? cJSON_GetObjectItem(args, test_get_param_name1) : NULL;
+	cJSON * deflated = json ? cJSON_GetObjectItem(json, "deflated") : NULL;
+	cJSON * gzipped = json ? cJSON_GetObjectItem(json, "gzipped") : NULL;
+
+	switch (test_number) {
+		case 1:
+			if (args && headers && param1 && param1->valuestring) {
+				if (strcmp(test_get_param_value1, param1->valuestring) == 0) return 0;
+				return 9;
+			}
+			break;
+
+		case 2:
+			if (deflated && deflated->valueint) return 0; // bool `true`
+			break;
+
+		case 3:
+			if (gzipped && gzipped->valueint) return 0; // bool `true`
+			break;
+
+		default:
+			break;
 	}
-	return 0;
+
+	return 12;
 }
 
 static void test_get_on_response(nhr_request request, nhr_response responce) {
-	printf("\nResponce:\n");
 	char * body = nhr_response_get_body(responce);
 	unsigned int body_len = nhr_response_get_body_length(responce);
 	int i;
 	test_get_error = 1;
+	unsigned long test_number = (unsigned long)nhr_request_get_user_object(request);
+	printf("\nResponce #%lu:\n", test_number);
+	if (test_number == 0) {
+		test_get_error = 10;
+		return;
+	}
 
 	if (body && body_len)
 	{
-		test_get_error = test_get_parse_body(body);
+		test_get_error = test_get_parse_body(body, test_number);
 		for (i = 0; i < body_len; i++) {
 			printf("%c", body[i]);
 		}
@@ -71,17 +92,44 @@ static void test_get_on_response(nhr_request request, nhr_response responce) {
 	test_get_working = nhr_false;
 }
 
-int test_get(void) {
+static int test_get_number(unsigned long number) {
 
 	test_get_request = nhr_request_create();
-	nhr_request_set_url(test_get_request, "http", "httpbin.org", "/get", 80);
+
+	switch (number) {
+		case 1: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/get", 80); break;
+		case 2: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/deflate", 80); break;
+		case 3: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/gzip", 80); break;
+		default:
+			break;
+	}
+
+
 	nhr_request_set_method(test_get_request, nhr_method_GET);
 	nhr_request_set_timeout(test_get_request, 10);
 
+	nhr_request_set_user_object(test_get_request, (void*)number);
+
 	nhr_request_add_header_field(test_get_request, "Cache-control", "no-cache");
 	nhr_request_add_header_field(test_get_request, "Accept-Charset", "utf-8");
+	nhr_request_add_header_field(test_get_request, "Accept", "application/json");
 
-	nhr_request_add_parameter(test_get_request, test_get_param_name1, test_get_param_value1);
+	switch (number) {
+		case 1:
+			nhr_request_add_parameter(test_get_request, test_get_param_name1, test_get_param_value1);
+			break;
+
+		case 2:
+			nhr_request_add_header_field(test_get_request, "Accept-Encoding", k_nhr_deflate);
+			break;
+
+		case 3:
+			nhr_request_add_header_field(test_get_request, "Accept-Encoding", k_nhr_gzip);
+			break;
+
+		default:
+			break;
+	}
 
 	nhr_request_set_on_recvd_responce(test_get_request, &test_get_on_response);
 	nhr_request_set_on_error(test_get_request, &test_get_on_error);
@@ -95,6 +143,19 @@ int test_get(void) {
 	}
 
 	return test_get_error;
+}
+
+int test_get(void) {
+	int ret = 0;
+
+	ret += test_get_number(1); // plain responce
+
+#if !defined(NHR_NO_GZIP)
+	ret += test_get_number(2); // deflate responce
+	ret += test_get_number(3); // gziped responce
+#endif
+
+	return ret;
 }
 #endif
 

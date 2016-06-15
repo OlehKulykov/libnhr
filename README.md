@@ -86,6 +86,9 @@ nhr_request_set_method(_request, nhr_method_GET); // GET
 // Add HTTP headers
 nhr_request_add_header_field(_request, "Cache-control", "no-cache");
 nhr_request_add_header_field(_request, "Accept-Charset", "utf-8");
+
+// Optional: in a case of POST, send gzip compressed url encoded parameters
+nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_gzip_deflate);
 ............
 // Add request parameters
 nhr_request_add_parameter(_request, "format", "json");

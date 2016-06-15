@@ -78,12 +78,12 @@ if(WIN32)
 	add_definitions(-DWIN32)
 	add_definitions(-D_WIN32)
 	set(NHR_OS_WINDOWS 1)
-endif(WIN32)
+endif()
 
 
 if(MINGW)
 	set(NHR_COMPILER_MINGW 1)
-endif(MINGW)
+endif()
 
 
 add_definitions(-DCMAKE_BUILD)
@@ -94,16 +94,14 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-if(NOT NHR_OPT_NO_GZIP)
-	message("Looking for zlib...")
-	find_package(ZLIB QUIET)
-	if (ZLIB_FOUND)
-		include_directories(${ZLIB_INCLUDE_DIRS})
-		message("zlib include dirs: ${ZLIB_INCLUDE_DIRS}")
-		message("zlib libraries: ${ZLIB_LIBRARIES}")
-	else()
-		message("zlib not found")
-	endif(ZLIB_FOUND)
+message("Looking for zlib...")
+find_package(ZLIB)
+if (ZLIB_FOUND)
+	include_directories(${ZLIB_INCLUDE_DIRS})
+	message("zlib include dirs: ${ZLIB_INCLUDE_DIRS}")
+	message("zlib libraries: ${ZLIB_LIBRARIES}")
+else()
+	message("zlib not found")
 endif()
 
 
@@ -121,16 +119,6 @@ message(CMAKE_EXTRA_INCLUDE_FILES ": " ${CMAKE_EXTRA_INCLUDE_FILES})
 
 # To check the size of a primitive type:
 check_type_size("void*" NHR_SIZEOF_VOIDP_T)
-if(NHR_SIZEOF_VOIDP_T AND (NOT NHR_VOIDP_TYPE))
-	set(NHR_VOIDP_TYPE void*)
-endif()
-
-if(NHR_SIZEOF_VOIDP_T EQUAL 4)
-	set(NHR_32BIT_PLATFORM 1)
-endif()
-if(NHR_SIZEOF_VOIDP_T EQUAL 8)
-	set(NHR_64BIT_PLATFORM 1)
-endif()
 
 
 # functions
@@ -142,7 +130,7 @@ endif()
 #check_function_exists(pthread_cancel NHR_HAVE_FUNCTION_PTHREAD_CANCEL)
 #check_function_exists(pthread_setname_np NHR_HAVE_FUNCTION_PTHREAD_SETNAME_NP)
 #check_function_exists(pthread_set_name_np NHR_HAVE_FUNCTION_PTHREAD_SET_NAME_NP)
-#endif(NHR_HAVE_PTHREAD_H)
+#endif()
 
 
 if((NOT NHR_HAVE_PTHREAD_H) AND (NOT WIN32))
@@ -152,7 +140,7 @@ endif()
 
 if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
 	set(CMAKE_INSTALL_LIBDIR lib)
-endif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+endif()
 
 # Now make sure that you the the build directory on your "Include" path when compiling
 include_directories(${PROJECT_BINARY_DIR})
@@ -166,6 +154,7 @@ set(LIBNHR_SOURCES src/nhr_common.c
 		src/nhr_response.c
 		src/nhr_string.c
 		src/nhr_thread.c)
+
 
 set(NHR_HAVE_ANY_METHOD FALSE)
 set(NHR_LINK_ZLIB FALSE)

@@ -88,7 +88,6 @@ NHR_EXTERN const char * k_nhr_request_http_ver; // "1.1"
 NHR_EXTERN const char * k_nhr_content_type; // "Content-Type"
 NHR_EXTERN const char * k_nhr_application_x_www_form_urlencoded; // "application/x-www-form-urlencoded"
 NHR_EXTERN const char * k_nhr_transfer_encoding; // "Transfer-Encoding"
-NHR_EXTERN const char * k_nhr_transfer_encoding; // "Transfer-Encoding"
 
 NHR_EXTERN const char * k_nhr_CRLF; // "\r\n"
 #define k_nhr_CRLF_length 2

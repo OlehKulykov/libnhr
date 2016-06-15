@@ -28,15 +28,20 @@
 
 #if defined(NHR_GZIP)
 
+// raw deflate
+
+#define NHR_GZ_METHOD_DEFLATE 0
+#define NHR_GZ_METHOD_GZIP 1
+
 void * nhr_gz_compress(const void * buff,
 					   const size_t buff_size,
 					   size_t * compressed_size,
-					   const unsigned char have_header);
+					   const unsigned char method);
 
 void * nhr_gz_decompress(const void * buff,
 						 const size_t buff_size,
 						 size_t * decompressed_size,
-						 const unsigned char have_header);
+						 const unsigned char method);
 
 #endif
 #endif 

@@ -100,5 +100,8 @@ NHR_EXTERN const char * k_nhr_content_length; // "Content-Length";
 NHR_EXTERN const char * k_nhr_chunked; // "chunked"
 #define k_nhr_chunked_length 7
 
+#define k_nhr_gzip_length 4
+#define k_nhr_deflate_length 7
+
 #endif
 

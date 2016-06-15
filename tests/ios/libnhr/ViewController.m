@@ -20,7 +20,12 @@ static void onResponse(nhr_request request, nhr_response responce) {
 	unsigned int bodyLength = nhr_response_get_body_length(responce);
 	if (body && bodyLength)
 	{
-		for (int i = 0; i < bodyLength; i++) printf("%c", body[i]);
+		FILE * f = fopen("/Volumes/Data/1/responce", "w+b");
+		for (int i = 0; i < bodyLength; i++) {
+			printf("%c", body[i]);
+			fputc(body[i], f);
+		}
+		fclose(f);
 	}
 }
 
@@ -33,17 +38,19 @@ static void onResponse(nhr_request request, nhr_response responce) {
 //	nhr_request_set_url(request, "http", "api.ipify.org", "/", 80);
 //	nhr_request_set_url(request, "http", "isithackday.com", "/arrpi.php", 80);
 //	nhr_request_set_url(request, "http", "www.tutorialspoint.com", "/http/http_header_fields.htm", 80);
-	nhr_request_set_url(request, "http", "httpbin.org", "/post", 80);
+//	nhr_request_set_url(request, "http", "httpbin.org", "/deflate", 80);
+	nhr_request_set_url(request, "http", "httpbin.org", "/gzip", 80);
 //	nhr_request_set_url(request, "http", "requestb.in", "/1agvbet1", 80);
 
-//	nhr_request_set_method(request, nhr_method_GET);
-	nhr_request_set_method(request, nhr_method_POST);
+	nhr_request_set_method(request, nhr_method_GET);
+//	nhr_request_set_method(request, nhr_method_POST);
 
 	nhr_request_add_header_field(request, "Cache-control", "no-cache");
 	nhr_request_add_header_field(request, "User-Agent", "iOS");
 //	nhr_request_add_header_field(request, "Accept", "text/html");
 	nhr_request_add_header_field(request, "Accept-Charset", "utf-8");
-	nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_gzip_deflate);
+	nhr_request_add_header_field(request, "Accept-Encoding", k_nhr_gzip_deflate);
+//	nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_gzip_deflate);
 
 	nhr_request_add_parameter(request, "format", "json");
 	nhr_request_add_parameter(request, "text", "Hello%20world");

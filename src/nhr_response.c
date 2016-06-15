@@ -24,8 +24,30 @@
 #include "nhr_response.h"
 #include "nhr_memory.h"
 #include "nhr_string.h"
+#include "nhr_gz.h"
 #include <string.h>
 #include <ctype.h>
+
+#if defined(NHR_GZIP)
+void nhr_response_ungzip(_nhr_response * r) {
+	if (!r->body || r->body_len <= 0) return;
+
+	void * decompressed = NULL;
+	size_t decompressed_size = 0;
+	if (r->content_encoding & NHR_CONTENT_ENCODING_GZIP) {
+		decompressed = nhr_gz_decompress(r->body, r->body_len, &decompressed_size, NHR_GZ_METHOD_GZIP);
+	} else if (r->content_encoding & NHR_CONTENT_ENCODING_DEFLATE) {
+		decompressed = nhr_gz_decompress(r->body, r->body_len, &decompressed_size, NHR_GZ_METHOD_DEFLATE);
+	}
+	if (decompressed && decompressed_size > 0) {
+		nhr_free(r->body);
+		r->body = decompressed;
+		r->body_len = decompressed_size;
+	} else {
+		nhr_free(decompressed);
+	}
+}
+#endif
 
 void nhr_response_fix_body_len(_nhr_response * r) {
 	if (r->content_length > 0 && r->body_len > r->content_length) {
@@ -64,7 +86,12 @@ void nhr_response_read_chunks(_nhr_response * r, char * str) {
 #endif
 
 void nhr_response_parse_body(_nhr_response * r, char * received, const size_t received_len) {
-//	printf("\n------HEADER---------\n%s\n---------------------\n", received);
+#if defined(NHR_DEBUG_LOG)
+	size_t log_index = 0;
+	printf("\n----[ RESPONCE HEADER ]----\n");
+	for (log_index = 0; log_index < received_len; log_index++) printf("%c", received[log_index]);
+	printf("\n---------------------------\n");
+#endif
 	char * sub = strstr(received, k_nhr_double_CRLF);
 	if (!sub) return;
 
@@ -73,7 +100,7 @@ void nhr_response_parse_body(_nhr_response * r, char * received, const size_t re
 		sub += k_nhr_double_CRLF_length;
 		skiped -= k_nhr_double_CRLF_length;
 
-		if (r->transfer_encoding == NHR_TRANSFER_ENCODING_CHUNKED) {
+		if (r->transfer_encoding & NHR_TRANSFER_ENCODING_CHUNKED) {
 #if !defined(NHR_NO_CHUNKED)
 			nhr_response_read_chunks(r, sub);
 #endif
@@ -103,30 +130,74 @@ void nhr_response_parse_content_length(_nhr_response * r, char * received) {
 	if (nhr_sscanf(value, "%lu", &length) == 1 && length > 0) r->content_length = (size_t)length;
 }
 
-void nhr_response_parse_transfer_encoding(_nhr_response * r, char * received) {
-	char * sub = nhr_response_find_http_field_value(received, k_nhr_transfer_encoding);
-	if (!sub) return;
+void nhr_response_log_unprocessed(const char * key, const char * value) {
+	printf("\nWARNING: libnhr unprocessed \"%s\" : \"%s\".", key, value);
+}
 
-	if (strncmp(sub, k_nhr_chunked, k_nhr_chunked_length) == 0) {
+void nhr_response_parse_transfer_encoding(_nhr_response * r, char * received) {
+	char * encoding = nhr_response_find_http_field_value(received, k_nhr_transfer_encoding);
+	if (!encoding) return;
+
+	if (strstr(encoding, k_nhr_chunked)) {
 #if defined(NHR_NO_CHUNKED)
-		printf("WARNING: libnhr unprocessed chucked encoding.\n");
+		nhr_response_log_unprocessed(k_nhr_transfer_encoding, encoding);
 #else
-		r->transfer_encoding = NHR_TRANSFER_ENCODING_CHUNKED;
+		r->transfer_encoding |= NHR_TRANSFER_ENCODING_CHUNKED;
 #endif
 	}
+}
+
+void nhr_response_parse_content_encoding(_nhr_response * r, char * received) {
+	char * encoding = nhr_response_find_http_field_value(received, k_nhr_content_encoding);
+	if (!encoding) return;
+
+	if (strstr(encoding, k_nhr_gzip)) {
+#if defined(NHR_GZIP)
+		r->content_encoding |= NHR_CONTENT_ENCODING_GZIP;
+#else
+		nhr_response_log_unprocessed(k_nhr_transfer_encoding, encoding);
+#endif
+	}
+	if (strstr(encoding, k_nhr_deflate)) {
+#if defined(NHR_GZIP)
+		r->content_encoding |= NHR_CONTENT_ENCODING_DEFLATE;
+#else
+		nhr_response_log_unprocessed(k_nhr_transfer_encoding, encoding);
+#endif
+	}
+}
+
+nhr_bool nhr_response_is_finished_receiving(_nhr_response * r) {
+#if !defined(NHR_NO_CHUNKED)
+	if (r->transfer_encoding & NHR_TRANSFER_ENCODING_CHUNKED) return r->is_all_chunks_processed;
+#endif
+	return (r->content_length > 0) ? r->content_length == r->body_len : nhr_false;
+}
+
+void nhr_response_check_is_finished(_nhr_response * r) {
+	if (!nhr_response_is_finished_receiving(r)) return;
+
+	if (r->content_encoding & NHR_CONTENT_ENCODING_GZIP ||
+		r->content_encoding & NHR_CONTENT_ENCODING_DEFLATE) {
+#if defined(NHR_GZIP)
+		nhr_response_ungzip(r);
+#endif
+	}
+	r->is_finished = nhr_true;
 }
 
 _nhr_response * nhr_response_create(void * received, const size_t received_len) {
 	_nhr_response * r = (_nhr_response *)nhr_malloc_zero(sizeof(struct _nhr_response_struct));
 
-	nhr_response_parse_status_code(r, (char *)received);
+	nhr_response_parse_status_code(r, received);
 
 	if (r->status_code == 200) {
-		nhr_response_parse_content_length(r, (char *)received);
-		nhr_response_parse_transfer_encoding(r, (char *)received);
-		nhr_response_parse_body(r, (char *)received, received_len);
+		nhr_response_parse_content_length(r, received);
+		nhr_response_parse_transfer_encoding(r, received);
+		nhr_response_parse_content_encoding(r, received);
+		nhr_response_parse_body(r, received, received_len);
 	}
-
+	nhr_response_check_is_finished(r);
 	return r;
 }
 
@@ -149,13 +220,14 @@ void nhr_response_add_body_data(_nhr_response * r, void * data, const size_t dat
 }
 
 void nhr_response_append(_nhr_response * r, void * received, const size_t received_len) {
-	if (r->transfer_encoding == NHR_TRANSFER_ENCODING_CHUNKED) {
+	if (r->transfer_encoding & NHR_TRANSFER_ENCODING_CHUNKED) {
 #if !defined(NHR_NO_CHUNKED)
 		nhr_response_read_chunks(r, (char *)received);
 #endif
 	} else {
 		nhr_response_add_body_data(r, received, received_len);
 	}
+	nhr_response_check_is_finished(r);
 }
 
 void nhr_response_delete(_nhr_response * r) {
@@ -179,16 +251,4 @@ void* nhr_response_get_body(nhr_response responce) {
 unsigned int nhr_response_get_body_length(nhr_response responce) {
 	_nhr_response * r = (_nhr_response *)responce;
 	return r ? (unsigned int)r->body_len : 0;
-}
-
-nhr_bool nhr_response_is_finished(_nhr_response * r) {
-	if (!r) return nhr_false;
-
-#if !defined(NHR_NO_CHUNKED)
-	if (r->transfer_encoding == NHR_TRANSFER_ENCODING_CHUNKED) {
-		return r->is_all_chunks_processed;
-	}
-#endif
-	
-	return (r->content_length > 0) ? r->content_length == r->body_len : nhr_false;
 }

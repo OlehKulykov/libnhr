@@ -68,12 +68,27 @@ int test_gz_creation_string(void) {
 		assert(src_string_len > 0);
 
 		size_t compr_size = 0;
-		void * compr_buff = nhr_gz_compress(src_string, src_string_len, &compr_size, 0);
+		void * compr_buff = nhr_gz_compress(src_string, src_string_len, &compr_size, NHR_GZ_METHOD_DEFLATE);
 		assert(compr_buff);
 		assert(compr_size > 0);
 
 		size_t decompr_size = 0;
-		char * decompr_string = (char *)nhr_gz_decompress(compr_buff, compr_size, &decompr_size, 0);
+		char * decompr_string = (char *)nhr_gz_decompress(compr_buff, compr_size, &decompr_size, NHR_GZ_METHOD_DEFLATE);
+
+		assert(src_string_len == decompr_size);
+		assert(strncmp(src_string, decompr_string, decompr_size) == 0);
+
+		nhr_free(compr_buff);
+		nhr_free(decompr_string);
+
+
+		compr_size = 0;
+		compr_buff = nhr_gz_compress(src_string, src_string_len, &compr_size, NHR_GZ_METHOD_GZIP);
+		assert(compr_buff);
+		assert(compr_size > 0);
+
+		decompr_size = 0;
+		decompr_string = (char *)nhr_gz_decompress(compr_buff, compr_size, &decompr_size, NHR_GZ_METHOD_GZIP);
 
 		assert(src_string_len == decompr_size);
 		assert(strncmp(src_string, decompr_string, decompr_size) == 0);

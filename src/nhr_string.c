@@ -66,4 +66,3 @@ void nhr_string_delete_clean(char ** str) {
 		*str = NULL;
 	}
 }
-

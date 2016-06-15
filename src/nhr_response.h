@@ -31,6 +31,7 @@ typedef struct _nhr_response_struct {
 	size_t content_length;
 	unsigned short status_code;
 	unsigned char transfer_encoding;
+	unsigned char content_encoding;
 
 	void * body;
 	size_t body_len; // stored
@@ -39,6 +40,8 @@ typedef struct _nhr_response_struct {
 #if !defined(NHR_NO_CHUNKED)
 	nhr_bool is_all_chunks_processed;
 #endif
+
+	nhr_bool is_finished; // all data received & processed
 } _nhr_response;
 
 void nhr_response_add_body_data(_nhr_response * r, void * data, const size_t data_size);
@@ -49,9 +52,11 @@ void nhr_response_append(_nhr_response * r, void * received, const size_t receiv
 
 void nhr_response_delete(_nhr_response * r);
 
-nhr_bool nhr_response_is_finished(_nhr_response * r);
+//nhr_bool nhr_response_is_finished(_nhr_response * r);
 
 #define NHR_TRANSFER_ENCODING_CHUNKED 1
 
+#define NHR_CONTENT_ENCODING_GZIP 1
+#define NHR_CONTENT_ENCODING_DEFLATE 1 << 1
 
 #endif

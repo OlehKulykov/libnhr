@@ -95,8 +95,10 @@ nhr_bool nhr_request_recv(_nhr_request * r) {
 }
 
 void nhr_request_wait_raw_responce(_nhr_request * r) {
+	nhr_bool is_finished = nhr_false;
 	if (nhr_request_recv(r)) {
-		if (nhr_response_is_finished(r->responce)) nhr_request_set_command(r, NHR_COMMAND_INFORM_RESPONCE);
+		is_finished = r->responce ? r->responce->is_finished : nhr_false;
+		if (is_finished) nhr_request_set_command(r, NHR_COMMAND_INFORM_RESPONCE);
 		if (!nhr_request_check_timeout(r)) return; // error already exists
 	} else if (r) {
 		nhr_request_set_command(r, NHR_COMMAND_INFORM_RESPONCE);

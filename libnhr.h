@@ -30,7 +30,7 @@
 
 #define NHR_VERSION_MAJOR 0
 #define NHR_VERSION_MINOR 3
-#define NHR_VERSION_PATCH 2
+#define NHR_VERSION_PATCH 3
 
 
 // check windows
@@ -214,6 +214,14 @@ NHR_EXTERN const char * k_nhr_content_encoding;
  Can be used as HTTP header value.
  */
 NHR_EXTERN const char * k_nhr_gzip_deflate;
+
+
+/// String constant "gzip"
+NHR_EXTERN const char * k_nhr_gzip;
+
+
+/// String constant "deflate"
+NHR_EXTERN const char * k_nhr_deflate;
 
 
 // request

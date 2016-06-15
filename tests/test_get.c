@@ -70,13 +70,21 @@ static int test_get_parse_body(const char * body, unsigned long test_number) {
 	return 12;
 }
 
+static void test_get_log_body(const char * body, const unsigned int body_len) {
+	if (!body || body_len == 0) return;
+	int i;
+	for (i = 0; i < body_len; i++) {
+		printf("%c", body[i]);
+	}
+}
+
 static void test_get_on_response(nhr_request request, nhr_response responce) {
 	char * body = nhr_response_get_body(responce);
 	unsigned int body_len = nhr_response_get_body_length(responce);
-	int i;
 	test_get_error = 1;
 	unsigned long test_number = (unsigned long)nhr_request_get_user_object(request);
 	printf("\nResponce #%lu:\n", test_number);
+	test_get_log_body(body, body_len);
 	if (test_number == 0) {
 		test_get_error = 10;
 		test_get_working = nhr_false;
@@ -84,17 +92,21 @@ static void test_get_on_response(nhr_request request, nhr_response responce) {
 	}
 
 	if (test_number == 4) { // status code 418
+		printf("\nGet status code: %i, need 418", (int)nhr_response_get_status_code(responce));
 		test_get_error = nhr_response_get_status_code(responce) == 418 ? 0 : 14;
 		test_get_working = nhr_false;
 		return;
 	}
 
-	if (body && body_len)
-	{
+	if (test_number == 5) {
+		printf("\nGet body_len: %u, need 1024", body_len);
+		test_get_error = body_len == 1024 ? 0 : 15;
+		test_get_working = nhr_false;
+		return;
+	}
+
+	if (body && body_len) {
 		test_get_error = test_get_parse_body(body, test_number);
-		for (i = 0; i < body_len; i++) {
-			printf("%c", body[i]);
-		}
 	} else {
 		test_get_error = 5;
 	}
@@ -111,6 +123,7 @@ static int test_get_number(unsigned long number) {
 		case 2: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/deflate", 80); break;
 		case 3: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/gzip", 80); break;
 		case 4: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/status/418", 80); break;
+		case 5: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/range/1024", 80); break;
 		default:
 			break;
 	}
@@ -138,6 +151,11 @@ static int test_get_number(unsigned long number) {
 			nhr_request_add_header_field(test_get_request, "Accept-Encoding", k_nhr_gzip);
 			break;
 
+		case 5:
+			// chunked, total 1024, chunk_size 375, delay 1
+			nhr_request_set_timeout(test_get_request, 10 + 1024/375); // increase default delay
+			nhr_request_add_parameter(test_get_request, "duration", "1");
+			nhr_request_add_parameter(test_get_request, "chunk_size", "375");
 		default:
 			break;
 	}
@@ -167,6 +185,10 @@ int test_get(void) {
 #endif
 
 	ret += test_get_number(4); // status code 418
+
+#if !defined(NHR_NO_CHUNKED)
+	ret += test_get_number(5); // chunked, total 1024, chunk_size 375, delay 1
+#endif
 
 	return ret;
 }

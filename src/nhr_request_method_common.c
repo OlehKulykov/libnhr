@@ -28,7 +28,7 @@
 size_t nhr_request_map_strings_length(_nhr_map_node * map, const size_t iteration_increment) {
 	size_t len = 0;
 	_nhr_map_node *cur = map;
-	while(cur) {
+	while (cur) {
 		len += strlen(cur->key) + strlen(cur->value.string) + iteration_increment;
 		cur = cur->next;
 	}

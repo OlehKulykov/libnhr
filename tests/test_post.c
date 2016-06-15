@@ -115,7 +115,7 @@ static int test_post_number(unsigned long number) {
 		nhr_thread_sleep(20);
 	}
 
-	nhr_thread_sleep(583); // just delay between requests
+	nhr_thread_sleep(834); // just delay between requests
 
 	return test_post_error;
 }

@@ -48,25 +48,25 @@ const char * test_gz_string6 = "Lorem Ipsum - это текст-рыба, час
 const char * test_gz_string7 = "Lorem Ipsum ist ein einfacher Demo-Text für die Print- und Schriftindustrie. Lorem Ipsum ist in der Industrie bereits der Standard Demo-Text seit 1500, als ein unbekannter Schriftsteller eine Hand voll Wörter nahm und diese durcheinander warf um ein Musterbuch zu erstellen. Es hat nicht nur 5 Jahrhunderte überlebt, sondern auch in Spruch in die elektronische Schriftbearbeitung geschafft (bemerke, nahezu unverändert). Bekannt wurde es 1960, mit dem erscheinen von \"Letraset\", welches Passagen von Lorem Ipsum enhielt, so wie Desktop Software wie \"Aldus PageMaker\" - ebenfalls mit Lorem Ipsum.";
 const char * test_gz_string8 = "Lorem Ipsum，也称乱数假文或者哑元文本， 是印刷及排版领域所常用的虚拟文字。由于曾经一台匿名的打印机刻意打乱了一盒印刷字体从而造出一本字体样品书，Lorem Ipsum从西元15世纪起就被作为此领域的标准文本使用。它不仅延续了五个世纪，还通过了电子排版的挑战，其雏形却依然保存至今。在1960年代，”Leatraset”公司发布了印刷着Lorem Ipsum段落的纸张，从而广泛普及了它的使用。最近，计算机桌面出版软件”Aldus PageMaker”也通过同样的方式使Lorem Ipsum落入大众的视野。";
 
+#define STRINGS_COUNT 8
+
 int test_gz_creation_string(void) {
-	const size_t strings_count = 8;
-	const char * strings[strings_count] = {
-		test_gz_string1,
-		test_gz_string2,
-		test_gz_string3,
-		test_gz_string4,
-		test_gz_string5,
-		test_gz_string6,
-		test_gz_string7,
-		test_gz_string8
-	};
+	const char * strings[STRINGS_COUNT];
+	strings[0] = test_gz_string1;
+	strings[0] = test_gz_string2;
+	strings[0] = test_gz_string3;
+	strings[0] = test_gz_string4;
+	strings[0] = test_gz_string5;
+	strings[0] = test_gz_string6;
+	strings[0] = test_gz_string7;
+	strings[0] = test_gz_string8;
 
 	int i;
 	const char * src_string;
 	size_t src_string_len, compr_size, decompr_size;
 	void * compr_buff;
 
-	for (i = 0; i < strings_count; i++) {
+	for (i = 0; i < STRINGS_COUNT; i++) {
 		src_string = strings[i];
 		src_string_len = strlen(src_string);
 		assert(src_string_len > 0);

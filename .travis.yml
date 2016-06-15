@@ -24,7 +24,6 @@ before_script:
   - cd ..
 
 script:
-  - printenv
   - cd build
   - make
   - make test

@@ -205,11 +205,8 @@ void nhr_response_add_body_data(_nhr_response * r, void * data, const size_t dat
 	const size_t required = r->body_len + data_size;
 
 	if (required > r->body_size) {
-		void * body = nhr_malloc(required);
-		if (r->body) memcpy(body, r->body, r->body_len);
+		r->body = nhr_realloc(r->body, required);
 		r->body_size = required;
-		nhr_free(r->body);
-		r->body = body;
 	}
 
 	char * body = (char *)r->body;

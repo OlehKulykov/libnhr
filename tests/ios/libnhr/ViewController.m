@@ -23,9 +23,9 @@ static void onResponse(nhr_request request, nhr_response responce) {
 		FILE * f = fopen("/Volumes/Data/1/responce", "w+b");
 		for (int i = 0; i < bodyLength; i++) {
 			printf("%c", body[i]);
-			fputc(body[i], f);
+			if (f) fputc(body[i], f);
 		}
-		fclose(f);
+		if (f) fclose(f);
 	}
 }
 
@@ -37,10 +37,10 @@ static void onResponse(nhr_request request, nhr_response responce) {
 
 //	nhr_request_set_url(request, "http", "api.ipify.org", "/", 80);
 //	nhr_request_set_url(request, "http", "isithackday.com", "/arrpi.php", 80);
-//	nhr_request_set_url(request, "http", "www.tutorialspoint.com", "/http/http_header_fields.htm", 80);
+	nhr_request_set_url(request, "http", "www.tutorialspoint.com", "/http/http_header_fields.htm", 80);
 //	nhr_request_set_url(request, "http", "httpbin.org", "/deflate", 80);
 //	nhr_request_set_url(request, "http", "httpbin.org", "/gzip", 80);
-	nhr_request_set_url(request, "http", "requestb.in", "/1agvbet1", 80);
+//	nhr_request_set_url(request, "http", "requestb.in", "/1agvbet1", 80);
 
 //	nhr_request_set_method(request, nhr_method_GET);
 	nhr_request_set_method(request, nhr_method_POST);

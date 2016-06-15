@@ -52,5 +52,13 @@ void nhr_free_clean(void ** mem) {
 	}
 }
 
+void * nhr_realloc(void * mem, const size_t new_size) {
+	if (new_size > 0) {
+		void * new_mem = realloc(mem, new_size);
+		assert(new_mem);
+		return new_mem;
+	}
+	return NULL;
+}
 
 

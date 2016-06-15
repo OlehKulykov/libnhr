@@ -36,15 +36,6 @@
 #define NHR_GZ_FOOTER_SIZE 8
 #define NHR_GZ_WINDOWS_BITS -15
 
-void * nhr_gz_extend(void * buff, size_t * buff_size, const size_t increment) {
-	const size_t new_size = *buff_size + increment;
-	void * new_buff = nhr_malloc(new_size);
-	memcpy(new_buff, buff, *buff_size);
-	nhr_free(buff);
-	*buff_size = new_size;
-	return new_buff;
-}
-
 void nhr_gz_write_header(unsigned char * buff) {
 	*buff++ = 0x1f; // magic header
 	*buff++ = 0x8b; // magic header
@@ -62,13 +53,14 @@ void nhr_gz_write_header(unsigned char * buff) {
 }
 
 void * nhr_gz_write_footer(void * buff,
-						   size_t buff_size,
-						   size_t writed,
+						   const size_t buff_size,
+						   const size_t writed,
 						   const void * src_buff,
 						   const size_t src_size) {
 	// used `uLong` as unsigned 32 bit integer
 	const size_t left = buff_size - writed;
-	if (left < 8) buff = nhr_gz_extend(buff, &buff_size, 8);
+	if (left < 8) buff = nhr_realloc(buff, buff_size + 8);
+
 	uLong * footer = buff + writed;
 
 	uLong crc = crc32(0L, Z_NULL, 0);
@@ -127,8 +119,9 @@ void * nhr_gz_compress(const void * buff,
 			return NULL;
 		}
 		if (zip.avail_out == 0) {
-			out_buff = nhr_gz_extend(out_buff, &out_size, NHR_GZ_CHUNK_SIZE);
+			out_size += NHR_GZ_CHUNK_SIZE;
 			writed += NHR_GZ_CHUNK_SIZE;
+			out_buff = nhr_realloc(out_buff, out_size);
 			zip.next_out = out_buff + writed;
 			zip.avail_out = NHR_GZ_CHUNK_SIZE;
 		}
@@ -137,8 +130,9 @@ void * nhr_gz_compress(const void * buff,
 	result = Z_OK;
 	while (result == Z_OK) {
 		if (zip.avail_out == 0) {
-			out_buff = nhr_gz_extend(out_buff, &out_size, NHR_GZ_CHUNK_SIZE);
+			out_size += NHR_GZ_CHUNK_SIZE;
 			writed += NHR_GZ_CHUNK_SIZE;
+			out_buff = nhr_realloc(out_buff, out_size);
 			zip.next_out = out_buff + writed;
 			zip.avail_out = NHR_GZ_CHUNK_SIZE;
 		}
@@ -230,7 +224,8 @@ void * nhr_gz_decompress(const void * buff,
 			if (writed < out_size) {
 				zip.avail_out = ((int)NHR_GZ_CHUNK_SIZE) - available_size;
 			} else {
-				out_buff = nhr_gz_extend(out_buff, &out_size, NHR_GZ_CHUNK_SIZE);
+				out_size += NHR_GZ_CHUNK_SIZE;
+				out_buff = nhr_realloc(out_buff, out_size);
 				zip.avail_out = NHR_GZ_CHUNK_SIZE;
 			}
 		} else {

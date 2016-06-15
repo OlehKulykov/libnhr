@@ -38,4 +38,6 @@ void nhr_free(void * mem);
 
 void nhr_free_clean(void ** mem);
 
+void * nhr_realloc(void * mem, const size_t new_size);
+
 #endif

@@ -43,8 +43,6 @@ char * nhr_string_copy(const char * str);
 
 char * nhr_string_copy_len(const char * str, const size_t len);
 
-char * nhr_string_extend(const char * str, const size_t len);
-
 char nhr_string_last_char(const char * str);
 
 void nhr_string_delete(char * str);

@@ -38,19 +38,6 @@ char * nhr_string_copy_len(const char * str, const size_t len) {
 	return NULL;
 }
 
-char * nhr_string_extend(const char * str, const size_t len) {
-	size_t src_len = 0;
-	char * newStr = NULL;
-	if (len > 0) {
-		src_len = str ? strlen(str) : 0;
-		newStr = (char *)nhr_malloc(src_len + len + 1);
-		if (src_len > 0) memcpy(newStr, str, src_len);
-		newStr[src_len + len] = 0;
-		return newStr;
-	}
-	return newStr;
-}
-
 char nhr_string_last_char(const char * str) {
 	const size_t len = str ? strlen(str) : 0;
 	return len > 0 ? str[len - 1] : 0;

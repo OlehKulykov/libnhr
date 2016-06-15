@@ -21,46 +21,19 @@
  */
 
 
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
+#import <XCTest/XCTest.h>
+#include "libnhr_public_tests.h"
 
-#if defined(CMAKE_BUILD)
-#undef CMAKE_BUILD
-#endif
+@interface getTest : XCTestCase
 
+@end
 
-#if defined(XCODE)
-#include "libnhr.h"
-#include "nhr_memory.h"
-#include "nhr_string.h"
-#include "nhr_gz.h"
-#else
-#include <libnhr.h>
-
-// include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-#include "src/nhr_memory.h"
-#include "src/nhr_string.h"
-#include "src/nhr_gz.h"
-#endif
+@implementation getTest
 
 
-#if defined(CMAKE_BUILD)
-#undef CMAKE_BUILD
-#endif
+- (void) testGET {
+	test_get();
+}
 
 
-// test_libnhr_creation
-
-int test_create(void);
-
-
-// test_gz_creation
-
-int test_gz_creation(void);
-
-
-// test_get
-int test_get(void);
-
-
+@end

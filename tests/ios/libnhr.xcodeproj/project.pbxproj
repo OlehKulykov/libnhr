@@ -24,6 +24,8 @@
 		3D9318351D0F139000B6E6B5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D9318341D0F139000B6E6B5 /* libz.tbd */; };
 		3D9B61341D104BE80061C58F /* test_gz_creation.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D9B61321D104BE80061C58F /* test_gz_creation.c */; };
 		3D9B61361D104F0A0061C58F /* gzCreationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D9B61351D104F0A0061C58F /* gzCreationTest.m */; };
+		3DB2E53D1D11D302007740F7 /* test_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DB2E53C1D11D302007740F7 /* test_get.c */; };
+		3DB2E53F1D11D3CD007740F7 /* getTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DB2E53E1D11D3CD007740F7 /* getTest.m */; };
 		3DC2B0471D039DDB006CB4B0 /* nhr_request_method_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DC2B0461D039DDB006CB4B0 /* nhr_request_method_get.c */; };
 		3DC2B0491D039E01006CB4B0 /* nhr_request_method_post.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DC2B0481D039E01006CB4B0 /* nhr_request_method_post.c */; };
 		3DC2B04B1D039F74006CB4B0 /* nhr_request_method_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DC2B04A1D039F74006CB4B0 /* nhr_request_method_common.c */; };
@@ -73,6 +75,8 @@
 		3D9318341D0F139000B6E6B5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		3D9B61321D104BE80061C58F /* test_gz_creation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_gz_creation.c; path = ../../test_gz_creation.c; sourceTree = "<group>"; };
 		3D9B61351D104F0A0061C58F /* gzCreationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gzCreationTest.m; sourceTree = "<group>"; };
+		3DB2E53C1D11D302007740F7 /* test_get.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_get.c; path = ../../test_get.c; sourceTree = "<group>"; };
+		3DB2E53E1D11D3CD007740F7 /* getTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = getTest.m; sourceTree = "<group>"; };
 		3DC2B0461D039DDB006CB4B0 /* nhr_request_method_get.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nhr_request_method_get.c; sourceTree = "<group>"; };
 		3DC2B0481D039E01006CB4B0 /* nhr_request_method_post.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nhr_request_method_post.c; sourceTree = "<group>"; };
 		3DC2B04A1D039F74006CB4B0 /* nhr_request_method_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nhr_request_method_common.c; sourceTree = "<group>"; };
@@ -152,7 +156,9 @@
 				3DEAD27A1CFF1147008996B5 /* libnhr_public_tests.h */,
 				3DEAD2751CFF0F40008996B5 /* test_libnhr_creation.c */,
 				3D9B61321D104BE80061C58F /* test_gz_creation.c */,
+				3DB2E53C1D11D302007740F7 /* test_get.c */,
 				3D9B61351D104F0A0061C58F /* gzCreationTest.m */,
+				3DB2E53E1D11D3CD007740F7 /* getTest.m */,
 				3D0BD6421CFD8B4000C91654 /* Info.plist */,
 			);
 			path = libnhrTests;
@@ -310,7 +316,9 @@
 			files = (
 				3D9B61341D104BE80061C58F /* test_gz_creation.c in Sources */,
 				3D9B61361D104F0A0061C58F /* gzCreationTest.m in Sources */,
+				3DB2E53D1D11D302007740F7 /* test_get.c in Sources */,
 				3DEAD2791CFF10E2008996B5 /* test_libnhr_creation.c in Sources */,
+				3DB2E53F1D11D3CD007740F7 /* getTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

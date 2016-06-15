@@ -32,6 +32,8 @@ if(NHR_OPT_APPVEYOR_CI)
 	add_definitions(-DNHR_APPVEYOR_CI)
 endif()
 
+
+
 add_executable(test_libnhr_creation test_libnhr_creation.c)
 target_link_libraries(test_libnhr_creation nhr)
 add_test(test_libnhr_creation test_libnhr_creation)
@@ -52,14 +54,26 @@ add_test(test_gz_creation_static test_gz_creation_static)
 
 
 
+add_executable(test_get test_get.c)
+target_link_libraries(test_get nhr)
+add_test(test_get test_get)
+
+add_executable(test_get_static test_get.c)
+target_link_libraries(test_get_static nhr_static)
+add_test(test_get_static test_get_static)
+
+
+
 if(NHR_HAVE_PTHREAD_H)
 	target_link_libraries(test_libnhr_creation_static pthread)
 	target_link_libraries(test_gz_creation_static pthread)
+	target_link_libraries(test_get_static pthread)
 endif()
 
 if(NHR_LINK_ZLIB)
 	target_link_libraries(test_libnhr_creation_static ${ZLIB_LIBRARIES})
 	target_link_libraries(test_gz_creation_static ${ZLIB_LIBRARIES})
+	target_link_libraries(test_get_static ${ZLIB_LIBRARIES})
 endif()
 
 #install(TARGETS test_libnhr_creation DESTINATION bin)

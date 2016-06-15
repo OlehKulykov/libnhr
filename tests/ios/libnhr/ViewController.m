@@ -32,7 +32,7 @@ static void onResponse(nhr_request request, nhr_response responce) {
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	
+	return;
 	nhr_request request = nhr_request_create();
 
 //	nhr_request_set_url(request, "http", "api.ipify.org", "/", 80);

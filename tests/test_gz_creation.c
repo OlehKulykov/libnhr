@@ -53,13 +53,13 @@ const char * test_gz_string8 = "Lorem Ipsum，也称乱数假文或者哑元文�
 int test_gz_creation_string(void) {
 	const char * strings[STRINGS_COUNT];
 	strings[0] = test_gz_string1;
-	strings[0] = test_gz_string2;
-	strings[0] = test_gz_string3;
-	strings[0] = test_gz_string4;
-	strings[0] = test_gz_string5;
-	strings[0] = test_gz_string6;
-	strings[0] = test_gz_string7;
-	strings[0] = test_gz_string8;
+	strings[1] = test_gz_string2;
+	strings[2] = test_gz_string3;
+	strings[3] = test_gz_string4;
+	strings[4] = test_gz_string5;
+	strings[5] = test_gz_string6;
+	strings[6] = test_gz_string7;
+	strings[7] = test_gz_string8;
 
 	int i;
 	const char * src_string;

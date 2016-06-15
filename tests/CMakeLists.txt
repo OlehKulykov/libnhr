@@ -40,5 +40,16 @@ add_executable(test_gz_creation test_gz_creation.c)
 target_link_libraries(test_gz_creation nhr)
 add_test(test_gz_creation test_gz_creation)
 
+
+if(NHR_HAVE_PTHREAD_H)
+	target_link_libraries(test_libnhr_creation pthread)
+	target_link_libraries(test_gz_creation pthread)
+endif()
+
+if(NHR_LINK_ZLIB)
+	target_link_libraries(test_libnhr_creation ${ZLIB_LIBRARIES})
+	target_link_libraries(test_gz_creation ${ZLIB_LIBRARIES})
+endif()
+
 #install(TARGETS test_libnhr_creation DESTINATION bin)
 

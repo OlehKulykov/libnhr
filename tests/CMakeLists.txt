@@ -33,10 +33,15 @@ if(NHR_OPT_APPVEYOR_CI)
 endif()
 
 
-# cJSON lib for test
+# cJSON lib for test apps
 set(CJSON_SOURCES cJSON.c)
 set(CJSON_HEADERS cJSON.h)
 add_library(cJSON SHARED ${CJSON_SOURCES} ${CJSON_HEADERS})
+
+if(NOT WIN32)
+	target_link_libraries(cJSON m)
+endif()
+
 
 
 add_executable(test_libnhr_creation test_libnhr_creation.c)

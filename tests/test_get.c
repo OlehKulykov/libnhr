@@ -37,6 +37,21 @@ static void test_get_on_error(nhr_request request, nhr_error_code error_code) {
 	test_get_working = nhr_false;
 }
 
+static int test_get_parse_body(const char * body) {
+	cJSON * json = cJSON_ParseWithOpts(body, NULL, 0);
+	cJSON * args = json ? cJSON_GetObjectItem(json, "args") : NULL;
+	cJSON * headers = json ? cJSON_GetObjectItem(json, "headers") : NULL;
+	cJSON * param1 = NULL;
+	if (args && headers && (args->type & cJSON_Object) && (headers->type & cJSON_Object)) {
+		param1 = cJSON_GetObjectItem(args, test_get_param_name1);
+		if (!param1 || !(param1->type & cJSON_String) || !param1->valuestring) return 8;
+		if (strcmp(test_get_param_value1, param1->valuestring) != 0) return 9;
+	} else {
+		return 7;
+	}
+	return 0;
+}
+
 static void test_get_on_response(nhr_request request, nhr_response responce) {
 	printf("\nResponce:\n");
 	char * body = nhr_response_get_body(responce);
@@ -46,15 +61,7 @@ static void test_get_on_response(nhr_request request, nhr_response responce) {
 
 	if (body && body_len)
 	{
-		cJSON * json = cJSON_ParseWithOpts(body, NULL, 0);
-		cJSON * args = json ? cJSON_GetObjectItem(json, "args") : NULL;
-		cJSON * headers = json ? cJSON_GetObjectItem(json, "headers") : NULL;
-		if (args && headers && (args->type & cJSON_Object) && (headers->type & cJSON_Object)) {
-//			cJSON *
-		} else {
-			test_get_error = 6;
-		}
-
+		test_get_error = test_get_parse_body(body);
 		for (i = 0; i < body_len; i++) {
 			printf("%c", body[i]);
 		}

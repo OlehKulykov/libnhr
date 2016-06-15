@@ -20,7 +20,8 @@ All features are **enabled by default**. But it's possible to **disable**. See t
 | NHR_NO_GET     | NHR_OPT_NO_GET        | Send GET requests.                                                                           |
 | NHR_NO_POST    | NHR_OPT_NO_POST       | Send POST requests.                                                                          |
 | NHR_NO_CHUNKED | NHR_OPT_NO_CHUNKED    | Process received responce with chunked transfer encoding, e.g. "Transfer-Encoding: chunked". |
-| NHR_NO_GZIP    | NHR_OPT_NO_GZIP       | Post gzip compressed url encoded parameters                                                  |
+| NHR_NO_GZIP    | NHR_OPT_NO_GZIP       | Post gzip or deflate compressed url encoded parameters.                                      |
+|                |                       | Process gzip or deflate compressed responce body.                                            |
 
 
 #### Build with CMake
@@ -87,8 +88,9 @@ nhr_request_set_method(_request, nhr_method_GET); // GET
 nhr_request_add_header_field(_request, "Cache-control", "no-cache");
 nhr_request_add_header_field(_request, "Accept-Charset", "utf-8");
 
-// Optional: in a case of POST, send gzip compressed url encoded parameters
-nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_gzip_deflate);
+// Optional: in a case of POST, send gzip or deflate compressed url encoded parameters
+nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_gzip); // gzip
+nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_deflate); // deflate
 ............
 // Add request parameters
 nhr_request_add_parameter(_request, "format", "json");

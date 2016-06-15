@@ -78,7 +78,7 @@ static int test_post_number(unsigned long number) {
 	test_post_request = nhr_request_create();
 
 	switch (number) {
-		case 1: nhr_request_set_url(test_post_request, "http", "httpbin.org", "/get", 80); break;
+		case 1: nhr_request_set_url(test_post_request, "http", "httpbin.org", "/post", 80); break;
 		default:
 			break;
 	}
@@ -133,7 +133,7 @@ int test_post(void) {
 int main(int argc, char* argv[]) {
 
 	int ret = 0;
-#if !defined(NHR_NO_GET)
+#if !defined(NHR_NO_POST)
 	ret += test_post();
 	assert(ret == 0);
 #endif

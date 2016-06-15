@@ -137,6 +137,8 @@ static int test_get_number(unsigned long number) {
 	nhr_request_add_header_field(test_get_request, "Cache-control", "no-cache");
 	nhr_request_add_header_field(test_get_request, "Accept-Charset", "utf-8");
 	nhr_request_add_header_field(test_get_request, "Accept", "application/json");
+	nhr_request_add_header_field(test_get_request, "Connection", "close");
+	nhr_request_add_header_field(test_get_request, "User-Agent", "CMake tests");
 
 	switch (number) {
 		case 1:

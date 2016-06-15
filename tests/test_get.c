@@ -34,6 +34,8 @@ static nhr_bool test_get_working = 0;
 static void test_get_on_error(nhr_request request, nhr_error_code error_code) {
 	printf("\nResponce error: %i", (int)error_code);
 	test_get_error = error_code;
+
+
 	test_get_working = nhr_false;
 }
 
@@ -77,6 +79,13 @@ static void test_get_on_response(nhr_request request, nhr_response responce) {
 	printf("\nResponce #%lu:\n", test_number);
 	if (test_number == 0) {
 		test_get_error = 10;
+		test_get_working = nhr_false;
+		return;
+	}
+
+	if (test_number == 4) { // status code 418
+		test_get_error = nhr_response_get_status_code(responce) == 418 ? 0 : 14;
+		test_get_working = nhr_false;
 		return;
 	}
 
@@ -89,6 +98,7 @@ static void test_get_on_response(nhr_request request, nhr_response responce) {
 	} else {
 		test_get_error = 5;
 	}
+
 	test_get_working = nhr_false;
 }
 
@@ -100,6 +110,7 @@ static int test_get_number(unsigned long number) {
 		case 1: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/get", 80); break;
 		case 2: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/deflate", 80); break;
 		case 3: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/gzip", 80); break;
+		case 4: nhr_request_set_url(test_get_request, "http", "httpbin.org", "/status/418", 80); break;
 		default:
 			break;
 	}
@@ -154,6 +165,8 @@ int test_get(void) {
 	ret += test_get_number(2); // deflate responce
 	ret += test_get_number(3); // gziped responce
 #endif
+
+	ret += test_get_number(4); // status code 418
 
 	return ret;
 }

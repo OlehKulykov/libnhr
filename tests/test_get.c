@@ -46,8 +46,14 @@ static void test_get_on_response(nhr_request request, nhr_response responce) {
 
 	if (body && body_len)
 	{
-		if (strstr(body, test_get_param_name1) && strstr(body, test_get_param_value1)) test_get_error = 0;
-		else test_get_error = 2;
+		cJSON * json = cJSON_ParseWithOpts(body, NULL, 0);
+		cJSON * args = json ? cJSON_GetObjectItem(json, "args") : NULL;
+		cJSON * headers = json ? cJSON_GetObjectItem(json, "headers") : NULL;
+		if (args && headers && (args->type & cJSON_Object) && (headers->type & cJSON_Object)) {
+//			cJSON *
+		} else {
+			test_get_error = 6;
+		}
 
 		for (i = 0; i < body_len; i++) {
 			printf("%c", body[i]);

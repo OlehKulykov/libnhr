@@ -49,18 +49,19 @@
 #undef CMAKE_BUILD
 #endif
 
+#include "cJSON.h"
 
 // test_libnhr_creation
 
-int test_create(void);
+NHR_API(int) test_create(void);
 
 
 // test_gz_creation
 
-int test_gz_creation(void);
+NHR_API(int) test_gz_creation(void);
 
 
 // test_get
-int test_get(void);
+NHR_API(int) test_get(void);
 
 

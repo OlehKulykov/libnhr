@@ -85,7 +85,7 @@ target_link_libraries(test_post nhr)
 target_link_libraries(test_post cJSON)
 add_test(test_post test_post)
 
-add_executable(test_post_static test_get.c)
+add_executable(test_post_static test_post.c)
 target_link_libraries(test_post_static nhr_static)
 target_link_libraries(test_post_static cJSON)
 add_test(test_post_static test_post_static)

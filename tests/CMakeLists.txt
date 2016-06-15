@@ -53,12 +53,12 @@ add_test(test_gz_creation_static test_gz_creation_static)
 
 
 if(NHR_HAVE_PTHREAD_H)
-	target_link_libraries(test_gz_creation_static pthread)
+	target_link_libraries(test_libnhr_creation_static pthread)
 	target_link_libraries(test_gz_creation_static pthread)
 endif()
 
 if(NHR_LINK_ZLIB)
-	target_link_libraries(test_gz_creation_static ${ZLIB_LIBRARIES})
+	target_link_libraries(test_libnhr_creation_static ${ZLIB_LIBRARIES})
 	target_link_libraries(test_gz_creation_static ${ZLIB_LIBRARIES})
 endif()
 

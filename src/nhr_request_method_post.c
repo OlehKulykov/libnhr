@@ -39,8 +39,8 @@ char * nhr_request_create_parameters_POST(_nhr_request * r, size_t * parameters_
 #if defined(NHR_GZIP)
 	size_t zgip_parameters_size = 0;
 	void * zgip_parameters = NULL;
-	if (r->is_gziped) {
-		zgip_parameters = nhr_gz_compress(params, params_len, &zgip_parameters_size, 1);
+	if (r->is_gziped || r->is_deflated) {
+		zgip_parameters = nhr_gz_compress(params, params_len, &zgip_parameters_size, r->is_gziped ? NHR_GZ_METHOD_GZIP : NHR_GZ_METHOD_DEFLATE);
 		if (zgip_parameters && zgip_parameters_size) {
 			nhr_free(params);
 			params_len = zgip_parameters_size;

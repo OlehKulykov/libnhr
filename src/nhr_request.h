@@ -91,6 +91,7 @@ typedef struct _nhr_request_struct {
 
 #if defined(NHR_GZIP)
 	nhr_bool is_gziped;
+	nhr_bool is_deflated;
 #endif
 } _nhr_request;
 

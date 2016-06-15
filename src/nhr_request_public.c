@@ -115,7 +115,8 @@ void nhr_request_add_header_field(nhr_request request, const char * name, const 
 	last->value.string = nhr_string_copy(value);
 	last->value_type = NHR_MAP_VALUE_STRING;
 #if defined(NHR_GZIP)
-	if (strcmp(value, k_nhr_gzip_deflate) == 0) r->is_gziped = nhr_true;
+	if (strcmp(value, k_nhr_gzip) == 0) r->is_gziped = nhr_true;
+	if (strcmp(value, k_nhr_deflate) == 0) r->is_deflated = nhr_true;
 #endif
 }
 

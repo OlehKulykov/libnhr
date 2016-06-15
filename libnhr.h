@@ -300,6 +300,8 @@ NHR_API(void) nhr_request_set_on_error(nhr_request request, nhr_on_request_error
  @param request The request object. If request is `NULL` do nothing.
  @param name The HTTP header field name. `NULL` or empty value is ignored.
  @param value Value of the header field. `NULL` or empty value is ignored.
+ @note If value is `k_nhr_deflate` or `k_nhr_gzip` post body will be compressed
+ with appropriate method.
  */
 NHR_API(void) nhr_request_add_header_field(nhr_request request, const char * name, const char * value);
 

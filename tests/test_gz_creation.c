@@ -61,17 +61,22 @@ int test_gz_creation_string(void) {
 		test_gz_string8
 	};
 
-	for (int i = 0; i < strings_count; i++) {
-		const char * src_string = strings[i];
-		size_t src_string_len = strlen(src_string);
+	int i;
+	const char * src_string;
+	size_t src_string_len, compr_size, decompr_size;
+	void * compr_buff;
+
+	for (i = 0; i < strings_count; i++) {
+		src_string = strings[i];
+		src_string_len = strlen(src_string);
 		assert(src_string_len > 0);
 
-		size_t compr_size = 0;
-		void * compr_buff = nhr_gz_compress(src_string, src_string_len, &compr_size, NHR_GZ_METHOD_DEFLATE);
+		compr_size = 0;
+		compr_buff = nhr_gz_compress(src_string, src_string_len, &compr_size, NHR_GZ_METHOD_DEFLATE);
 		assert(compr_buff);
 		assert(compr_size > 0);
 
-		size_t decompr_size = 0;
+		decompr_size = 0;
 		char * decompr_string = (char *)nhr_gz_decompress(compr_buff, compr_size, &decompr_size, NHR_GZ_METHOD_DEFLATE);
 
 		assert(src_string_len == decompr_size);
@@ -99,17 +104,21 @@ int test_gz_creation_string(void) {
 }
 
 int test_gz_big_data(void) {
-	for (size_t mbts = 1; mbts < 10; mbts++) {
-		const size_t src_size = mbts * 1024 * 1024;
-		void * src = nhr_malloc(src_size); // any data inside
+
+	size_t mbts, src_size, dst_size;
+	void * src, *compr_buff, *dst;
+
+	for (mbts = 1; mbts < 10; mbts++) {
+		src_size = mbts * 1024 * 1024;
+		src = nhr_malloc(src_size); // any data inside
 
 		size_t compr_size = 0;
-		void * compr_buff = nhr_gz_compress(src, src_size, &compr_size, NHR_GZ_METHOD_DEFLATE);
+		compr_buff = nhr_gz_compress(src, src_size, &compr_size, NHR_GZ_METHOD_DEFLATE);
 		assert(compr_buff);
 		assert(compr_size > 0);
 
-		size_t dst_size = 0;
-		char * dst = (char *)nhr_gz_decompress(compr_buff, compr_size, &dst_size, NHR_GZ_METHOD_DEFLATE);
+		dst_size = 0;
+		dst = nhr_gz_decompress(compr_buff, compr_size, &dst_size, NHR_GZ_METHOD_DEFLATE);
 
 		assert(src_size == dst_size);
 		assert(memcmp(src, dst, src_size) == 0);
@@ -126,7 +135,7 @@ int test_gz_big_data(void) {
 		assert(compr_size > 0);
 
 		dst_size = 0;
-		dst = (char *)nhr_gz_decompress(compr_buff, compr_size, &dst_size, NHR_GZ_METHOD_GZIP);
+		dst = nhr_gz_decompress(compr_buff, compr_size, &dst_size, NHR_GZ_METHOD_GZIP);
 
 		assert(src_size == dst_size);
 		assert(memcmp(src, dst, src_size) == 0);

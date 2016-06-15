@@ -20,6 +20,7 @@ All features are **enabled by default**. But it's possible to **disable**. See t
 | NHR_NO_GET     | NHR_OPT_NO_GET        | Send GET requests.                                                                           |
 | NHR_NO_POST    | NHR_OPT_NO_POST       | Send POST requests.                                                                          |
 | NHR_NO_CHUNKED | NHR_OPT_NO_CHUNKED    | Process received responce with chunked transfer encoding, e.g. "Transfer-Encoding: chunked". |
+| NHR_NO_GZIP    | NHR_OPT_NO_GZIP       | Post gzip compressed url encoded parameters                                                  |
 
 
 #### Build with CMake

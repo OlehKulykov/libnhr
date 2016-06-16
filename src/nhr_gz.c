@@ -58,7 +58,7 @@ void * nhr_gz_write_footer(void * buff,
 						   const size_t writed,
 						   const void * src_buff,
 						   const size_t src_size) {
-	if (buff_size - writed < 8) buff = nhr_realloc(buff, buff_size + 8);
+	if (buff_size - writed < NHR_GZ_FOOTER_SIZE) buff = nhr_realloc(buff, buff_size + NHR_GZ_FOOTER_SIZE);
 
 	// used `uLong` as unsigned 32 bit integer
 	uLong * footer = buff + writed;

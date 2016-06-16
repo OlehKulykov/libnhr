@@ -28,6 +28,9 @@ link_directories(${PROJECT_BINARY_DIR})
 
 remove_definitions(-DCMAKE_BUILD)
 
+
+add_library(cJSON STATIC cJSON/cJSON.h cJSON/cJSON.c)
+
 if(NHR_OPT_APPVEYOR_CI)
 	add_definitions(-DNHR_APPVEYOR_CI)
 endif()
@@ -40,11 +43,11 @@ if(MSVC)
 endif(MSVC)
 
 
-add_executable(test_libnhr_creation test_libnhr_creation.c cJSON/cJSON.c)
+add_executable(test_libnhr_creation test_libnhr_creation.c)
 target_link_libraries(test_libnhr_creation nhr)
 add_test(test_libnhr_creation test_libnhr_creation)
 
-add_executable(test_libnhr_creation_static test_libnhr_creation.c cJSON/cJSON.c)
+add_executable(test_libnhr_creation_static test_libnhr_creation.c)
 target_link_libraries(test_libnhr_creation_static nhr_static)
 set_property(TARGET test_libnhr_creation_static APPEND PROPERTY COMPILE_FLAGS -DLIBNHR_STATIC)
 add_test(test_libnhr_creation_static test_libnhr_creation_static)
@@ -58,11 +61,11 @@ endif()
 
 
 
-add_executable(test_gz_creation test_gz_creation.c cJSON/cJSON.c)
+add_executable(test_gz_creation test_gz_creation.c)
 target_link_libraries(test_gz_creation nhr)
 add_test(test_gz_creation test_gz_creation)
 
-add_executable(test_gz_creation_static test_gz_creation.c cJSON/cJSON.c)
+add_executable(test_gz_creation_static test_gz_creation.c)
 target_link_libraries(test_gz_creation_static nhr_static)
 set_property(TARGET test_gz_creation_static APPEND PROPERTY COMPILE_FLAGS -DLIBNHR_STATIC)
 add_test(test_gz_creation_static test_gz_creation_static)
@@ -76,12 +79,14 @@ endif()
 
 
 
-add_executable(test_get test_get.c cJSON/cJSON.c)
+add_executable(test_get test_get.c)
 target_link_libraries(test_get nhr)
+target_link_libraries(test_get cJSON)
 add_test(test_get test_get)
 
-add_executable(test_get_static test_get.c cJSON/cJSON.c)
+add_executable(test_get_static test_get.c)
 target_link_libraries(test_get_static nhr_static)
+target_link_libraries(test_get_static cJSON)
 set_property(TARGET test_get_static APPEND PROPERTY COMPILE_FLAGS -DLIBNHR_STATIC)
 add_test(test_get_static test_get_static)
 
@@ -94,12 +99,14 @@ endif()
 
 
 
-add_executable(test_post test_post.c cJSON/cJSON.c)
+add_executable(test_post test_post.c)
 target_link_libraries(test_post nhr)
+target_link_libraries(test_post cJSON)
 add_test(test_post test_post)
 
-add_executable(test_post_static test_post.c cJSON/cJSON.c)
+add_executable(test_post_static test_post.c)
 target_link_libraries(test_post_static nhr_static)
+target_link_libraries(test_post_static cJSON)
 set_property(TARGET test_post_static APPEND PROPERTY COMPILE_FLAGS -DLIBNHR_STATIC)
 add_test(test_post_static test_post_static)
 

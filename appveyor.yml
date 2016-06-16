@@ -99,6 +99,7 @@ build_script:
   - cmake %CMAKE_ARGS% ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target Install
+  - ctest
   - cd ..
 
 

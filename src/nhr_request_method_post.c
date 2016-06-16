@@ -29,16 +29,19 @@
 
 char * nhr_request_create_parameters_POST(_nhr_request * r, size_t * parameters_len) {
 	size_t params_len = 0;
+	char content_length[24];
+#if defined(NHR_GZIP)
+	size_t zgip_parameters_size = 0;
+	void * zgip_parameters = NULL;
+#endif
+
 	char * params = r->parameters ? nhr_request_url_encoded_parameters(r->parameters, &params_len) : NULL;
 	if (!params) {
 		*parameters_len = 0;
 		return NULL;
 	}
-	char content_length[24];
-
+	
 #if defined(NHR_GZIP)
-	size_t zgip_parameters_size = 0;
-	void * zgip_parameters = NULL;
 	if (r->is_gziped || r->is_deflated) {
 		zgip_parameters = nhr_gz_compress(params, params_len, &zgip_parameters_size, r->is_gziped ? NHR_GZ_METHOD_GZIP : NHR_GZ_METHOD_DEFLATE);
 		if (zgip_parameters && zgip_parameters_size) {

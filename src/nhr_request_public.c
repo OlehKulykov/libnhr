@@ -103,14 +103,16 @@ void nhr_request_set_on_error(nhr_request request, nhr_on_request_error callback
 
 void nhr_request_add_header_field(nhr_request request, const char * name, const char * value) {
 	_nhr_request * r = (_nhr_request *)request;
+	size_t name_len = 0, value_len = 0;
+	_nhr_map_node * last = NULL;
 	if (!r) return;
 
-	const size_t name_len = name ? strlen(name) : 0;
-	const size_t value_len = value ? strlen(value) : 0;
+	name_len = name ? strlen(name) : 0;
+	value_len = value ? strlen(value) : 0;
 	if (name_len == 0 || value_len == 0) return;
 
 	if (!r->http_headers) r->http_headers = nhr_map_create();
-	_nhr_map_node * last = nhr_map_append(r->http_headers);
+	last = nhr_map_append(r->http_headers);
 	last->key = nhr_string_copy(name);
 	last->value.string = nhr_string_copy(value);
 	last->value_type = NHR_MAP_VALUE_STRING;
@@ -122,16 +124,18 @@ void nhr_request_add_header_field(nhr_request request, const char * name, const 
 
 void nhr_request_add_parameter(nhr_request request, const char * name, const char * value) {
 	_nhr_request * r = (_nhr_request *)request;
+	size_t name_len = 0, value_len = 0;
+	_nhr_map_node * last = NULL;
 	if (!r) return;
 
-	const size_t name_len = name ? strlen(name) : 0;
-	const size_t value_len = value ? strlen(value) : 0;
+	name_len = name ? strlen(name) : 0;
+	value_len = value ? strlen(value) : 0;
 	if (name_len == 0 || value_len == 0) return;
 
 	assert(r->method); //!!! set method
 
 	if (!r->parameters) r->parameters = nhr_map_create();
-	_nhr_map_node * last = nhr_map_append(r->parameters);
+	last = nhr_map_append(r->parameters);
 	last->key = nhr_string_copy(name);
 	last->value.string = nhr_string_copy(value);
 	last->value_type = NHR_MAP_VALUE_STRING;

@@ -71,8 +71,8 @@ static int test_get_parse_body(const char * body, unsigned long test_number) {
 }
 
 static void test_get_log_body(const char * body, const unsigned int body_len) {
+	unsigned int i;
 	if (!body || body_len == 0) return;
-	int i;
 	for (i = 0; i < body_len; i++) {
 		printf("%c", body[i]);
 	}
@@ -81,8 +81,9 @@ static void test_get_log_body(const char * body, const unsigned int body_len) {
 static void test_get_on_response(nhr_request request, nhr_response responce) {
 	char * body = nhr_response_get_body(responce);
 	unsigned int body_len = nhr_response_get_body_length(responce);
-	test_get_error = 1;
 	unsigned long test_number = (unsigned long)nhr_request_get_user_object(request);
+
+	test_get_error = 1;
 	printf("\nResponce #%lu:\n", test_number);
 	test_get_log_body(body, body_len);
 	if (test_number == 0) {

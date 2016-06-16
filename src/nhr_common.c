@@ -22,18 +22,19 @@
 
 
 #include "nhr_common.h"
+#include "../libnhr.h"
 
 const char * k_nhr_request_http_ver = "1.1";
 const char * k_nhr_content_type = "Content-Type";
 const char * k_nhr_application_x_www_form_urlencoded = "application/x-www-form-urlencoded";
 const char * k_nhr_transfer_encoding = "Transfer-Encoding";
-const char * k_nhr_content_encoding = "Content-Encoding";
-const char * k_nhr_gzip_deflate = "gzip, deflate";
-const char * k_nhr_gzip = "gzip";
-const char * k_nhr_deflate = "deflate";
+//const char * k_nhr_content_encoding = "Content-Encoding";
+//const char * k_nhr_gzip_deflate = "gzip, deflate";
+//char * k_nhr_gzip = "gzip";
+//char * k_nhr_deflate = "deflate";
 const char * k_nhr_CRLF = "\r\n";
 const char * k_nhr_double_CRLF = "\r\n\r\n";
 const char * k_nhr_content_length = "Content-Length";
 const char * k_nhr_chunked = "chunked";
-const char * k_nhr_GET = "GET";
-const char * k_nhr_POST = "POST";
+//const char * k_nhr_GET = "GET";
+//const char * k_nhr_POST = "POST";

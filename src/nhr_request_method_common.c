@@ -37,10 +37,13 @@ size_t nhr_request_map_strings_length(_nhr_map_node * map, const size_t iteratio
 
 char * nhr_request_http_headers(_nhr_map_node * map, size_t * length) {
 	const size_t buff_size = nhr_request_map_strings_length(map, 4); // "\r\n" + ": "
-	if (buff_size == 0) return NULL;
-	char * buff = (char *)nhr_malloc(buff_size); // null terminated included
 	size_t writed = 0;
 	_nhr_map_node * cur = map;
+	char * buff = NULL;
+
+	if (buff_size == 0) return NULL;
+	buff = (char *)nhr_malloc(buff_size); // null terminated included
+	
 	while (cur) {
 		writed += nhr_sprintf(buff + writed, buff_size - writed, writed > 0 ? "\r\n%s: %s" : "%s: %s", cur->key, cur->value.string);
 		cur = cur->next;
@@ -53,10 +56,13 @@ char * nhr_request_http_headers(_nhr_map_node * map, size_t * length) {
 
 char * nhr_request_url_encoded_parameters(_nhr_map_node * map, size_t * length) {
 	size_t buff_size = nhr_request_map_strings_length(map, 2); // `&` + `=`
-	if (buff_size == 0) return NULL;
-	char * buff = (char *)nhr_malloc(buff_size); // null terminated included
 	size_t writed = 0;
 	_nhr_map_node * cur = map;
+	char * buff = NULL;
+
+	if (buff_size == 0) return NULL;
+	buff = (char *)nhr_malloc(buff_size); // null terminated included
+	
 	while (cur) {
 		writed += nhr_sprintf(buff + writed, buff_size - writed, writed > 0 ? "&%s=%s" : "%s=%s", cur->key, cur->value.string);
 		cur = cur->next;

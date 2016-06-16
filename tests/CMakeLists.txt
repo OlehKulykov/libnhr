@@ -33,63 +33,82 @@ if(NHR_OPT_APPVEYOR_CI)
 endif()
 
 
-# cJSON lib for test apps
-set(CJSON_SOURCES cJSON/cJSON.c)
-set(CJSON_HEADERS cJSON/cJSON.h)
-add_library(cJSON SHARED ${CJSON_SOURCES} ${CJSON_HEADERS})
+if(MSVC)
+	# Suppress warning about "deprecated" functions
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_CRT_SECURE_NO_WARNINGS")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS")
+endif(MSVC)
 
-if(NOT WIN32)
-	target_link_libraries(cJSON m)
+
+add_executable(test_libnhr_creation test_libnhr_creation.c cJSON/cJSON.c)
+target_link_libraries(test_libnhr_creation nhr)
+add_test(test_libnhr_creation test_libnhr_creation)
+
+add_executable(test_libnhr_creation_static test_libnhr_creation.c cJSON/cJSON.c)
+target_link_libraries(test_libnhr_creation_static nhr_static)
+set_property(TARGET test_libnhr_creation_static APPEND PROPERTY COMPILE_FLAGS -DLIBNHR_STATIC)
+add_test(test_libnhr_creation_static test_libnhr_creation_static)
+
+if(WIN32)
+	target_link_libraries(test_libnhr_creation_static ws2_32)
+else()
+	target_link_libraries(test_libnhr_creation m)
+	target_link_libraries(test_libnhr_creation_static m)
 endif()
 
 
 
-add_executable(test_libnhr_creation test_libnhr_creation.c)
-target_link_libraries(test_libnhr_creation nhr)
-target_link_libraries(test_libnhr_creation cJSON)
-add_test(test_libnhr_creation test_libnhr_creation)
-
-add_executable(test_libnhr_creation_static test_libnhr_creation.c)
-target_link_libraries(test_libnhr_creation_static nhr_static)
-target_link_libraries(test_libnhr_creation_static cJSON)
-add_test(test_libnhr_creation_static test_libnhr_creation_static)
-
-
-
-add_executable(test_gz_creation test_gz_creation.c)
+add_executable(test_gz_creation test_gz_creation.c cJSON/cJSON.c)
 target_link_libraries(test_gz_creation nhr)
-target_link_libraries(test_gz_creation cJSON)
 add_test(test_gz_creation test_gz_creation)
 
-add_executable(test_gz_creation_static test_gz_creation.c)
+add_executable(test_gz_creation_static test_gz_creation.c cJSON/cJSON.c)
 target_link_libraries(test_gz_creation_static nhr_static)
-target_link_libraries(test_gz_creation_static cJSON)
+set_property(TARGET test_gz_creation_static APPEND PROPERTY COMPILE_FLAGS -DLIBNHR_STATIC)
 add_test(test_gz_creation_static test_gz_creation_static)
 
+if(WIN32)
+	target_link_libraries(test_gz_creation_static ws2_32)
+else()
+	target_link_libraries(test_gz_creation m)
+	target_link_libraries(test_gz_creation_static m)
+endif()
 
 
-add_executable(test_get test_get.c)
+
+add_executable(test_get test_get.c cJSON/cJSON.c)
 target_link_libraries(test_get nhr)
-target_link_libraries(test_get cJSON)
 add_test(test_get test_get)
 
-add_executable(test_get_static test_get.c)
+add_executable(test_get_static test_get.c cJSON/cJSON.c)
 target_link_libraries(test_get_static nhr_static)
-target_link_libraries(test_get_static cJSON)
+set_property(TARGET test_get_static APPEND PROPERTY COMPILE_FLAGS -DLIBNHR_STATIC)
 add_test(test_get_static test_get_static)
 
+if(WIN32)
+	target_link_libraries(test_get_static ws2_32)
+else()
+	target_link_libraries(test_get m)
+	target_link_libraries(test_get_static m)
+endif()
 
 
-add_executable(test_post test_post.c)
+
+add_executable(test_post test_post.c cJSON/cJSON.c)
 target_link_libraries(test_post nhr)
-target_link_libraries(test_post cJSON)
 add_test(test_post test_post)
 
-add_executable(test_post_static test_post.c)
+add_executable(test_post_static test_post.c cJSON/cJSON.c)
 target_link_libraries(test_post_static nhr_static)
-target_link_libraries(test_post_static cJSON)
+set_property(TARGET test_post_static APPEND PROPERTY COMPILE_FLAGS -DLIBNHR_STATIC)
 add_test(test_post_static test_post_static)
 
+if(WIN32)
+	target_link_libraries(test_post_static ws2_32)
+else()
+	target_link_libraries(test_post m)
+	target_link_libraries(test_post_static m)
+endif()
 
 
 if(NHR_HAVE_PTHREAD_H)

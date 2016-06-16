@@ -145,8 +145,8 @@ typedef void (*nhr_thread_funct)(void * user_object);
 /**
  @brief Error codes.
  */
-typedef enum _nhr_error_code
-{
+typedef enum _nhr_error_code {
+
 	nhr_error_code_none = 0,
 
 	nhr_error_code_missed_parameter,
@@ -160,8 +160,7 @@ typedef enum _nhr_error_code
 /**
  @brief Supported HTTP methods.
  */
-typedef enum _nhr_method
-{
+typedef enum _nhr_method {
 	/**
 	 @brief Request method `GET`.
 	 @note To disable `GET` functionality define flag `NHR_NO_GET`. By default enable.
@@ -195,33 +194,33 @@ typedef void (*nhr_on_request_error)(nhr_request request, nhr_error_code error_c
 
 
 // String constant "GET"
-NHR_EXTERN const char * k_nhr_GET;
+#define k_nhr_GET "GET"
 
 
 // String constant "POST"
-NHR_EXTERN const char * k_nhr_POST;
+#define k_nhr_POST "POST"
 
 
 /**
  @brief String constant "Content-Encoding"
  Can be used as HTTP header name.
  */
-NHR_EXTERN const char * k_nhr_content_encoding;
+#define k_nhr_content_encoding "Content-Encoding"
 
 
 /**
  @brief String constant "gzip, deflate"
  Can be used as HTTP header value.
  */
-NHR_EXTERN const char * k_nhr_gzip_deflate;
+#define k_nhr_gzip_deflate "gzip, deflate"
 
 
 /// String constant "gzip"
-NHR_EXTERN const char * k_nhr_gzip;
+#define k_nhr_gzip "gzip"
 
 
 /// String constant "deflate"
-NHR_EXTERN const char * k_nhr_deflate;
+#define k_nhr_deflate "deflate"
 
 
 // request

@@ -92,10 +92,11 @@ void nhr_response_parse_body(_nhr_response * r, char * received, const size_t re
 	for (log_index = 0; log_index < received_len; log_index++) printf("%c", received[log_index]);
 	printf("\n---------------------------\n");
 #endif
+	size_t skiped = 0;
 	char * sub = strstr(received, k_nhr_double_CRLF);
 	if (!sub) return;
 
-	size_t skiped = sub - received;
+	skiped = sub - received;
 	if (skiped > k_nhr_double_CRLF_length) {
 		sub += k_nhr_double_CRLF_length;
 		skiped -= k_nhr_double_CRLF_length;
@@ -203,13 +204,14 @@ _nhr_response * nhr_response_create(void * received, const size_t received_len) 
 
 void nhr_response_add_body_data(_nhr_response * r, void * data, const size_t data_size) {
 	const size_t required = r->body_len + data_size;
+	char * body = NULL;
 
 	if (required > r->body_size) {
 		r->body = nhr_realloc(r->body, required);
 		r->body_size = required;
 	}
 
-	char * body = (char *)r->body;
+	body = (char *)r->body;
 	body += r->body_len;
 	memcpy(body, data, data_size);
 	r->body_len += data_size;

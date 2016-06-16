@@ -23,7 +23,7 @@
 
 #include "libnhr_public_tests.h"
 
-#if !defined(NHR_NO_GET)
+#if !defined(NHR_NO_GET) && !defined(NHR_APPVEYOR_CI)
 
 static nhr_request test_get_request = NULL;
 static const char * test_get_param_name1 = "test_get_param_name1";
@@ -203,7 +203,7 @@ int test_get(void) {
 int main(int argc, char* argv[]) {
 
 	int ret = 0;
-#if !defined(NHR_NO_GET)
+#if !defined(NHR_NO_GET) && !defined(NHR_APPVEYOR_CI)
 	ret += test_get();
 	assert(ret == 0);
 #endif

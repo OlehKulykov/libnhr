@@ -23,7 +23,7 @@
 
 #include "libnhr_public_tests.h"
 
-#if !defined(NHR_NO_POST)
+#if !defined(NHR_NO_POST) && !defined(NHR_APPVEYOR_CI)
 
 static nhr_request test_post_request = NULL;
 static int test_post_error = 0;
@@ -134,7 +134,7 @@ int test_post(void) {
 int main(int argc, char* argv[]) {
 
 	int ret = 0;
-#if !defined(NHR_NO_POST)
+#if !defined(NHR_NO_POST) && !defined(NHR_APPVEYOR_CI)
 	ret += test_post();
 	assert(ret == 0);
 #endif

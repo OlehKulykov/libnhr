@@ -27,8 +27,10 @@ static nhr_request _request = NULL;
 
 int test_create(void) {
 
+#if !defined(NHR_APPVEYOR_CI)
 	_request = nhr_request_create();
 	assert(_request);
+#endif
 
 	return 0;
 }

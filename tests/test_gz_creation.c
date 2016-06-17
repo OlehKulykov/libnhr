@@ -52,6 +52,12 @@ static const char * test_gz_string8 = "Lorem Ipsum，也称乱数假文或者哑
 
 static int test_gz_creation_string(void) {
 	const char * strings[STRINGS_COUNT];
+	int i;
+	const char * src_string;
+	size_t src_string_len, compr_size, decompr_size;
+	void * compr_buff;
+	char * decompr_string;
+
 	strings[0] = test_gz_string1;
 	strings[1] = test_gz_string2;
 	strings[2] = test_gz_string3;
@@ -60,11 +66,6 @@ static int test_gz_creation_string(void) {
 	strings[5] = test_gz_string6;
 	strings[6] = test_gz_string7;
 	strings[7] = test_gz_string8;
-
-	int i;
-	const char * src_string;
-	size_t src_string_len, compr_size, decompr_size;
-	void * compr_buff;
 
 	for (i = 0; i < STRINGS_COUNT; i++) {
 		src_string = strings[i];
@@ -77,7 +78,7 @@ static int test_gz_creation_string(void) {
 		assert(compr_size > 0);
 
 		decompr_size = 0;
-		char * decompr_string = (char *)nhr_gz_decompress(compr_buff, compr_size, &decompr_size, NHR_GZ_METHOD_DEFLATE);
+		decompr_string = (char *)nhr_gz_decompress(compr_buff, compr_size, &decompr_size, NHR_GZ_METHOD_DEFLATE);
 
 		assert(src_string_len == decompr_size);
 		assert(strncmp(src_string, decompr_string, decompr_size) == 0);
@@ -107,12 +108,13 @@ static int test_gz_big_data(void) {
 
 	size_t mbts, src_size, dst_size;
 	void * src, *compr_buff, *dst;
+	size_t compr_size;
 
 	for (mbts = 1; mbts < 10; mbts++) {
 		src_size = mbts * 1024 * 1024;
 		src = nhr_malloc(src_size); // any data inside
 
-		size_t compr_size = 0;
+		compr_size = 0;
 		compr_buff = nhr_gz_compress(src, src_size, &compr_size, NHR_GZ_METHOD_DEFLATE);
 		assert(compr_buff);
 		assert(compr_size > 0);

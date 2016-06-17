@@ -23,7 +23,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 
-project(libnhr)
+project(libnhr C)
 
 
 set(PACKAGE "libnhr")
@@ -40,15 +40,10 @@ set(VERSION "${CPACK_PACKAGE_VERSION}")
 
 include(CheckLibraryExists)
 include(CheckFunctionExists)
-
 include(CheckIncludeFile)
-include(CheckIncludeFileCXX)
-
 include(CheckTypeSize)
 include(CheckSymbolExists)
-
 include(CheckCCompilerFlag)
-include(CheckCXXCompilerFlag)
 
 # COMMAND LINE OPTIONS
 option(NHR_OPT_SHARED "Build shared lib" ON)
@@ -65,13 +60,6 @@ check_c_compiler_flag("-fPIC" WITH_FPIC_C)
 if(WITH_FPIC_C)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 endif(WITH_FPIC_C)
-
-
-# CXX with -fPIC
-check_cxx_compiler_flag("-fPIC" WITH_FPIC_CXX)
-if(WITH_FPIC_CXX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif(WITH_FPIC_CXX)
 
 
 if(WIN32)
@@ -98,6 +86,8 @@ message("Looking for zlib...")
 find_package(ZLIB)
 if(ZLIB_FOUND)
 	include_directories(${ZLIB_INCLUDE_DIRS})
+	list(APPEND CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIRS})
+	message("zlib not found")
 	message("zlib include dirs: ${ZLIB_INCLUDE_DIRS}")
 	message("zlib libraries: ${ZLIB_LIBRARIES}")
 else()
@@ -105,9 +95,13 @@ else()
 endif()
 
 
-check_include_file("netdb.h" NHR_HAVE_NETDB_H)
+# Check include files
+message(CMAKE_REQUIRED_INCLUDES ": " ${CMAKE_REQUIRED_INCLUDES})
+message(CMAKE_EXTRA_INCLUDE_FILES ": " ${CMAKE_EXTRA_INCLUDE_FILES})
+
 check_include_file("sys/socket.h" NHR_HAVE_SYS_SOCKET_H)
 check_include_file("sys/types.h" NHR_HAVE_SYS_TYPES_H)
+check_include_file("netdb.h" NHR_HAVE_NETDB_H)
 check_include_file("netinet/tcp.h" NHR_HAVE_NETINET_TCP_H)
 check_include_file("unistd.h" NHR_HAVE_UNISTD_H)
 check_include_file("fcntl.h" NHR_HAVE_FCNTL_H)
@@ -115,22 +109,8 @@ check_include_file("pthread.h" NHR_HAVE_PTHREAD_H)
 check_include_file("zlib.h" NHR_HAVE_ZLIB_H)
 
 
-message(CMAKE_EXTRA_INCLUDE_FILES ": " ${CMAKE_EXTRA_INCLUDE_FILES})
-
 # To check the size of a primitive type:
 check_type_size("void*" NHR_SIZEOF_VOIDP_T)
-
-
-# functions
-#check_function_exists(usleep NHR_HAVE_FUNCTION_USLEEP)
-
-#if(NHR_HAVE_PTHREAD_H)
-#check_function_exists(pthread_attr_setscope NHR_HAVE_FUNCTION_PTHREAD_ATTR_SETSCOPE)
-#check_function_exists(pthread_attr_setstacksize NHR_HAVE_FUNCTION_PTHREAD_ATTR_SETSTACKSIZE)
-#check_function_exists(pthread_cancel NHR_HAVE_FUNCTION_PTHREAD_CANCEL)
-#check_function_exists(pthread_setname_np NHR_HAVE_FUNCTION_PTHREAD_SETNAME_NP)
-#check_function_exists(pthread_set_name_np NHR_HAVE_FUNCTION_PTHREAD_SET_NAME_NP)
-#endif()
 
 
 if((NOT NHR_HAVE_PTHREAD_H) AND (NOT WIN32))

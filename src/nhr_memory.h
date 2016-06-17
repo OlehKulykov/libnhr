@@ -27,17 +27,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nhr_common.h"
+#include "../libnhr.h"
 
 // size > 0 => malloc
-void * nhr_malloc(const size_t size);
+NHR_API(void *) nhr_malloc(const size_t size);
 
 // size > 0 => malloc
-void * nhr_malloc_zero(const size_t size);
+NHR_API(void *) nhr_malloc_zero(const size_t size);
 
-void nhr_free(void * mem);
+NHR_API(void) nhr_free(void * mem);
 
-void nhr_free_clean(void ** mem);
+NHR_API(void) nhr_free_clean(void ** mem);
 
-void * nhr_realloc(void * mem, const size_t new_size);
+NHR_API(void *) nhr_realloc(void * mem, const size_t new_size);
 
 #endif

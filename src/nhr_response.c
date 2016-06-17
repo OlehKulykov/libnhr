@@ -30,10 +30,11 @@
 
 #if defined(NHR_GZIP)
 void nhr_response_ungzip(_nhr_response * r) {
-	if (!r->body || r->body_len <= 0) return;
-
 	void * decompressed = NULL;
 	size_t decompressed_size = 0;
+
+	if (!r->body || r->body_len <= 0) return;
+	
 	if (r->content_encoding & NHR_CONTENT_ENCODING_GZIP) {
 		decompressed = nhr_gz_decompress(r->body, r->body_len, &decompressed_size, NHR_GZ_METHOD_GZIP);
 	} else if (r->content_encoding & NHR_CONTENT_ENCODING_DEFLATE) {

@@ -28,11 +28,11 @@ _nhr_map_node * nhr_map_create(void) {
 }
 
 _nhr_map_node * nhr_map_last(_nhr_map_node * map) {
-	_nhr_map_node *cur = map, *last;
-	do {
+	_nhr_map_node *cur = map, *last = map;
+	while (cur) {
 		last = cur;
 		cur = cur->next;
-	} while (cur);
+	}
 	return last;
 }
 

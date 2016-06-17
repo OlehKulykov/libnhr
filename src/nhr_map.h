@@ -40,8 +40,10 @@ typedef struct _nhr_map_node_struct {
 
 	struct _nhr_map_node_struct * next;
 
-	unsigned char value_type;
 	size_t value_size;
+
+	unsigned char value_type;
+	char tag;
 } _nhr_map_node;
 
 _nhr_map_node * nhr_map_create(void);

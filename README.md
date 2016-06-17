@@ -11,6 +11,21 @@
 * Send/receive logic in background thread
 
 
+### TODO/DONE
+
+- [x] **GET**.
+  - [x] Send url encoded request, default.
+- [ ] **POST**
+  - [x] Send url encoded request, default.
+  - [x] Send deflate compressed url encoded request.
+  - [x] Send gzip compressed url encoded request.
+  - [ ] Send file/data.
+- [x] **Responce**
+  - [x] Process responce with chunked transfer encoding.
+  - [x] Process deflate compressed content encoding.
+  - [x] Process gzip compressed content encoding.
+
+
 ### Build
 
 All features are **enabled by default**. But it's possible to **disable**. See table below:

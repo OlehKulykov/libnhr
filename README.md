@@ -5,7 +5,6 @@
 
 
 ### Features
-* No additional dependecies
 * Single header library interface ```libnhr.h``` with public methods
 * Thread safe
 * Send/receive logic in background thread

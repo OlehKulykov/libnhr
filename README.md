@@ -30,13 +30,14 @@
 
 All features are **enabled by default**. But it's possible to **disable**. See table below:
 
-| Preprocessor   | CMake (Boolean value) | Description                                                                                  |
-|----------------|-----------------------|----------------------------------------------------------------------------------------------|
-| NHR_NO_GET     | NHR_OPT_NO_GET        | Send GET requests.                                                                           |
-| NHR_NO_POST    | NHR_OPT_NO_POST       | Send POST requests.                                                                          |
-| NHR_NO_CHUNKED | NHR_OPT_NO_CHUNKED    | Process received responce with chunked transfer encoding, e.g. "Transfer-Encoding: chunked". |
-| NHR_NO_GZIP    | NHR_OPT_NO_GZIP       | Post gzip or deflate compressed url encoded parameters.                                      |
-|                |                       | Process gzip or deflate compressed responce body.                                            |
+| Preprocessor       | CMake (Boolean value)     | Description                                                                                  |
+|--------------------|---------------------------|----------------------------------------------------------------------------------------------|
+| NHR_NO_GET         | NHR_OPT_NO_GET            | Send GET requests.                                                                           |
+| NHR_NO_POST        | NHR_OPT_NO_POST           | Send POST requests.                                                                          |
+| NHR_NO_RECV_CHUNKS | NHR_OPT_NO_RECV_CHUNKS    | Process received responce with chunked transfer encoding, e.g. "Transfer-Encoding: chunked". |
+| NHR_NO_SEND_CHUNKS | NHR_OPT_NO_SEND_CHUNKS    | Send big request as chunks.                                                                  |
+| NHR_NO_GZIP        | NHR_OPT_NO_GZIP           | Post gzip or deflate compressed url encoded parameters.                                      |
+|                    |                           | Process gzip or deflate compressed responce body.                                            |
 
 
 #### Build with CMake

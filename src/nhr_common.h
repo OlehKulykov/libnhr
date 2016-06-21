@@ -74,6 +74,20 @@
 #endif
 
 
+/* check debug */
+#if defined(DEBUG) || defined(_DEBUG)
+#define NHR_DEBUG 1
+#endif
+
+
+/* check not debug, release */
+#if defined(NDEBUG) || defined(_NDEBUG) || defined(RELEASE) || defined(_RELEASE)
+#if defined(NHR_DEBUG)
+#undef NHR_DEBUG
+#endif
+#endif
+
+
 // Settings
 
 #if defined(NHR_HAVE_ZLIB_H) && !defined(NHR_NO_GZIP)

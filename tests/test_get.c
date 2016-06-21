@@ -197,7 +197,7 @@ int test_get(void) {
 
 	ret += test_get_number(4); // status code 418
 
-#if !defined(NHR_NO_CHUNKED)
+#if !defined(NHR_NO_RECV_CHUNKS)
 	ret += test_get_number(5); // chunked, total 1024, chunk_size 375, delay 1
 #endif
 

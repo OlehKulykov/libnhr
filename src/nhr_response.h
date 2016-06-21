@@ -38,7 +38,7 @@ typedef struct _nhr_response_struct {
 	unsigned char transfer_encoding;
 	unsigned char content_encoding;
 
-#if !defined(NHR_NO_CHUNKED)
+#if !defined(NHR_NO_RECV_CHUNKS)
 	nhr_bool is_all_chunks_processed;
 #endif
 

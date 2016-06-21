@@ -29,8 +29,8 @@
 
 
 #define NHR_VERSION_MAJOR 0
-#define NHR_VERSION_MINOR 3
-#define NHR_VERSION_PATCH 4
+#define NHR_VERSION_MINOR 4
+#define NHR_VERSION_PATCH 0
 
 
 // check windows

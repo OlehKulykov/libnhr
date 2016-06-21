@@ -18,6 +18,7 @@
   - [x] Send url encoded request, default.
   - [x] Send deflate compressed url encoded request.
   - [x] Send gzip compressed url encoded request.
+  - [ ] Send chuncked request body.
   - [ ] Send file/data.
 - [x] **Responce**
   - [x] Process responce with chunked transfer encoding.

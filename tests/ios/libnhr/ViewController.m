@@ -29,21 +29,24 @@ static void onResponse(nhr_request request, nhr_response responce) {
 	}
 }
 
-- (void)viewDidLoad
-{
-	[super viewDidLoad];
-	return;
+- (IBAction) onDo:(id) sender {
 	nhr_request request = nhr_request_create();
+
+//	NSString * str = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://httpbin.org/get"]
+//											  encoding:NSUTF8StringEncoding
+//												 error:nil];
+//	NSLog(@"%@", str);
 
 //	nhr_request_set_url(request, "http", "api.ipify.org", "/", 80);
 //	nhr_request_set_url(request, "http", "isithackday.com", "/arrpi.php", 80);
-	nhr_request_set_url(request, "http", "www.tutorialspoint.com", "/http/http_header_fields.htm", 80);
+//	nhr_request_set_url(request, "http", "www.tutorialspoint.com", "/http/http_header_fields.htm", 80);
+	nhr_request_set_url(request, "http", "httpbin.org", "/get", 80);
 //	nhr_request_set_url(request, "http", "httpbin.org", "/deflate", 80);
 //	nhr_request_set_url(request, "http", "httpbin.org", "/gzip", 80);
 //	nhr_request_set_url(request, "http", "requestb.in", "/1agvbet1", 80);
 
-//	nhr_request_set_method(request, nhr_method_GET);
-	nhr_request_set_method(request, nhr_method_POST);
+	nhr_request_set_method(request, nhr_method_GET);
+//	nhr_request_set_method(request, nhr_method_POST);
 
 	nhr_request_add_header_field(request, "Cache-control", "no-cache");
 	nhr_request_add_header_field(request, "User-Agent", "iOS");
@@ -51,19 +54,23 @@ static void onResponse(nhr_request request, nhr_response responce) {
 	nhr_request_add_header_field(request, "Accept-Charset", "utf-8");
 //	nhr_request_add_header_field(request, "Accept-Encoding", k_nhr_gzip_deflate);
 //	nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_deflate);
-	nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_gzip);
+//	nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_gzip);
 
-	nhr_request_add_parameter(request, "format", "json");
-	nhr_request_add_parameter(request, "text", "Hello%20world");
+//	nhr_request_add_parameter(request, "format", "json");
+//	nhr_request_add_parameter(request, "text", "Hello%20world");
 
 	nhr_request_set_on_recvd_responce(request, &onResponse);
 	nhr_request_set_on_error(request, &onError);
 	nhr_request_send(request);
 }
 
+- (void)viewDidLoad {
+	[super viewDidLoad];
+}
+
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
-	// Dispose of any resources that can be recreated.
+// Dispose of any resources that can be recreated.
 }
 
 @end

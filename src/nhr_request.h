@@ -36,10 +36,10 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #else
-#include <netdb.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/tcp.h>
+#include <netdb.h>
 #include <fcntl.h>
 #include <unistd.h>
 #endif

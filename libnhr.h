@@ -227,6 +227,7 @@ typedef void (*nhr_on_request_error)(nhr_request request, nhr_error_code error_c
 
 /**
  @brief Create new request.
+ @note Default timeout interval is `30` seconds.
  @return Request handler or NULL on error.
  */
 NHR_API(nhr_request) nhr_request_create(void);
@@ -234,6 +235,7 @@ NHR_API(nhr_request) nhr_request_create(void);
 
 /**
  @brief Set request connect URL.
+ @note This method is required, before send the request via `nhr_request_send`.
  @param request The request object. If request is `NULL` do nothing.
  @param scheme Connect URL scheme, "http"
  @param scheme Connect URL host, "api.ipify.org"
@@ -267,6 +269,7 @@ NHR_API(nhr_error_code) nhr_request_get_error_code(nhr_request request);
 
 /**
  @brief Set request method.
+ @note This method is required, before send the request via `nhr_request_send`.
  @param request The request object. If request is `NULL` do nothing.
  */
 NHR_API(void) nhr_request_set_method(nhr_request request, nhr_method method);
@@ -274,6 +277,7 @@ NHR_API(void) nhr_request_set_method(nhr_request request, nhr_method method);
 
 /**
  @brief Set on request received responce callback.
+ @note This method is required, before send the request via `nhr_request_send`.
  @warning After trigering callback, request object will be automaticaly released.
  It's recommened set to `NULL` request variable inside this callback.
  Called from non `main` thread.
@@ -285,6 +289,7 @@ NHR_API(void) nhr_request_set_on_recvd_responce(nhr_request request, nhr_on_requ
 
 /**
  @brief Set on request error ocupared callback.
+ @note This method is required, before send the request via `nhr_request_send`.
  @warning After trigering callback, request object will be automaticaly released.
  It's recommened set to `NULL` request variable inside this callback.
  Called from non `main` thread.
@@ -421,6 +426,8 @@ NHR_API(void) nhr_mutex_delete(nhr_mutex mutex);
 
 /**
  @brief Create thread object that start immidiatelly.
+ @param thread_function Thre thread function.
+ @param user_object Any object pointer that provide to the thread function.
  */
 NHR_API(nhr_thread) nhr_thread_create(nhr_thread_funct thread_function, void * user_object);
 

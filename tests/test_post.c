@@ -65,6 +65,12 @@ static void test_post_on_response(nhr_request request, nhr_response responce) {
 		return;
 	}
 
+	if (nhr_response_get_status_code(responce) != 200) {
+		test_post_error = 15;
+		test_post_working = nhr_false;
+		return;
+	}
+
 	if (body && body_len) {
 		test_post_error = test_post_parse_body(body, test_number);
 	} else {

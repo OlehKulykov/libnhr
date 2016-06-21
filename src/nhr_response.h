@@ -28,15 +28,15 @@
 #include "nhr_common.h"
 
 typedef struct _nhr_response_struct {
+	void * body;
+	size_t body_len; // stored
+	size_t body_size; // allocated
+
 	size_t content_length;
 
 	unsigned short status_code;
 	unsigned char transfer_encoding;
 	unsigned char content_encoding;
-
-	void * body;
-	size_t body_len; // stored
-	size_t body_size; // allocated
 
 #if !defined(NHR_NO_CHUNKED)
 	nhr_bool is_all_chunks_processed;

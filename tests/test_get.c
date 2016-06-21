@@ -99,6 +99,12 @@ static void test_get_on_response(nhr_request request, nhr_response responce) {
 		return;
 	}
 
+	if (nhr_response_get_status_code(responce) != 200) {
+		test_get_error = 15;
+		test_get_working = nhr_false;
+		return;
+	}
+
 	if (test_number == 5) {
 		printf("\nGet body_len: %u, need 1024", body_len);
 		test_get_error = body_len == 1024 ? 0 : 15;

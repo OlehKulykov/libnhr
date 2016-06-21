@@ -101,11 +101,11 @@ message(CMAKE_EXTRA_INCLUDE_FILES ": " ${CMAKE_EXTRA_INCLUDE_FILES})
 
 check_include_file("sys/socket.h" NHR_HAVE_SYS_SOCKET_H)
 check_include_file("sys/types.h" NHR_HAVE_SYS_TYPES_H)
-check_include_file("netdb.h" NHR_HAVE_NETDB_H)
 check_include_file("netinet/tcp.h" NHR_HAVE_NETINET_TCP_H)
-check_include_file("unistd.h" NHR_HAVE_UNISTD_H)
+check_include_file("netdb.h" NHR_HAVE_NETDB_H)
 check_include_file("fcntl.h" NHR_HAVE_FCNTL_H)
 check_include_file("pthread.h" NHR_HAVE_PTHREAD_H)
+check_include_file("unistd.h" NHR_HAVE_UNISTD_H)
 check_include_file("zlib.h" NHR_HAVE_ZLIB_H)
 
 

@@ -42,8 +42,12 @@ environment:
     CMAKE_ARGS: -G"Visual Studio 14" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_GET:BOOL=ON -DNHR_OPT_NO_POST:BOOL=ON
 
   - platform: x86
-    nhr_env_matrix: no_chunked
+    nhr_env_matrix: no_recv_chunks
     CMAKE_ARGS: -G"Visual Studio 14" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_RECV_CHUNKS:BOOL=ON
+    
+  - platform: x86
+    nhr_env_matrix: no_send_chunks
+    CMAKE_ARGS: -G"Visual Studio 14" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_SEND_CHUNKS:BOOL=ON
 
   - platform: x86
     nhr_env_matrix: no_gzip
@@ -66,8 +70,12 @@ environment:
     CMAKE_ARGS: -G"Visual Studio 14 Win64" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_GET:BOOL=ON -DNHR_OPT_NO_POST:BOOL=ON
 
   - platform: x64
-    nhr_env_matrix: no_chunked
+    nhr_env_matrix: no_recv_chunks
     CMAKE_ARGS: -G"Visual Studio 14 Win64" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_RECV_CHUNKS:BOOL=ON
+    
+  - platform: x64
+    nhr_env_matrix: no_send_chunks
+    CMAKE_ARGS: -G"Visual Studio 14 Win64" -DNHR_OPT_APPVEYOR_CI=ON -DCMAKE_INSTALL_PREFIX:PATH=c:\dev\libnhr\libnhr-install-win-%PLATFORM% -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_SEND_CHUNKS:BOOL=ON
 
   - platform: x64
     nhr_env_matrix: no_gzip

@@ -6,7 +6,8 @@ env:
     - nhr_env_matrix=no_get CMAKE_ARGS="-DNHR_OPT_NO_GET:BOOL=ON"
     - nhr_env_matrix=no_post CMAKE_ARGS="-DNHR_OPT_NO_POST:BOOL=ON"
     - nhr_env_matrix=no_get_post CMAKE_ARGS="-DNHR_OPT_NO_GET:BOOL=ON -DNHR_OPT_NO_POST:BOOL=ON"
-    - nhr_env_matrix=no_chunked CMAKE_ARGS="-DNHR_OPT_NO_RECV_CHUNKS:BOOL=ON"
+    - nhr_env_matrix=no_recv_chunks CMAKE_ARGS="-DNHR_OPT_NO_RECV_CHUNKS:BOOL=ON"
+    - nhr_env_matrix=no_send_chunks CMAKE_ARGS="-DNHR_OPT_NO_SEND_CHUNKS:BOOL=ON"
     - nhr_env_matrix=no_gzip CMAKE_ARGS=-DNHR_OPT_NO_GZIP:BOOL=ON"
 
 os:

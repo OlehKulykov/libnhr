@@ -95,7 +95,7 @@ typedef struct _nhr_request_struct {
 #endif
 
 #if !defined(NHR_NO_SEND_CHUNKS)
-	
+
 #endif
 } _nhr_request;
 

@@ -1,14 +1,17 @@
 language: c
 
-env:
-  matrix:
-    - nhr_env_matrix=default
-    - nhr_env_matrix=no_get CMAKE_ARGS="-DNHR_OPT_NO_GET:BOOL=ON"
-    - nhr_env_matrix=no_post CMAKE_ARGS="-DNHR_OPT_NO_POST:BOOL=ON"
-    - nhr_env_matrix=no_get_post CMAKE_ARGS="-DNHR_OPT_NO_GET:BOOL=ON -DNHR_OPT_NO_POST:BOOL=ON"
-    - nhr_env_matrix=no_recv_chunks CMAKE_ARGS="-DNHR_OPT_NO_RECV_CHUNKS:BOOL=ON"
-    - nhr_env_matrix=no_send_chunks CMAKE_ARGS="-DNHR_OPT_NO_SEND_CHUNKS:BOOL=ON"
-    - nhr_env_matrix=no_gzip CMAKE_ARGS=-DNHR_OPT_NO_GZIP:BOOL=ON"
+# Big matrix is to heavy for travis, 
+# so use script section
+
+#env:
+#  matrix:
+#    - nhr_env_matrix=default
+#    - nhr_env_matrix=no_get CMAKE_ARGS="-DNHR_OPT_NO_GET:BOOL=ON"
+#    - nhr_env_matrix=no_post CMAKE_ARGS="-DNHR_OPT_NO_POST:BOOL=ON"
+#    - nhr_env_matrix=no_get_post CMAKE_ARGS="-DNHR_OPT_NO_GET:BOOL=ON -DNHR_OPT_NO_POST:BOOL=ON"
+#    - nhr_env_matrix=no_recv_chunks CMAKE_ARGS="-DNHR_OPT_NO_RECV_CHUNKS:BOOL=ON"
+#    - nhr_env_matrix=no_send_chunks CMAKE_ARGS="-DNHR_OPT_NO_SEND_CHUNKS:BOOL=ON"
+#    - nhr_env_matrix=no_gzip CMAKE_ARGS=-DNHR_OPT_NO_GZIP:BOOL=ON"
 
 os:
   - linux
@@ -20,14 +23,41 @@ compiler:
 
 before_script:
   - mkdir build
-  - cd build
-  - cmake -DCMAKE_INSTALL_PREFIX:PATH=~/libnhr-install-dir -DCMAKE_BUILD_TYPE=Release $CMAKE_ARGS ..
-  - cd ..
+#  - cd build
+#  - cmake -DCMAKE_INSTALL_PREFIX:PATH=~/libnhr-install-dir -DCMAKE_BUILD_TYPE=Release $CMAKE_ARGS ..
+#  - cd ..
 
 script:
   - cd build
+# no_get
+  - rm -rf *
+  - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_GET:BOOL=ON ..
   - make
-  - make test
+#  no_post
+  - rm -rf *
+  - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_POST:BOOL=ON ..
+  - make
+# no_get_post
+  - rm -rf *
+  - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_GET:BOOL=ON -DNHR_OPT_NO_POST:BOOL=ON ..
+  - make
+# no_recv_chunks
+  - rm -rf *
+  - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_RECV_CHUNKS:BOOL=ON ..
+  - make
+# no_send_chunks
+  - rm -rf *
+  - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_SEND_CHUNKS:BOOL=ON ..
+  - make
+# no_gzip
+  - rm -rf *
+  - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_GZIP:BOOL=ON ..
+  - make
+# default + tests
+  - rm -rf *
+  - cmake -DCMAKE_INSTALL_PREFIX:PATH=~/libnhr-install-dir -DCMAKE_BUILD_TYPE=Release ..
+  - make
+  - make test 
   - make install
 
 branches:

@@ -184,7 +184,7 @@ typedef enum _nhr_method {
 
 
 /**
- @brief Callback type on socket receive binary frame.
+ @brief Callback type on socket error ocupared.
  @warning After trigering callback, request object will be automaticaly released.
  It's recommened set to `NULL` request variable in your logic.
  @param request Request object.

@@ -41,11 +41,17 @@ char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size) {
 	buff_size += 1 << 8; // extra size for formatting strings
 	buff = (char *)nhr_malloc(buff_size);
 
-	if (parameters) writed = nhr_sprintf(buff, buff_size, "%s %s?%s HTTP/%s\r\n", k_nhr_GET, r->path, parameters, k_nhr_request_http_ver);
-	else writed = nhr_sprintf(buff, buff_size, "%s %s HTTP/%s\r\n", k_nhr_GET, r->path, k_nhr_request_http_ver);
+	if (parameters) {
+		writed = nhr_sprintf(buff, buff_size, "%s %s?%s HTTP/%s\r\n", k_nhr_GET, r->path, parameters, k_nhr_request_http_ver);
+	} else {
+		writed = nhr_sprintf(buff, buff_size, "%s %s HTTP/%s\r\n", k_nhr_GET, r->path, k_nhr_request_http_ver);
+	}
 
-	if (r->port == 80) writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
-	else writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
+	if (r->port == 80) {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
+	} else {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
+	}
 
 	if (headers) {
 		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", headers);

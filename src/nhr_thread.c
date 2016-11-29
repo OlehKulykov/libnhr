@@ -61,15 +61,24 @@ static void nhr_threads_joiner_clean(void) { // private
 	void * r = NULL;
 #endif
 
-	if (!t) return;
+	if (!t) {
+		return;
+	}
+	
 	_threads_joiner->thread = NULL;
 
 #if defined(NHR_OS_WINDOWS)
 	do {
-		if (GetExitCodeThread(t->thread, &dwExitCode) == 0) break; // fail
+		if (GetExitCodeThread(t->thread, &dwExitCode) == 0) {
+			break; // fail
+		}
 	} while (dwExitCode == STILL_ACTIVE);
-	if (dwExitCode == STILL_ACTIVE) TerminateThread(t->thread, 0);
-	if (CloseHandle(t->thread)) t->thread = NULL;
+	if (dwExitCode == STILL_ACTIVE) {
+		TerminateThread(t->thread, 0);
+	}
+	if (CloseHandle(t->thread)) {
+		t->thread = NULL;
+	}
 #else
 	pthread_join(t->thread, &r);
 	assert(r == NULL);
@@ -85,17 +94,18 @@ static void nhr_threads_joiner_add(_nhr_thread * thread) { // public
 }
 
 static void nhr_threads_joiner_create_ifneed(void) {
-	if (_threads_joiner) return;
+	if (_threads_joiner) {
+		return;
+	}
 	_threads_joiner = (_nhr_threads_joiner *)nhr_malloc_zero(sizeof(_nhr_threads_joiner));
 	_threads_joiner->mutex = nhr_mutex_create_recursive();
 }
 
 #if defined(NHR_OS_WINDOWS)
-static DWORD WINAPI nhr_thread_func_priv(LPVOID some_pointer)
+static DWORD WINAPI nhr_thread_func_priv(LPVOID some_pointer) {
 #else
-static void * nhr_thread_func_priv(void * some_pointer)
+static void * nhr_thread_func_priv(void * some_pointer) {
 #endif
-{
 	_nhr_thread * t = (_nhr_thread *)some_pointer;
 	t->thread_function(t->user_object);
 	nhr_threads_joiner_add(t);
@@ -114,7 +124,9 @@ nhr_thread nhr_thread_create(nhr_thread_funct thread_function, void * user_objec
 	pthread_attr_t attr;
 #endif
 
-	if (!thread_function) return NULL;
+	if (!thread_function) {
+		return NULL;
+	}
 	nhr_threads_joiner_create_ifneed();
 	t = (_nhr_thread *)nhr_malloc_zero(sizeof(_nhr_thread));
 	t->user_object = user_object;
@@ -123,12 +135,9 @@ nhr_thread nhr_thread_create(nhr_thread_funct thread_function, void * user_objec
 	t->thread = CreateThread(NULL, 0, &nhr_thread_func_priv, (LPVOID)t, 0, NULL);
 	assert(t->thread);
 #else
-	if (pthread_attr_init(&attr) == 0)
-	{
-		if (pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM) == 0)
-		{
-			if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE) == 0)
-			{
+	if (pthread_attr_init(&attr) == 0) {
+		if (pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM) == 0) {
+			if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE) == 0) {
 				res = pthread_create(&t->thread, &attr, &nhr_thread_func_priv, (void *)t);
 			}
 		}
@@ -157,8 +166,9 @@ nhr_mutex nhr_mutex_create_recursive(void) {
 	int res = -1;
 	pthread_mutexattr_t attr;
 	if (pthread_mutexattr_init(&attr) == 0) {
-		if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) == 0)
+		if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) == 0) {
 			res = pthread_mutex_init(mutex, &attr);
+		}
 		pthread_mutexattr_destroy(&attr);
 	}
 	assert(res == 0);
@@ -167,19 +177,23 @@ nhr_mutex nhr_mutex_create_recursive(void) {
 }
 
 void nhr_mutex_lock(nhr_mutex mutex) {
+	if (mutex)  {
 #if defined(NHR_OS_WINDOWS)
-	if (mutex) EnterCriticalSection((LPCRITICAL_SECTION)mutex);
+		EnterCriticalSection((LPCRITICAL_SECTION)mutex);
 #else
-	if (mutex) pthread_mutex_lock((pthread_mutex_t *)mutex);
+		pthread_mutex_lock((pthread_mutex_t *)mutex);
 #endif
+	}
 }
 
 void nhr_mutex_unlock(nhr_mutex mutex) {
+	if (mutex) {
 #if defined(NHR_OS_WINDOWS)
-	if (mutex) LeaveCriticalSection((LPCRITICAL_SECTION)mutex);
+		LeaveCriticalSection((LPCRITICAL_SECTION)mutex);
 #else
-	if (mutex) pthread_mutex_unlock((pthread_mutex_t *)mutex);
+		pthread_mutex_unlock((pthread_mutex_t *)mutex);
 #endif
+	}
 }
 
 void nhr_mutex_delete(nhr_mutex mutex) {

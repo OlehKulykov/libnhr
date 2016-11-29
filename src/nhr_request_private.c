@@ -49,11 +49,15 @@ static void nhr_request_work_th_func(void * user_object) {
 		switch (nhr_request_get_command(r)) {
 			case NHR_COMMAND_INFORM_RESPONCE:
 				nhr_request_set_command(r,NHR_COMMAND_END);
-				if (r->on_recvd_responce) r->on_recvd_responce(r, r->responce);
+				if (r->on_recvd_responce) {
+					r->on_recvd_responce(r, r->responce);
+				}
 				break;
 			case NHR_COMMAND_INFORM_ERROR:
 				nhr_request_set_command(r, NHR_COMMAND_END);
-				if (r->on_error) r->on_error(r, r->error_code);
+				if (r->on_error) {
+					r->on_error(r, r->error_code);
+				}
 				break;
 			default: break;
 		}
@@ -82,8 +86,11 @@ nhr_bool nhr_request_recv(_nhr_request * r) {
 #endif
 		if (len > 0) {
 			r->last_time = time(NULL);
-			if (r->responce) nhr_response_append(r->responce, buff, len);
-			else r->responce = nhr_response_create(buff, len);
+			if (r->responce) {
+				nhr_response_append(r->responce, buff, len);
+			} else {
+				r->responce = nhr_response_create(buff, len);
+			}
 		}
 	} while (len > 0);
 
@@ -98,8 +105,12 @@ void nhr_request_wait_raw_responce(_nhr_request * r) {
 	nhr_bool is_finished = nhr_false;
 	if (nhr_request_recv(r)) {
 		is_finished = r->responce ? r->responce->is_finished : nhr_false;
-		if (is_finished) nhr_request_set_command(r, NHR_COMMAND_INFORM_RESPONCE);
-		if (!nhr_request_check_timeout(r)) return; // error already exists
+		if (is_finished) {
+			nhr_request_set_command(r, NHR_COMMAND_INFORM_RESPONCE);
+		}
+		if (!nhr_request_check_timeout(r)) {
+			return; // error already exists
+		}
 	} else if (r) {
 		nhr_request_set_command(r, NHR_COMMAND_INFORM_RESPONCE);
 	} else {
@@ -154,8 +165,12 @@ nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size
 	error_number = errno;
 #endif
 
-	if (sended > 0) return nhr_true;
-	if (error_number > 0) return nhr_false;
+	if (sended > 0) {
+		return nhr_true;
+	}
+	if (error_number > 0) {
+		return nhr_false;
+	}
 	return nhr_true;
 }
 
@@ -182,10 +197,16 @@ struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r) {
 		hints.ai_socktype = SOCK_STREAM;
 
 		ret = getaddrinfo(r->host, portstr, &hints, &result);
-		if (ret == 0 && result) return result;
+		if (ret == 0 && result) {
+			return result;
+		}
 
-		if (ret != 0) last_ret = ret;
-		if (result) freeaddrinfo(result);
+		if (ret != 0) {
+			last_ret = ret;
+		}
+		if (result) {
+			freeaddrinfo(result);
+		}
 		nhr_thread_sleep(NHR_CONNECT_RETRY_DELAY);
 	}
 
@@ -209,8 +230,12 @@ void nhr_request_connect_to_host(_nhr_request * r) {
 
 	r->last_time = time(NULL);
 	result = nhr_request_connect_getaddr_info(r);
-	if (!nhr_request_check_timeout(r)) return; // error already exists
-	if (!result) return; // error already exists
+	if (!nhr_request_check_timeout(r)) {
+		return; // error already exists
+	}
+	if (!result) {
+		return; // error already exists
+	}
 
 	while ((++retry_number < NHR_CONNECT_ATTEMPS) && (sock == NHR_INVALID_SOCKET)) {
 		for (p = result; p != NULL; p = p->ai_next) {
@@ -232,9 +257,13 @@ void nhr_request_connect_to_host(_nhr_request * r) {
 				}
 				NHR_SOCK_CLOSE(sock);
 			}
-			if (!nhr_request_check_timeout(r)) return; // error already exists
+			if (!nhr_request_check_timeout(r)) {
+				return; // error already exists
+			}
 		}
-		if (sock == NHR_INVALID_SOCKET) nhr_thread_sleep(NHR_CONNECT_RETRY_DELAY);
+		if (sock == NHR_INVALID_SOCKET) {
+			nhr_thread_sleep(NHR_CONNECT_RETRY_DELAY);
+		}
 	}
 
 	freeaddrinfo(result);
@@ -293,7 +322,9 @@ void nhr_request_set_option(nhr_socket_t s, int option, int value) {
 }
 
 nhr_bool nhr_request_check_timeout(_nhr_request * r) {
-	if (time(NULL) - r->last_time < r->timeout) return nhr_true;
+	if (time(NULL) - r->last_time < r->timeout) {
+		return nhr_true;
+	}
 	r->error_code = nhr_error_code_timeout;
 	nhr_request_set_command(r, NHR_COMMAND_INFORM_ERROR);
 	return nhr_false;

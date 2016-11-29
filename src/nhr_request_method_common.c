@@ -41,7 +41,9 @@ char * nhr_request_http_headers(_nhr_map_node * map, size_t * length) {
 	_nhr_map_node * cur = map;
 	char * buff = NULL;
 
-	if (buff_size == 0) return NULL;
+	if (buff_size == 0) {
+		return NULL;
+	}
 	buff = (char *)nhr_malloc(buff_size); // null terminated included
 	
 	while (cur) {
@@ -60,7 +62,9 @@ char * nhr_request_url_encoded_parameters(_nhr_map_node * map, size_t * length) 
 	_nhr_map_node * cur = map;
 	char * buff = NULL;
 
-	if (buff_size == 0) return NULL;
+	if (buff_size == 0) {
+		return NULL;
+	}
 	buff = (char *)nhr_malloc(buff_size); // null terminated included
 	
 	while (cur) {

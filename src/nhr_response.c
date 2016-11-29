@@ -33,7 +33,9 @@ void nhr_response_ungzip(_nhr_response * r) {
 	void * decompressed = NULL;
 	size_t decompressed_size = 0;
 
-	if (!r->body || r->body_len <= 0) return;
+	if (!r->body || r->body_len <= 0) {
+		return;
+	}
 	
 	if (r->content_encoding & NHR_CONTENT_ENCODING_GZIP) {
 		decompressed = nhr_gz_decompress(r->body, r->body_len, &decompressed_size, NHR_GZ_METHOD_GZIP);
@@ -59,10 +61,14 @@ void nhr_response_fix_body_len(_nhr_response * r) {
 
 char * nhr_response_find_http_field_value(char * received, const char * field) {
 	char * sub = strstr(received, field);
-	if (!sub) return NULL;
+	if (!sub) {
+		return NULL;
+	}
 
 	sub += strlen(field);
-	while (!isalnum(*sub)) sub++;
+	while (!isalnum(*sub)) {
+		sub++;
+	}
 
 	return sub;
 }
@@ -73,8 +79,9 @@ void nhr_response_read_chunks(_nhr_response * r, char * str) {
 	while ((nhr_sscanf(str, "%X", &chunk_len) == 1) || (nhr_sscanf(str, "%x", &chunk_len) == 1)) {
 		while (isxdigit(*str)) str++;
 		if (chunk_len == 0) {
-			if (strncmp(str, k_nhr_double_CRLF, k_nhr_double_CRLF_length) == 0)
+			if (strncmp(str, k_nhr_double_CRLF, k_nhr_double_CRLF_length) == 0) {
 				r->is_all_chunks_processed = nhr_true;
+			}
 			break;
 		}
 		str += k_nhr_CRLF_length;
@@ -90,12 +97,16 @@ void nhr_response_parse_body(_nhr_response * r, char * received, const size_t re
 #if defined(NHR_DEBUG_LOG)
 	size_t log_index = 0;
 	printf("\n----[ RESPONCE HEADER ]----\n");
-	for (log_index = 0; log_index < received_len; log_index++) printf("%c", received[log_index]);
+	for (log_index = 0; log_index < received_len; log_index++) {
+		printf("%c", received[log_index]);
+	}
 	printf("\n---------------------------\n");
 #endif
 	size_t skiped = 0;
 	char * sub = strstr(received, k_nhr_double_CRLF);
-	if (!sub) return;
+	if (!sub) {
+		return;
+	}
 
 	skiped = sub - received;
 	if (skiped > k_nhr_double_CRLF_length) {
@@ -119,17 +130,25 @@ void nhr_response_parse_body(_nhr_response * r, char * received, const size_t re
 void nhr_response_parse_status_code(_nhr_response * r, char * received) {
 	int code = 0;
 	char * value = strstr(received, " ");
-	if (!value) return;
+	if (!value) {
+		return;
+	}
 
-	if (nhr_sscanf(value, " %i", &code) == 1 && code > 0) r->status_code = code;
+	if (nhr_sscanf(value, " %i", &code) == 1 && code > 0) {
+		r->status_code = code;
+	}
 }
 
 void nhr_response_parse_content_length(_nhr_response * r, char * received) {
 	unsigned long length = 0;
 	char * value = nhr_response_find_http_field_value(received, k_nhr_content_length);
-	if (!value) return;
+	if (!value) {
+		return;
+	}
 
-	if (nhr_sscanf(value, "%lu", &length) == 1 && length > 0) r->content_length = (size_t)length;
+	if (nhr_sscanf(value, "%lu", &length) == 1 && length > 0) {
+		r->content_length = (size_t)length;
+	}
 }
 
 void nhr_response_log_unprocessed(const char * key, const char * value) {
@@ -138,7 +157,9 @@ void nhr_response_log_unprocessed(const char * key, const char * value) {
 
 void nhr_response_parse_transfer_encoding(_nhr_response * r, char * received) {
 	char * encoding = nhr_response_find_http_field_value(received, k_nhr_transfer_encoding);
-	if (!encoding) return;
+	if (!encoding) {
+		return;
+	}
 
 	if (strstr(encoding, k_nhr_chunked)) {
 #if defined(NHR_NO_RECV_CHUNKS)
@@ -151,7 +172,9 @@ void nhr_response_parse_transfer_encoding(_nhr_response * r, char * received) {
 
 void nhr_response_parse_content_encoding(_nhr_response * r, char * received) {
 	char * encoding = nhr_response_find_http_field_value(received, k_nhr_content_encoding);
-	if (!encoding) return;
+	if (!encoding) {
+		return;
+	}
 
 	if (strstr(encoding, k_nhr_gzip)) {
 #if defined(NHR_GZIP)
@@ -171,13 +194,17 @@ void nhr_response_parse_content_encoding(_nhr_response * r, char * received) {
 
 nhr_bool nhr_response_is_finished_receiving(_nhr_response * r) {
 #if !defined(NHR_NO_RECV_CHUNKS)
-	if (r->transfer_encoding & NHR_TRANSFER_ENCODING_CHUNKED) return r->is_all_chunks_processed;
+	if (r->transfer_encoding & NHR_TRANSFER_ENCODING_CHUNKED) {
+		return r->is_all_chunks_processed;
+	}
 #endif
 	return (r->content_length > 0) ? r->content_length == r->body_len : nhr_false;
 }
 
 void nhr_response_check_is_finished(_nhr_response * r) {
-	if (!nhr_response_is_finished_receiving(r)) return;
+	if (!nhr_response_is_finished_receiving(r)) {
+		return;
+	}
 
 	if (r->content_encoding & NHR_CONTENT_ENCODING_GZIP ||
 		r->content_encoding & NHR_CONTENT_ENCODING_DEFLATE) {

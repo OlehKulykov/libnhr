@@ -37,7 +37,7 @@
 #define NHR_GZ_HEADER_FOOTER_SIZE 18
 #define NHR_GZ_WINDOWS_BITS -15
 
-void nhr_gz_write_header(Bytef * buff) {
+static void nhr_gz_write_header(Bytef * buff) {
 	// used `uLong` as unsigned 32 bit integer
 	const uLong curr_time = (uLong)time(NULL);
 
@@ -54,14 +54,16 @@ void nhr_gz_write_header(Bytef * buff) {
 	*buff = 0; //0xff; // OS type: unknown
 }
 
-void * nhr_gz_write_footer(Bytef * buff,
-						   const size_t buff_size,
-						   const size_t writed,
-						   const void * src_buff,
-						   const size_t src_size) {
+static void * nhr_gz_write_footer(Bytef * buff,
+								  const size_t buff_size,
+								  const size_t writed,
+								  const void * src_buff,
+								  const size_t src_size) {
 	// used `uLong` as unsigned 32 bit integer
 	uLong * footer = NULL;
-	if (buff_size - writed < NHR_GZ_FOOTER_SIZE) buff = (Bytef *)nhr_realloc(buff, buff_size + NHR_GZ_FOOTER_SIZE);
+	if (buff_size - writed < NHR_GZ_FOOTER_SIZE) {
+		buff = (Bytef *)nhr_realloc(buff, buff_size + NHR_GZ_FOOTER_SIZE);
+	}
 
 	footer = (uLong *)(buff + writed);
 	*footer++ = crc32(crc32(0L, Z_NULL, 0), src_buff, (uInt)src_size);
@@ -78,13 +80,20 @@ void * nhr_gz_compress(const void * buff,
 	size_t writed = 0, out_size = NHR_GZ_CHUNK_SIZE;
 	int result = Z_STREAM_ERROR;
 	
-	if (!buff || buff_size == 0) return NULL;
+	if (!buff || buff_size == 0) {
+		return NULL;
+	}
 	memset(&zip, 0, sizeof(z_stream));
 
-	if (method == NHR_GZ_METHOD_DEFLATE) result = deflateInit(&zip, Z_BEST_COMPRESSION);
-	else result = deflateInit2(&zip, Z_BEST_COMPRESSION, Z_DEFLATED, NHR_GZ_WINDOWS_BITS, 8, Z_DEFAULT_STRATEGY);
+	if (method == NHR_GZ_METHOD_DEFLATE) {
+		result = deflateInit(&zip, Z_BEST_COMPRESSION);
+	} else {
+		result = deflateInit2(&zip, Z_BEST_COMPRESSION, Z_DEFLATED, NHR_GZ_WINDOWS_BITS, 8, Z_DEFAULT_STRATEGY);
+	}
 
-	if (result != Z_OK) return NULL;
+	if (result != Z_OK) {
+		return NULL;
+	}
 
 	if (method == NHR_GZ_METHOD_GZIP) {
 		out_size += NHR_GZ_HEADER_SIZE;
@@ -139,14 +148,18 @@ void * nhr_gz_compress(const void * buff,
 		writed += NHR_GZ_FOOTER_SIZE;
 	}
 
-	if (compressed_size) *compressed_size = writed;
+	if (compressed_size) {
+		*compressed_size = writed;
+	}
 
 	deflateEnd(&zip);
 	return out_buff;
 }
 
-int nhr_gz_is_gzip_file(const Bytef * buff, const size_t buff_size) {
-	if (buff_size <= NHR_GZ_HEADER_FOOTER_SIZE) return 0;
+static int nhr_gz_is_gzip_file(const Bytef * buff, const size_t buff_size) {
+	if (buff_size <= NHR_GZ_HEADER_FOOTER_SIZE) {
+		return 0;
+	}
 	return buff[0] == 0x1f && buff[1] == 0x8b;
 }
 
@@ -159,7 +172,9 @@ void * nhr_gz_decompress(const void * buff,
 	size_t writed = 0, out_size = NHR_GZ_CHUNK_SIZE;
 	int available_size = 0, result = Z_ERRNO;
 
-	if (!buff || buff_size == 0) return NULL;
+	if (!buff || buff_size == 0) {
+		return NULL;
+	}
 	memset(&zip, 0, sizeof(z_stream));
 
 	if (method == NHR_GZ_METHOD_DEFLATE) {
@@ -172,7 +187,9 @@ void * nhr_gz_decompress(const void * buff,
 		result = inflateInit2(&zip, NHR_GZ_WINDOWS_BITS);
 	}
 
-	if (result != Z_OK) return NULL;
+	if (result != Z_OK) {
+		return NULL;
+	}
 
 	out_buff = (Bytef *)nhr_malloc(NHR_GZ_CHUNK_SIZE);
 
@@ -211,7 +228,9 @@ void * nhr_gz_decompress(const void * buff,
 
 	inflateEnd(&zip);
 
-	if (decompressed_size) *decompressed_size = writed;
+	if (decompressed_size) {
+		*decompressed_size = writed;
+	}
 	return out_buff;
 }
 

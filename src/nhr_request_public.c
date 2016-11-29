@@ -59,28 +59,32 @@ void nhr_request_set_url(nhr_request request,
 						 const char * path,
 						 const unsigned short port) {
 	_nhr_request * r = (_nhr_request *)request;
-	if (!r) return;
-
-	nhr_string_delete(r->scheme);
-	r->scheme = nhr_string_copy(scheme);
-
-	nhr_string_delete(r->host);
-	r->host = nhr_string_copy(host);
-
-	nhr_string_delete(r->path);
-	r->path = nhr_string_copy(path);
-
-	r->port = port;
+	if (r) {
+		nhr_string_delete(r->scheme);
+		r->scheme = nhr_string_copy(scheme);
+		
+		nhr_string_delete(r->host);
+		r->host = nhr_string_copy(host);
+		
+		nhr_string_delete(r->path);
+		r->path = nhr_string_copy(path);
+		
+		r->port = port;
+	}
 }
 
 void nhr_request_set_method(nhr_request request, nhr_method method) {
 	_nhr_request * r = (_nhr_request *)request;
-	if (r) r->method = method;
+	if (r) {
+		r->method = method;
+	}
 }
 
 nhr_bool nhr_request_send(nhr_request request) {
 	_nhr_request * r = (_nhr_request *)request;
-	if (!r) return nhr_false;
+	if (!r) {
+		return nhr_false;
+	}
 
 	if (!r->scheme || !r->host || !r->path || !r->method || !r->on_recvd_responce || !r->on_error) {
 		r->error_code = nhr_error_code_missed_parameter;
@@ -93,32 +97,46 @@ nhr_bool nhr_request_send(nhr_request request) {
 
 void nhr_request_set_on_recvd_responce(nhr_request request, nhr_on_request_recvd_responce callback) {
 	_nhr_request * r = (_nhr_request *)request;
-	if (r) r->on_recvd_responce = callback;
+	if (r) {
+		r->on_recvd_responce = callback;
+	}
 }
 
 void nhr_request_set_on_error(nhr_request request, nhr_on_request_error callback) {
 	_nhr_request * r = (_nhr_request *)request;
-	if (r) r->on_error = callback;
+	if (r) {
+		r->on_error = callback;
+	}
 }
 
 void nhr_request_add_header_field(nhr_request request, const char * name, const char * value) {
 	_nhr_request * r = (_nhr_request *)request;
 	size_t name_len = 0, value_len = 0;
 	_nhr_map_node * last = NULL;
-	if (!r) return;
+	if (!r) {
+		return;
+	}
 
 	name_len = name ? strlen(name) : 0;
 	value_len = value ? strlen(value) : 0;
-	if (name_len == 0 || value_len == 0) return;
-
-	if (!r->http_headers) r->http_headers = nhr_map_create();
+	if (name_len == 0 || value_len == 0) {
+		return;
+	}
+	if (!r->http_headers) {
+		r->http_headers = nhr_map_create();
+	}
+	
 	last = nhr_map_append(r->http_headers);
 	last->key = nhr_string_copy(name);
 	last->value.string = nhr_string_copy(value);
 	last->value_type = NHR_MAP_VALUE_STRING;
 #if defined(NHR_GZIP)
-	if (strcmp(value, k_nhr_gzip) == 0) r->is_gziped = nhr_true;
-	if (strcmp(value, k_nhr_deflate) == 0) r->is_deflated = nhr_true;
+	if (strcmp(value, k_nhr_gzip) == 0) {
+		r->is_gziped = nhr_true;
+	}
+	if (strcmp(value, k_nhr_deflate) == 0) {
+		r->is_deflated = nhr_true;
+	}
 #endif
 }
 
@@ -126,15 +144,22 @@ void nhr_request_add_parameter(nhr_request request, const char * name, const cha
 	_nhr_request * r = (_nhr_request *)request;
 	size_t name_len = 0, value_len = 0;
 	_nhr_map_node * last = NULL;
-	if (!r) return;
+	if (!r) {
+		return;
+	}
 
 	name_len = name ? strlen(name) : 0;
 	value_len = value ? strlen(value) : 0;
-	if (name_len == 0 || value_len == 0) return;
+	if (name_len == 0 || value_len == 0) {
+		return;
+	}
 
 	assert(r->method); //!!! set method
 
-	if (!r->parameters) r->parameters = nhr_map_create();
+	if (!r->parameters) {
+		r->parameters = nhr_map_create();
+	}
+	
 	last = nhr_map_append(r->parameters);
 	last->key = nhr_string_copy(name);
 	last->value.string = nhr_string_copy(value);
@@ -148,7 +173,9 @@ nhr_error_code nhr_request_get_error_code(nhr_request request) {
 
 void nhr_request_set_user_object(nhr_request request, void * user_object) {
 	_nhr_request * r = (_nhr_request *)request;
-	if (r) r->user_object = user_object;
+	if (r) {
+		r->user_object = user_object;
+	}
 }
 
 void* nhr_request_get_user_object(nhr_request request) {
@@ -158,7 +185,9 @@ void* nhr_request_get_user_object(nhr_request request) {
 
 void nhr_request_set_timeout(nhr_request request, const unsigned int seconds) {
 	_nhr_request * r = (_nhr_request *)request;
-	if (r) r->timeout = (time_t)seconds;
+	if (r) {
+		r->timeout = (time_t)seconds;
+	}
 }
 
 unsigned int nhr_request_get_timeout(nhr_request request) {
@@ -168,13 +197,13 @@ unsigned int nhr_request_get_timeout(nhr_request request) {
 
 void nhr_request_cancel(nhr_request request) {
 	_nhr_request * r = (_nhr_request *)request;
-	if (!r) return;
-
-	if (r->work_thread) {
-		nhr_request_set_command(r, NHR_COMMAND_END);
-		return; // automaticaly deleted before exit work thread function.
+	if (r) {
+		if (r->work_thread) {
+			nhr_request_set_command(r, NHR_COMMAND_END);
+			return; // automaticaly deleted before exit work thread function.
+		}
+		
+		nhr_request_close(r);
+		nhr_request_delete(r);
 	}
-
-	nhr_request_close(r);
-	nhr_request_delete(r);
 }

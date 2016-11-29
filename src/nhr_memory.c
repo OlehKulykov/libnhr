@@ -37,12 +37,16 @@ void * nhr_malloc(const size_t size) {
 
 void * nhr_malloc_zero(const size_t size) {
 	void * mem = nhr_malloc(size);
-	if (mem) memset(mem, 0, size);
+	if (mem) {
+		memset(mem, 0, size);
+	}
 	return mem;
 }
 
 void nhr_free(void * mem) {
-	if (mem) free(mem);
+	if (mem) {
+		free(mem);
+	}
 }
 
 void nhr_free_clean(void ** mem) {

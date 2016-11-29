@@ -81,8 +81,11 @@ char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
 
 	writed = nhr_sprintf(buff, buff_size, "%s %s HTTP/%s\r\n", k_nhr_POST, r->path, k_nhr_request_http_ver);
 
-	if (r->port == 80) writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
-	else writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
+	if (r->port == 80) {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
+	} else {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
+	}
 
 	if (headers) {
 		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", headers);

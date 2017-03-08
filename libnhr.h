@@ -309,6 +309,12 @@ NHR_API(void) nhr_request_set_on_error(nhr_request request, nhr_on_request_error
  */
 NHR_API(void) nhr_request_add_header_field(nhr_request request, const char * name, const char * value);
 
+/**
+ @brief Add HTTP POST data
+ @param request The request object. If request is `NULL` do nothing.
+ @param name The HTTP POST data
+ */
+NHR_API(void) nhr_request_add_post_data(nhr_request request, const char * data);
 
 /**
  @brief Add request parameter and it's value.

@@ -69,6 +69,9 @@ char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
 	buff_size = strlen(r->path);
 	buff_size += strlen(r->host);
 
+        if(r->post_data!=NULL)
+            buff_size += 8 + strlen(r->post_data);
+
 	parameters = nhr_request_create_parameters_POST(r, &parameters_len);
 	if (parameters) buff_size += parameters_len;
 
@@ -87,24 +90,33 @@ char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
 		writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
 	}
 
-	if (headers) {
-		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", headers);
+	if(r->post_data!=NULL) {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\n\n", headers);
+        } else if (headers) {
+		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\n\r\n\r", headers);
 	} else {
 		memcpy(buff + writed, k_nhr_CRLF, k_nhr_CRLF_length);
 		writed += k_nhr_CRLF_length;
 	}
 
-	if (parameters_len > 0) {
+	if (parameters_len > 0 && r->post_data == NULL) {
 		memcpy(buff + writed, parameters, parameters_len);
 		writed += parameters_len;
 		memcpy(buff + writed, k_nhr_double_CRLF, k_nhr_double_CRLF_length);
 		writed += k_nhr_double_CRLF_length;
 	}
 
+        if(r->post_data != NULL) {
+                memcpy(buff + writed, r->post_data, strlen(r->post_data));
+		writed += strlen(r->post_data);
+        }
+
+
 	nhr_free(headers);
 	nhr_free(parameters);
 	buff[writed] = 0;
 	*header_size = writed;
+
 	return buff;
 }
 

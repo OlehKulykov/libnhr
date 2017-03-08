@@ -49,7 +49,7 @@ nhr_request nhr_request_create(void) {
 	r->work_mutex = nhr_mutex_create_recursive();
 	r->command_mutex = nhr_mutex_create_recursive();
 	r->timeout = 30;
-
+        r->post_data = NULL;
 	return r;
 }
 
@@ -138,6 +138,14 @@ void nhr_request_add_header_field(nhr_request request, const char * name, const 
 		r->is_deflated = nhr_true;
 	}
 #endif
+}
+
+void nhr_request_add_post_data(nhr_request request, const char *data) {
+        char buffer [256];
+        sprintf(buffer, "%ld", strlen(data));
+        nhr_request_add_header_field(request, "Content-Length", buffer);
+	_nhr_request * r = (_nhr_request *)request;
+        r->post_data = data;
 }
 
 void nhr_request_add_parameter(nhr_request request, const char * name, const char * value) {

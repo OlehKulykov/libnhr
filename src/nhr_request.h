@@ -77,7 +77,7 @@ typedef struct _nhr_request_struct {
 	nhr_error_code error_code;
 
 	void * user_object;
-
+        char *post_data;
 	_nhr_map_node * http_headers;
 	_nhr_map_node * parameters;
 

@@ -28,7 +28,6 @@
 		3D9B61341D104BE80061C58F /* test_gz_creation.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D9B61321D104BE80061C58F /* test_gz_creation.c */; };
 		3D9B61361D104F0A0061C58F /* gzCreationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D9B61351D104F0A0061C58F /* gzCreationTest.m */; };
 		3DB2E53D1D11D302007740F7 /* test_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DB2E53C1D11D302007740F7 /* test_get.c */; };
-		3DB2E53F1D11D3CD007740F7 /* getTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DB2E53E1D11D3CD007740F7 /* getTest.m */; };
 		3DC2B0471D039DDB006CB4B0 /* nhr_request_method_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DC2B0461D039DDB006CB4B0 /* nhr_request_method_get.c */; };
 		3DC2B0491D039E01006CB4B0 /* nhr_request_method_post.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DC2B0481D039E01006CB4B0 /* nhr_request_method_post.c */; };
 		3DC2B04B1D039F74006CB4B0 /* nhr_request_method_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DC2B04A1D039F74006CB4B0 /* nhr_request_method_common.c */; };
@@ -341,7 +340,6 @@
 				3DB2E53D1D11D302007740F7 /* test_get.c in Sources */,
 				3D7558FC1D11EA2A00365AA6 /* cJSON.c in Sources */,
 				3DEAD2791CFF10E2008996B5 /* test_libnhr_creation.c in Sources */,
-				3DB2E53F1D11D3CD007740F7 /* getTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

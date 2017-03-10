@@ -103,8 +103,11 @@ static int test_post_number(unsigned long number) {
 	nhr_request_add_header_field(test_post_request, "User-Agent", "CMake tests");
 
 	switch (number) {
-		case 1:
-
+        case 1: {
+            const char * text = "If the user selected a second (image) file, the user agent might construct the parts as follows";
+            nhr_request_add_parameter(test_post_request, "name", "Name value");
+            nhr_request_add_data_parameter(test_post_request, "text", "file1.txt", text, strlen(text));
+        }
 			break;
 
 		default:
@@ -130,7 +133,7 @@ static int test_post_number(unsigned long number) {
 int test_post(void) {
 	int ret = 0;
 
-//	ret += test_post_number(1); // plain responce
+	ret += test_post_number(1); // plain responce
 
 	return ret;
 }

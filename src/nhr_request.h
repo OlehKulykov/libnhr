@@ -93,10 +93,9 @@ typedef struct _nhr_request_struct {
 	nhr_bool is_gziped;
 	nhr_bool is_deflated;
 #endif
+    
+    nhr_bool is_have_file_parameter;
 
-#if !defined(NHR_NO_SEND_CHUNKS)
-
-#endif
 } _nhr_request;
 
 nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size_t data_size);

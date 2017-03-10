@@ -31,19 +31,28 @@
 
 typedef struct _nhr_map_node_struct {
 	char * key;
+    struct _nhr_map_node_struct * next;
+    
 	union {
 		void * data;
 		char * string;
 		int int_value;
 		unsigned int uint_value;
 	} value;
+    
+    union {
+        void * data;
+        char * string;
+        int int_value;
+        unsigned int uint_value;
+    } reserved;
 
-	struct _nhr_map_node_struct * next;
-
-	size_t value_size;
-
-	unsigned char value_type;
-	char tag;
+    size_t value_size;
+    size_t reserved_size;
+    
+    unsigned char reserved_type;
+    unsigned char value_type;
+    char reserved1, reserved2;
 } _nhr_map_node;
 
 _nhr_map_node * nhr_map_create(void);

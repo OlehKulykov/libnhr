@@ -322,6 +322,18 @@ NHR_API(void) nhr_request_add_parameter(nhr_request request, const char * name, 
 
 
 /**
+ @brief Add to `POST` request file parameter.
+ @param request The request object. If request is `NULL` do nothing.
+ @param name Parameter name. `NULL` or empty value is ignored.
+ @param file_name File name of the data. Should not be `NULL`.
+ @param data Some binary or text data. Should not be `NULL`.
+ @param data_size Size of the provided data. Should not be `0`.
+ @warning Add parameters only after method was setted via `nhr_request_set_method` and only for `POST`.
+ */
+NHR_API(void) nhr_request_add_data_parameter(nhr_request request, const char * name, const char * file_name, const void * data, const size_t data_size);
+
+
+/**
  @brief Assign some object with the request.
  @param request The request object. If request is `NULL` do nothing.
  @param user_object Any pointer.

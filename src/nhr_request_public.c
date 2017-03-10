@@ -127,8 +127,9 @@ void nhr_request_add_header_field(nhr_request request, const char * name, const 
 	}
 	
 	last = nhr_map_append(r->http_headers);
-	last->key = nhr_string_copy(name);
-	last->value.string = nhr_string_copy(value);
+	last->key = nhr_string_copy_len(name, name_len);
+	last->value.string = nhr_string_copy_len(value, value_len);
+    last->value_size = value_len;
 	last->value_type = NHR_MAP_VALUE_STRING;
 #if defined(NHR_GZIP)
 	if (strcmp(value, k_nhr_gzip) == 0) {
@@ -161,9 +162,48 @@ void nhr_request_add_parameter(nhr_request request, const char * name, const cha
 	}
 	
 	last = nhr_map_append(r->parameters);
-	last->key = nhr_string_copy(name);
-	last->value.string = nhr_string_copy(value);
+	last->key = nhr_string_copy_len(name, name_len);
+	last->value.string = nhr_string_copy_len(value, value_len);
+    last->value_size = value_len;
 	last->value_type = NHR_MAP_VALUE_STRING;
+}
+
+void nhr_request_add_data_parameter(nhr_request request, const char * name, const char * file_name, const void * data, const size_t data_size) {
+    _nhr_request * r = (_nhr_request *)request;
+    size_t name_len = 0, file_name_len = 0;
+    _nhr_map_node * last = NULL;
+    if (!r || !data || data_size == 0) {
+        return;
+    }
+    
+    name_len = name ? strlen(name) : 0;
+    file_name_len = file_name ? strlen(file_name) : 0;
+    if (name_len == 0 || file_name_len == 0) {
+        return;
+    }
+    
+    assert(r->method); //!!! set method
+    
+    void * _data = nhr_malloc(data_size);
+    if (!_data) {
+        return;
+    }
+    
+    memcpy(_data, data, data_size);
+    
+    if (!r->parameters) {
+        r->parameters = nhr_map_create();
+    }
+    
+    last = nhr_map_append(r->parameters);
+    last->key = nhr_string_copy_len(name, name_len);
+    last->reserved.string = nhr_string_copy_len(file_name, file_name_len);
+    last->reserved_size = file_name_len;
+    last->reserved_type = NHR_MAP_VALUE_STRING;
+    last->value.data = _data;
+    last->value_size = data_size;
+    last->value_type = NHR_MAP_VALUE_DATA;
+    r->is_have_file_parameter = nhr_true;
 }
 
 nhr_error_code nhr_request_get_error_code(nhr_request request) {

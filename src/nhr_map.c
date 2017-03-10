@@ -54,6 +54,9 @@ void nhr_map_delete(_nhr_map_node * map) {
 		if (last->value_type <= NHR_MAP_VALUE_STRING) {
 			nhr_free(last->value.data);
 		}
+        if (last->reserved_type <= NHR_MAP_VALUE_STRING) {
+            nhr_free(last->reserved.data);
+        }
 		nhr_free(last);
 	}
 }

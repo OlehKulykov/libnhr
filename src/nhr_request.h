@@ -58,6 +58,9 @@ typedef int nhr_socket_t;
 #define NHR_SOCK_CLOSE(sock) close(sock)
 #endif
 
+#if !defined(NHR_OPT_NO_POST_DATA)
+#define NHR_POST_BOUNDARY_LEN 12
+#endif
 
 typedef struct _nhr_request_struct {
 	unsigned short port;
@@ -94,7 +97,10 @@ typedef struct _nhr_request_struct {
 	nhr_bool is_deflated;
 #endif
     
-    nhr_bool is_have_file_parameter;
+#if !defined(NHR_OPT_NO_POST_DATA)
+    char * boundary;
+    nhr_bool is_have_data_parameter;
+#endif
 
 } _nhr_request;
 
@@ -158,6 +164,12 @@ char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size);
 
 
 #if !defined(NHR_NO_POST) // POST functionality
+
+#if !defined(NHR_OPT_NO_POST_DATA)
+
+void nhr_request_generate_new_boundary(_nhr_request * r);
+
+#endif
 
 char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size);
 

@@ -169,6 +169,7 @@ void nhr_request_add_parameter(nhr_request request, const char * name, const cha
 }
 
 void nhr_request_add_data_parameter(nhr_request request, const char * name, const char * file_name, const void * data, const size_t data_size) {
+#if !defined(NHR_OPT_NO_POST_DATA)
     _nhr_request * r = (_nhr_request *)request;
     size_t name_len = 0, file_name_len = 0;
     _nhr_map_node * last = NULL;
@@ -203,7 +204,11 @@ void nhr_request_add_data_parameter(nhr_request request, const char * name, cons
     last->value.data = _data;
     last->value_size = data_size;
     last->value_type = NHR_MAP_VALUE_DATA;
-    r->is_have_file_parameter = nhr_true;
+    r->is_have_data_parameter = nhr_true;
+    if (!r->boundary) {
+        nhr_request_generate_new_boundary(r);
+    }
+#endif
 }
 
 nhr_error_code nhr_request_get_error_code(nhr_request request) {

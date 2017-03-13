@@ -26,45 +26,45 @@
 #if !defined(NHR_NO_GET)
 
 char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size) {
-	size_t buff_size = 0, writed = 0, headers_len = 0, parameters_len = 0;
-	char * buff = NULL, *headers = NULL, *parameters = NULL;
-
-	buff_size = strlen(r->path);
-	buff_size += strlen(r->host);
-
-	headers = r->http_headers ? nhr_request_http_headers(r->http_headers, &headers_len) : NULL;
-	if (headers) buff_size += headers_len;
-
-	parameters = r->parameters ? nhr_request_url_encoded_parameters(r->parameters, &parameters_len) : NULL;
-	if (parameters) buff_size += parameters_len;
-
-	buff_size += 1 << 8; // extra size for formatting strings
-	buff = (char *)nhr_malloc(buff_size);
-
-	if (parameters) {
-		writed = nhr_sprintf(buff, buff_size, "%s %s?%s HTTP/%s\r\n", k_nhr_GET, r->path, parameters, k_nhr_request_http_ver);
-	} else {
-		writed = nhr_sprintf(buff, buff_size, "%s %s HTTP/%s\r\n", k_nhr_GET, r->path, k_nhr_request_http_ver);
-	}
-
-	if (r->port == 80) {
-		writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
-	} else {
-		writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
-	}
-
-	if (headers) {
-		writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", headers);
-	} else {
-		memcpy(buff + writed, k_nhr_CRLF, k_nhr_CRLF_length);
-		writed += k_nhr_CRLF_length;
-	}
-
-	nhr_free(headers);
-	nhr_free(parameters);
-	buff[writed] = 0;
-	*header_size = writed;
-	return buff;
+    size_t buff_size = 0, writed = 0, headers_len = 0, parameters_len = 0;
+    char * buff = NULL, *headers = NULL, *parameters = NULL;
+    
+    buff_size = strlen(r->path);
+    buff_size += strlen(r->host);
+    
+    headers = r->http_headers ? nhr_request_http_headers(r->http_headers, &headers_len) : NULL;
+    if (headers) buff_size += headers_len;
+    
+    parameters = r->parameters ? nhr_request_url_encoded_parameters(r->parameters, &parameters_len) : NULL;
+    if (parameters) buff_size += parameters_len;
+    
+    buff_size += 1 << 8; // extra size for formatting strings
+    buff = (char *)nhr_malloc(buff_size);
+    
+    if (parameters) {
+        writed = nhr_sprintf(buff, buff_size, "%s %s?%s HTTP/%s\r\n", k_nhr_GET, r->path, parameters, k_nhr_request_http_ver);
+    } else {
+        writed = nhr_sprintf(buff, buff_size, "%s %s HTTP/%s\r\n", k_nhr_GET, r->path, k_nhr_request_http_ver);
+    }
+    
+    if (r->port == 80) {
+        writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s\r\n", r->host);
+    } else {
+        writed += nhr_sprintf(buff + writed, buff_size - writed, "Host: %s:%i\r\n", r->host, (int)r->port);
+    }
+    
+    if (headers) {
+        writed += nhr_sprintf(buff + writed, buff_size - writed, "%s\r\n\r\n", headers);
+    } else {
+        memcpy(buff + writed, k_nhr_CRLF, k_nhr_CRLF_length);
+        writed += k_nhr_CRLF_length;
+    }
+    
+    nhr_free(headers);
+    nhr_free(parameters);
+    buff[writed] = 0;
+    *header_size = writed;
+    return buff;
 }
 
 #endif

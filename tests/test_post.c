@@ -39,8 +39,7 @@ static void test_post_on_error(nhr_request request, nhr_error_code error_code) {
 
 static int test_post_parse_body(const char * body, unsigned long test_number) {
 
-
-	return 12;
+	return 0;
 }
 
 static void test_post_log_body(const char * body, const unsigned int body_len) {
@@ -85,7 +84,9 @@ static int test_post_number(unsigned long number) {
 	test_post_request = nhr_request_create();
 
 	switch (number) {
-		case 1: nhr_request_set_url(test_post_request, "http", "httpbin.org", "/post", 80); break;
+		case 1:
+        case 2:
+            nhr_request_set_url(test_post_request, "http", "httpbin.org", "/post", 80); break;
 		default:
 			break;
 	}
@@ -103,13 +104,19 @@ static int test_post_number(unsigned long number) {
 	nhr_request_add_header_field(test_post_request, "User-Agent", "CMake tests");
 
 	switch (number) {
-        case 1: {
-            const char * text = "If the user selected a second (image) file, the user agent might construct the parts as follows";
-            nhr_request_add_parameter(test_post_request, "name", "Name value");
-            nhr_request_add_data_parameter(test_post_request, "text", "file1.txt", text, strlen(text));
-        }
+        case 1:
+            nhr_request_add_parameter(test_post_request, "name", "Url%20encoded%20name%20value");
 			break;
-
+            
+#if !defined(NHR_OPT_NO_POST_DATA)
+        case 2: {
+            nhr_request_add_parameter(test_post_request, "name", "Some name");
+            
+            const char * textFile = "If the user selected a second (image) file, the user agent might construct the parts as follows";
+            nhr_request_add_data_parameter(test_post_request, "text", "file1.txt", textFile, strlen(textFile));
+        }
+#endif
+            
 		default:
 			break;
 	}
@@ -134,7 +141,11 @@ int test_post(void) {
 	int ret = 0;
 
 	ret += test_post_number(1); // plain responce
-
+    
+#if !defined(NHR_OPT_NO_POST_DATA)
+    ret += test_post_number(2);
+#endif
+    
 	return ret;
 }
 #endif

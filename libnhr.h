@@ -29,8 +29,8 @@
 
 
 #define NHR_VERSION_MAJOR 0
-#define NHR_VERSION_MINOR 4
-#define NHR_VERSION_PATCH 1
+#define NHR_VERSION_MINOR 5
+#define NHR_VERSION_PATCH 0
 
 
 // check windows
@@ -316,7 +316,7 @@ NHR_API(void) nhr_request_add_header_field(nhr_request request, const char * nam
  @param name Parameter name. `NULL` or empty value is ignored.
  @param value Value of the parameter. Should be URL encoded. `NULL` or empty value is ignored.
  @warning Add parameters only after method was setted via `nhr_request_set_method`.
- @warning Value should be URL encoded.
+ @warning Except `POST`request with data parameters, this value should be URL encoded.
  */
 NHR_API(void) nhr_request_add_parameter(nhr_request request, const char * name, const char * value);
 

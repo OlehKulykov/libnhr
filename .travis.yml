@@ -37,6 +37,10 @@ script:
   - rm -rf *
   - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_POST:BOOL=ON ..
   - make
+# no_post_data
+  - rm -rf *
+  - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_POST_DATA:BOOL=ON ..
+  - make
 # no_get_post
   - rm -rf *
   - cmake -DCMAKE_BUILD_TYPE=Release -DNHR_OPT_NO_GET:BOOL=ON -DNHR_OPT_NO_POST:BOOL=ON ..

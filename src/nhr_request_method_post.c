@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#if !defined(NHR_NO_POST)
+#if !defined(NHR_NO_POST) // POST functionality
 
 #include "nhr_gz.h"
 
@@ -64,7 +64,7 @@ char * nhr_request_create_url_encoded_parameters_POST(_nhr_request * r, size_t *
     return params;
 }
 
-#if !defined(NHR_OPT_NO_POST_DATA)
+#if !defined(NHR_OPT_NO_POST_DATA) // POST DATA functionality
 
 void nhr_request_generate_new_boundary(_nhr_request * r) {
     static const char charset[62] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -172,7 +172,7 @@ void * nhr_request_create_data_parameters_POST(_nhr_request * r, size_t * parame
     return buff;
 };
 
-#endif
+#endif // end POST DATA functionality
 
 char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
     size_t buff_size = 0, writed = 0, headers_len = 0, parameters_len = 0;
@@ -228,4 +228,4 @@ char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
     return buff;
 }
 
-#endif
+#endif // end POST functionality

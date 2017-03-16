@@ -313,9 +313,13 @@ void nhr_request_delete(_nhr_request * r) {
 	nhr_mutex_delete(r->command_mutex);
 
 	nhr_response_delete(r->responce);
-#if !defined(NHR_NO_POST) && !defined(NHR_OPT_NO_POST_DATA)
+
+#if !defined(NHR_NO_POST)
+#if !defined(NHR_OPT_NO_POST_DATA)
     nhr_string_delete_clean(&r->boundary);
 #endif
+#endif
+
 	nhr_free(r);
 }
 

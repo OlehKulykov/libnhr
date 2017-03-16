@@ -30,7 +30,7 @@
 
 #define NHR_VERSION_MAJOR 0
 #define NHR_VERSION_MINOR 5
-#define NHR_VERSION_PATCH 0
+#define NHR_VERSION_PATCH 1
 
 
 // check windows
@@ -328,6 +328,7 @@ NHR_API(void) nhr_request_add_parameter(nhr_request request, const char * name, 
  @param file_name File name of the data. Should not be `NULL`.
  @param data Some binary or text data. Should not be `NULL`.
  @param data_size Size of the provided data. Should not be `0`.
+ @warning If `NHR_NO_POST` and `NHR_OPT_NO_POST_DATA` defined than this function do nothing.
  @warning Add parameters only after method was setted via `nhr_request_set_method` and only for `POST`.
  */
 NHR_API(void) nhr_request_add_data_parameter(nhr_request request, const char * name, const char * file_name, const void * data, const size_t data_size);

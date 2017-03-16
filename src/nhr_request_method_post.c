@@ -69,8 +69,9 @@ char * nhr_request_create_url_encoded_parameters_POST(_nhr_request * r, size_t *
 void nhr_request_generate_new_boundary(_nhr_request * r) {
     static const char charset[62] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     char boundary[NHR_POST_BOUNDARY_LEN];
+    size_t i;
     srand((unsigned)time(NULL));
-    for (int i = 0; i < NHR_POST_BOUNDARY_LEN; i++) {
+    for (i = 0; i < NHR_POST_BOUNDARY_LEN; i++) {
         boundary[i] = charset[rand() % 62];
     }
     nhr_string_delete_clean(&r->boundary);

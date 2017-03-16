@@ -58,7 +58,7 @@ typedef int nhr_socket_t;
 #define NHR_SOCK_CLOSE(sock) close(sock)
 #endif
 
-#if !defined(NHR_OPT_NO_POST_DATA)
+#if !defined(NHR_NO_POST) && !defined(NHR_OPT_NO_POST_DATA)
 #define NHR_POST_BOUNDARY_LEN 12
 #endif
 
@@ -97,7 +97,7 @@ typedef struct _nhr_request_struct {
 	nhr_bool is_deflated;
 #endif
     
-#if !defined(NHR_OPT_NO_POST_DATA)
+#if !defined(NHR_NO_POST) && !defined(NHR_OPT_NO_POST_DATA)
     char * boundary;
     nhr_bool is_have_data_parameter;
 #endif

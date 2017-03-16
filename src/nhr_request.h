@@ -169,6 +169,8 @@ char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size);
 
 void nhr_request_generate_new_boundary(_nhr_request * r);
 
+void * nhr_request_create_data_parameters_POST(_nhr_request * r, size_t * parameters_len);
+
 #endif
 
 char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size);

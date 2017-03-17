@@ -59,7 +59,7 @@ typedef int nhr_socket_t;
 #endif
 
 #if !defined(NHR_NO_POST) // POST functionality
-#if !defined(NHR_OPT_NO_POST_DATA) // POST DATA functionality
+#if !defined(NHR_NO_POST_DATA) // POST DATA functionality
 
 #define NHR_POST_BOUNDARY_LEN 12
 
@@ -102,7 +102,7 @@ typedef struct _nhr_request_struct {
 #endif
     
 #if !defined(NHR_NO_POST) 
-#if !defined(NHR_OPT_NO_POST_DATA)
+#if !defined(NHR_NO_POST_DATA)
     char * boundary;
     nhr_bool is_have_data_parameter;
 #endif
@@ -171,7 +171,7 @@ char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size);
 
 #if !defined(NHR_NO_POST) // POST functionality
 
-#if !defined(NHR_OPT_NO_POST_DATA) // POST DATA functionality
+#if !defined(NHR_NO_POST_DATA) // POST DATA functionality
 
 void nhr_request_generate_new_boundary(_nhr_request * r);
 

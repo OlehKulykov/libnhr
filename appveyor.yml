@@ -1,4 +1,4 @@
-version: 0.5.1.{build}
+version: 0.5.2.{build}
 
 
 os: Visual Studio 2015
@@ -13,6 +13,7 @@ branches:
   only:
   - master
   - dev
+  - deploy_artifacts
 
 
 # build platform, i.e. x86, x64, Any CPU. This setting is optional.
@@ -127,14 +128,14 @@ artifacts:
   - path: '*.7z'
 
 
-#deploy:
-#  - provider: GitHub
-#    release: $(appveyor_build_version)
-#    description: 'Appveyor CI build artifacts. Compressed install path with binaries, libraries and configured headers'
-#    auth_token:
-#      secure: 9fCOXiEygRERkV9JN67Rqq6WFwdbSBIllYdZGYcSoFPj1oUAxk3aRi+bWv04l7M5
-#    artifact: /.*\.7z/
-#    draft: false
-#    prerelease: true
-#    on:
-#      branch: master
+deploy:
+  - provider: GitHub
+    release: $(appveyor_build_version)
+    description: 'Appveyor CI build artifacts. Compressed install path with binaries, libraries and configured headers'
+    auth_token:
+      secure: 9fCOXiEygRERkV9JN67Rqq6WFwdbSBIllYdZGYcSoFPj1oUAxk3aRi+bWv04l7M5
+    artifact: /.*\.7z/
+    draft: false
+    prerelease: true
+    on:
+      branch: deploy_artifacts

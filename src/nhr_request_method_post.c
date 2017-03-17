@@ -64,7 +64,7 @@ char * nhr_request_create_url_encoded_parameters_POST(_nhr_request * r, size_t *
     return params;
 }
 
-#if !defined(NHR_OPT_NO_POST_DATA) // POST DATA functionality
+#if !defined(NHR_NO_POST_DATA) // POST DATA functionality
 
 void nhr_request_generate_new_boundary(_nhr_request * r) {
     static const char charset[62] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -182,7 +182,7 @@ char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
     buff_size = strlen(r->path);
     buff_size += strlen(r->host);
     
-#if defined(NHR_OPT_NO_POST_DATA)
+#if defined(NHR_NO_POST_DATA)
     parameters = nhr_request_create_url_encoded_parameters_POST(r, &parameters_len);
 #else
     parameters = r->is_have_data_parameter ? nhr_request_create_data_parameters_POST(r, &parameters_len) : nhr_request_create_url_encoded_parameters_POST(r, &parameters_len);

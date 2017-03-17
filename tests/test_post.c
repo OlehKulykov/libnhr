@@ -108,7 +108,7 @@ static int test_post_number(unsigned long number) {
             nhr_request_add_parameter(test_post_request, "name", "Url%20encoded%20name%20value");
 			break;
             
-#if !defined(NHR_OPT_NO_POST_DATA)
+#if !defined(NHR_NO_POST_DATA)
         case 2: {
             nhr_request_add_parameter(test_post_request, "name", "Some name");
             
@@ -142,7 +142,7 @@ int test_post(void) {
 
 	ret += test_post_number(1); // plain responce
     
-#if !defined(NHR_OPT_NO_POST_DATA)
+#if !defined(NHR_NO_POST_DATA)
     ret += test_post_number(2);
 #endif
     

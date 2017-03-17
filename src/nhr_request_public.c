@@ -170,7 +170,7 @@ void nhr_request_add_parameter(nhr_request request, const char * name, const cha
 
 void nhr_request_add_data_parameter(nhr_request request, const char * name, const char * file_name, const void * data, const size_t data_size) {
 #if !defined(NHR_NO_POST) // POST functionality
-#if !defined(NHR_OPT_NO_POST_DATA) // POST DATA functionality
+#if !defined(NHR_NO_POST_DATA) // POST DATA functionality
     _nhr_request * r = (_nhr_request *)request;
     size_t name_len = 0, file_name_len = 0;
     _nhr_map_node * last = NULL;

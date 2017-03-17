@@ -19,7 +19,7 @@
   - [x] Send deflate compressed url encoded request.
   - [x] Send gzip compressed url encoded request.
   - [ ] Send chunked request body.
-  - [ ] Send file/data.
+  - [x] Send file/data.
 - [x] **Responce**
   - [x] Process responce with chunked transfer encoding.
   - [x] Process deflate compressed content encoding.
@@ -34,6 +34,7 @@ All features are **enabled by default**. But it's possible to **disable**. See t
 |--------------------|---------------------------|----------------------------------------------------------------------------------------------|
 | NHR_NO_GET         | NHR_OPT_NO_GET            | Send GET requests.                                                                           |
 | NHR_NO_POST        | NHR_OPT_NO_POST           | Send POST requests.                                                                          |
+| NHR_NO_POST_DATA   | NHR_OPT_NO_POST_DATA      | Send POST requests with data/file parameters.                                                |
 | NHR_NO_RECV_CHUNKS | NHR_OPT_NO_RECV_CHUNKS    | Process received responce with chunked transfer encoding, e.g. "Transfer-Encoding: chunked". |
 | NHR_NO_SEND_CHUNKS | NHR_OPT_NO_SEND_CHUNKS    | Send big request as chunks.                                                                  |
 | NHR_NO_GZIP        | NHR_OPT_NO_GZIP           | Post gzip or deflate compressed url encoded parameters.                                      |
@@ -95,7 +96,7 @@ nhr_request_set_url(_request, "http", "isithackday.com", "/arrpi.php", 80);
 
 nhr_request_set_method(_request, nhr_method_GET); // GET
 // or
-//nhr_request_set_method(_request, nhr_method_POST); // POST
+nhr_request_set_method(_request, nhr_method_POST); // POST
 ```
 
 ##### Optionally add HTTP headers and/or parameters
@@ -110,7 +111,13 @@ nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_deflate); //
 ............
 // Add request parameters
 nhr_request_add_parameter(_request, "format", "json");
-nhr_request_add_parameter(_request, "text", "Hello%20world");
+nhr_request_add_parameter(_request, "text", "Hello%20world"); // url encoded if not POST and no data params
+
+// Add POST request with data parameters
+nhr_request_add_parameter(_request, "text", "Hello world"); // not url encoded if POST with data params
+
+const char * textFile = "If the user selected a second (image) file, the user agent might construct the parts as follows";
+nhr_request_add_data_parameter(test_post_request, "text", "file1.txt", textFile, strlen(textFile));
 ```
 
 ##### Set request callbacks
@@ -144,7 +151,7 @@ nhr_request_send(_request);
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Kulykov Oleh <info@resident.name>
+Copyright (c) 2016 - 2017 Kulykov Oleh <info@resident.name>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -139,3 +139,4 @@ deploy:
     prerelease: true
     on:
       branch: deploy_artifacts
+

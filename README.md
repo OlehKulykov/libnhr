@@ -113,11 +113,11 @@ nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_deflate); //
 nhr_request_add_parameter(_request, "format", "json");
 nhr_request_add_parameter(_request, "text", "Hello%20world"); // url encoded if not POST and no data params
 
-// Add POST request with data parameters
+// Add request parameters(including data parameter). Method should be POST
+const char * fileContent = "If the user selected a second (image) file, the user agent might construct the parts as follows";
+const size_t fileContentSize = strlen(fileContent);
+nhr_request_add_data_parameter(_request, "text", "file_name.txt", fileContent, fileContentSize);
 nhr_request_add_parameter(_request, "text", "Hello world"); // not url encoded if POST with data params
-
-const char * textFile = "If the user selected a second (image) file, the user agent might construct the parts as follows";
-nhr_request_add_data_parameter(test_post_request, "text", "file1.txt", textFile, strlen(textFile));
 ```
 
 ##### Set request callbacks

@@ -33,7 +33,7 @@
 #endif
 
 static void nhr_request_work_th_func(void * user_object) {
-	_nhr_request * r = (_nhr_request *)user_object;
+	nhr_request r = (nhr_request)user_object;
 
 	while (nhr_request_get_command(r) < NHR_COMMAND_END) {
 		nhr_mutex_lock(r->work_mutex);
@@ -73,7 +73,7 @@ static void nhr_request_work_th_func(void * user_object) {
 // c89 standard
 #define NHR_RECV_BUFF_SIZE (1 << 16)
 
-nhr_bool nhr_request_recv(_nhr_request * r) {
+nhr_bool nhr_request_recv(nhr_request r) {
 	int error_number = -1, len = -1;
 	char buff[NHR_RECV_BUFF_SIZE];
 
@@ -101,7 +101,7 @@ nhr_bool nhr_request_recv(_nhr_request * r) {
 	return nhr_true;
 }
 
-void nhr_request_wait_raw_responce(_nhr_request * r) {
+void nhr_request_wait_raw_responce(nhr_request r) {
 	nhr_bool is_finished = nhr_false;
 	if (nhr_request_recv(r)) {
 		is_finished = r->responce ? r->responce->is_finished : nhr_false;
@@ -119,12 +119,12 @@ void nhr_request_wait_raw_responce(_nhr_request * r) {
 	}
 }
 
-void nhr_request_start_waiting_raw_responce(_nhr_request * r) {
+void nhr_request_start_waiting_raw_responce(nhr_request r) {
 	r->last_time = time(NULL);
 	nhr_request_set_command(r, NHR_COMMAND_WAIT_RAW_RESPONCE);
 }
 
-void nhr_request_send_raw_request(_nhr_request * r) {
+void nhr_request_send_raw_request(nhr_request r) {
 	char * header = NULL;
 	size_t header_size = 0;
 	switch (r->method) {
@@ -153,7 +153,7 @@ void nhr_request_send_raw_request(_nhr_request * r) {
 	nhr_free(header);
 }
 
-nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size_t data_size) {
+nhr_bool nhr_request_send_buffer(nhr_request r, const void * data, const size_t data_size) {
 	int sended = -1, error_number = -1;
 	r->error_code = nhr_error_code_none;
 
@@ -174,7 +174,7 @@ nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size
 	return nhr_true;
 }
 
-struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r) {
+struct addrinfo * nhr_request_connect_getaddr_info(nhr_request r) {
 	struct addrinfo hints;
 	char portstr[12];
 	struct addrinfo * result = NULL;
@@ -219,7 +219,7 @@ struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r) {
 	return NULL;
 }
 
-void nhr_request_connect_to_host(_nhr_request * r) {
+void nhr_request_connect_to_host(nhr_request r) {
 	struct addrinfo * result = NULL;
 	struct addrinfo * p = NULL;
 	nhr_socket_t sock = NHR_INVALID_SOCKET;
@@ -279,7 +279,7 @@ void nhr_request_connect_to_host(_nhr_request * r) {
 	}
 }
 
-nhr_bool nhr_request_create_start_work_thread(_nhr_request * r) {
+nhr_bool nhr_request_create_start_work_thread(nhr_request r) {
 	nhr_request_set_command(r, NHR_COMMAND_NONE);
 	r->work_thread = nhr_thread_create(&nhr_request_work_th_func, r);
 	if (r->work_thread) {
@@ -289,7 +289,7 @@ nhr_bool nhr_request_create_start_work_thread(_nhr_request * r) {
 	return nhr_false;
 }
 
-void nhr_request_close(_nhr_request * r) {
+void nhr_request_close(nhr_request r) {
 	if (r->socket != NHR_INVALID_SOCKET) {
 		NHR_SOCK_CLOSE(r->socket);
 		r->socket = NHR_INVALID_SOCKET;
@@ -299,7 +299,7 @@ void nhr_request_close(_nhr_request * r) {
 	}
 }
 
-void nhr_request_delete(_nhr_request * r) {
+void nhr_request_delete(nhr_request r) {
 	nhr_request_close(r);
 
 	nhr_string_delete_clean(&r->scheme);
@@ -327,7 +327,7 @@ void nhr_request_set_option(nhr_socket_t s, int option, int value) {
 	setsockopt(s, SOL_SOCKET, option, (char *)&value, sizeof(int));
 }
 
-nhr_bool nhr_request_check_timeout(_nhr_request * r) {
+nhr_bool nhr_request_check_timeout(nhr_request r) {
 	if (time(NULL) - r->last_time < r->timeout) {
 		return nhr_true;
 	}
@@ -336,13 +336,13 @@ nhr_bool nhr_request_check_timeout(_nhr_request * r) {
 	return nhr_false;
 }
 
-void nhr_request_set_command(_nhr_request * r, const int command) {
+void nhr_request_set_command(nhr_request r, const int command) {
 	nhr_mutex_lock(r->command_mutex);
 	r->command = command;
 	nhr_mutex_unlock(r->command_mutex);
 }
 
-int nhr_request_get_command(_nhr_request * r) {
+int nhr_request_get_command(nhr_request r) {
 	int comand = NHR_COMMAND_NONE;
 	nhr_mutex_lock(r->command_mutex);
 	comand = r->command;

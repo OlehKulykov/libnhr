@@ -27,7 +27,7 @@
 #include "../libnhr.h"
 #include "nhr_common.h"
 
-typedef struct _nhr_response_struct {
+struct nhr_response_struct {
 	void * body;
 	size_t body_len; // stored
 	size_t body_size; // allocated
@@ -43,15 +43,15 @@ typedef struct _nhr_response_struct {
 #endif
 
 	nhr_bool is_finished; // all data received & processed
-} _nhr_response;
+};
 
-void nhr_response_add_body_data(_nhr_response * r, void * data, const size_t data_size);
+void nhr_response_add_body_data(nhr_response r, void * data, const size_t data_size);
 
-_nhr_response * nhr_response_create(void * received, const size_t received_len);
+nhr_response nhr_response_create(void * received, const size_t received_len);
 
-void nhr_response_append(_nhr_response * r, void * received, const size_t received_len);
+void nhr_response_append(nhr_response r, void * received, const size_t received_len);
 
-void nhr_response_delete(_nhr_response * r);
+void nhr_response_delete(nhr_response r);
 
 //nhr_bool nhr_response_is_finished(_nhr_response * r);
 

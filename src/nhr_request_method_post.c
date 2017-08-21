@@ -29,7 +29,7 @@
 
 #include "nhr_gz.h"
 
-char * nhr_request_create_url_encoded_parameters_POST(_nhr_request * r, size_t * parameters_len) {
+char * nhr_request_create_url_encoded_parameters_POST(nhr_request r, size_t * parameters_len) {
     size_t params_len = 0;
     char content_length[24];
 #if defined(NHR_GZIP)
@@ -66,7 +66,7 @@ char * nhr_request_create_url_encoded_parameters_POST(_nhr_request * r, size_t *
 
 #if !defined(NHR_NO_POST_DATA) // POST DATA functionality
 
-void nhr_request_generate_new_boundary(_nhr_request * r) {
+void nhr_request_generate_new_boundary(nhr_request r) {
     static const char charset[62] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     char boundary[NHR_POST_BOUNDARY_LEN];
     size_t i;
@@ -78,7 +78,7 @@ void nhr_request_generate_new_boundary(_nhr_request * r) {
     r->boundary = nhr_string_copy_len(boundary, NHR_POST_BOUNDARY_LEN);
 }
 
-void * nhr_request_create_data_parameters_POST(_nhr_request * r, size_t * parameters_len) {
+void * nhr_request_create_data_parameters_POST(nhr_request r, size_t * parameters_len) {
     size_t params_len = 0, buff_size = 0, writed = 0;
     char content_length[24];
     char content_type[NHR_POST_BOUNDARY_LEN + 32]; // "multipart/form-data; boundary=BOUNDARY"
@@ -174,7 +174,7 @@ void * nhr_request_create_data_parameters_POST(_nhr_request * r, size_t * parame
 
 #endif // end POST DATA functionality
 
-char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size) {
+char * nhr_request_create_header_POST(nhr_request r, size_t * header_size) {
     size_t buff_size = 0, writed = 0, headers_len = 0, parameters_len = 0;
     char * buff = NULL, *headers = NULL;
     void * parameters = NULL;

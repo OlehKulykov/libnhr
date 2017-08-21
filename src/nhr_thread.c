@@ -35,7 +35,7 @@
 #include <unistd.h>
 #endif
 
-typedef struct _nhr_thread_struct {
+struct nhr_thread_struct {
 	nhr_thread_funct thread_function;
 	void * user_object;
 
@@ -44,17 +44,17 @@ typedef struct _nhr_thread_struct {
 #else
 	pthread_t thread;
 #endif
-} _nhr_thread;
+};
 
 typedef struct _nhr_threads_joiner_struct {
-	_nhr_thread * thread;
+	nhr_thread thread;
 	nhr_mutex mutex;
 } _nhr_threads_joiner;
 
 static _nhr_threads_joiner * _threads_joiner = NULL;
 
 static void nhr_threads_joiner_clean(void) { // private
-	_nhr_thread * t = _threads_joiner->thread;
+	nhr_thread t = _threads_joiner->thread;
 #if defined(NHR_OS_WINDOWS)
 	DWORD dwExitCode = 0;
 #else
@@ -86,7 +86,7 @@ static void nhr_threads_joiner_clean(void) { // private
 	nhr_free(t);
 }
 
-static void nhr_threads_joiner_add(_nhr_thread * thread) { // public
+static void nhr_threads_joiner_add(nhr_thread thread) { // public
 	nhr_mutex_lock(_threads_joiner->mutex);
 	nhr_threads_joiner_clean();
 	_threads_joiner->thread = thread;
@@ -106,7 +106,7 @@ static DWORD WINAPI nhr_thread_func_priv(LPVOID some_pointer) {
 #else
 static void * nhr_thread_func_priv(void * some_pointer) {
 #endif
-	_nhr_thread * t = (_nhr_thread *)some_pointer;
+	nhr_thread t = (nhr_thread)some_pointer;
 	t->thread_function(t->user_object);
 	nhr_threads_joiner_add(t);
 
@@ -118,7 +118,7 @@ static void * nhr_thread_func_priv(void * some_pointer) {
 }
 
 nhr_thread nhr_thread_create(nhr_thread_funct thread_function, void * user_object) {
-	_nhr_thread * t = NULL;
+	nhr_thread t = NULL;
 	int res = -1;
 #if !defined(NHR_OS_WINDOWS)
 	pthread_attr_t attr;
@@ -128,7 +128,7 @@ nhr_thread nhr_thread_create(nhr_thread_funct thread_function, void * user_objec
 		return NULL;
 	}
 	nhr_threads_joiner_create_ifneed();
-	t = (_nhr_thread *)nhr_malloc_zero(sizeof(_nhr_thread));
+	t = (nhr_thread)nhr_malloc_zero(sizeof(struct nhr_thread_struct));
 	t->user_object = user_object;
 	t->thread_function = thread_function;
 #if defined(NHR_OS_WINDOWS)

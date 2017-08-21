@@ -104,13 +104,13 @@ typedef void* nhr_handle;
 /**
  @brief Request object handle.
  */
-typedef nhr_handle nhr_request;
+typedef struct nhr_request_struct * nhr_request;
 
 
 /**
  @brief Request object handle.
  */
-typedef nhr_handle nhr_response;
+typedef struct nhr_response_struct * nhr_response;
 
 
 /**
@@ -122,7 +122,7 @@ typedef nhr_handle nhr_mutex;
 /**
  @brief Thread object handle.
  */
-typedef nhr_handle nhr_thread;
+typedef struct nhr_thread_struct * nhr_thread;
 
 
 /**

@@ -30,7 +30,7 @@
 
 #define NHR_VERSION_MAJOR 0
 #define NHR_VERSION_MINOR 5
-#define NHR_VERSION_PATCH 2
+#define NHR_VERSION_PATCH 3
 
 
 // check windows

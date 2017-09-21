@@ -98,7 +98,7 @@ typedef unsigned char nhr_bool;
 /**
  @brief Type of all public objects.
  */
-typedef void* nhr_handle;
+typedef void * nhr_handle;
 
 
 /**
@@ -126,13 +126,13 @@ typedef struct nhr_thread_struct * nhr_thread;
 
 
 /**
- @brief Callback type on request reveiced responce.
+ @brief Callback type on request reveiced response.
  @warning After trigering callback, request object will be automaticaly released.
  It's recommened set to `NULL` request variable inside this callback.
  @param request Request object.
- @param responce Responce object.
+ @param response Response object.
  */
-typedef void (*nhr_on_request_recvd_responce)(nhr_request request, nhr_response responce);
+typedef void (*nhr_on_request_recvd_response)(nhr_request request, nhr_response response);
 
 
 /**
@@ -188,7 +188,7 @@ typedef enum _nhr_method {
  @warning After trigering callback, request object will be automaticaly released.
  It's recommened set to `NULL` request variable in your logic.
  @param request Request object.
- @param responce Responce object.
+ @param response Response object.
  */
 typedef void (*nhr_on_request_error)(nhr_request request, nhr_error_code error_code);
 
@@ -276,15 +276,15 @@ NHR_API(void) nhr_request_set_method(nhr_request request, nhr_method method);
 
 
 /**
- @brief Set on request received responce callback.
+ @brief Set on request received response callback.
  @note This method is required, before send the request via `nhr_request_send`.
  @warning After trigering callback, request object will be automaticaly released.
  It's recommened set to `NULL` request variable inside this callback.
  Called from non `main` thread.
  @param request The request object. If request is `NULL` do nothing.
- @param callback On request received responce callback. Called from non `main` thread.
+ @param callback On request received response callback. Called from non `main` thread.
  */
-NHR_API(void) nhr_request_set_on_recvd_responce(nhr_request request, nhr_on_request_recvd_responce callback);
+NHR_API(void) nhr_request_set_on_recvd_response(nhr_request request, nhr_on_request_recvd_response callback);
 
 
 /**
@@ -381,29 +381,29 @@ NHR_API(void) nhr_request_cancel(nhr_request request);
 // response
 
 /**
- @brief Get HTTP status code of the responce.
- @param responce The responce object. If responce is `NULL` returns `0`.
+ @brief Get HTTP status code of the response.
+ @param response The response object. If response is `NULL` returns `0`.
  @return Status code of the request.
  */
-NHR_API(unsigned short) nhr_response_get_status_code(nhr_response responce);
+NHR_API(unsigned short) nhr_response_get_status_code(nhr_response response);
 
 
 /**
- @brief Get responce received body data.
+ @brief Get response received body data.
  @note To get body data length use `nhr_response_get_body_length` function.
- @param responce The responce object. If responce is `NULL` returns `NULL`.
- @return Pointer to the received responce data.
+ @param response The response object. If response is `NULL` returns `NULL`.
+ @return Pointer to the received response data.
  */
-NHR_API(void*) nhr_response_get_body(nhr_response responce);
+NHR_API(void*) nhr_response_get_body(nhr_response response);
 
 
 /**
- @brief Get responce received body data length.
+ @brief Get response received body data length.
  @note To get body data use `nhr_response_get_body` function.
- @param responce The responce object. If responce is `NULL` returns `0`.
- @return Length of the received responce body data.
+ @param response The response object. If response is `NULL` returns `0`.
+ @return Length of the received response body data.
  */
-NHR_API(unsigned int) nhr_response_get_body_length(nhr_response responce);
+NHR_API(unsigned int) nhr_response_get_body_length(nhr_response response);
 
 
 

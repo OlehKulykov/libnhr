@@ -83,7 +83,7 @@ nhr_bool nhr_request_send(nhr_request request) {
 		return nhr_false;
 	}
 
-	if (!request->scheme || !request->host || !request->path || !request->method || !request->on_recvd_responce || !request->on_error) {
+	if (!request->scheme || !request->host || !request->path || !request->method || !request->on_recvd_response || !request->on_error) {
 		request->error_code = nhr_error_code_missed_parameter;
 		return nhr_false;
 	}
@@ -92,9 +92,9 @@ nhr_bool nhr_request_send(nhr_request request) {
 	return nhr_request_create_start_work_thread(request);
 }
 
-void nhr_request_set_on_recvd_responce(nhr_request request, nhr_on_request_recvd_responce callback) {
+void nhr_request_set_on_recvd_response(nhr_request request, nhr_on_request_recvd_response callback) {
 	if (request) {
-		request->on_recvd_responce = callback;
+		request->on_recvd_response = callback;
 	}
 }
 

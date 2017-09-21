@@ -96,7 +96,7 @@ void nhr_response_read_chunks(nhr_response r, char * str) {
 void nhr_response_parse_body(nhr_response r, char * received, const size_t received_len) {
 #if defined(NHR_DEBUG_LOG)
 	size_t log_index = 0;
-	printf("\n----[ RESPONCE HEADER ]----\n");
+	printf("\n----[ RESPONSE HEADER ]----\n");
 	for (log_index = 0; log_index < received_len; log_index++) {
 		printf("%c", received[log_index]);
 	}
@@ -265,14 +265,14 @@ void nhr_response_delete(nhr_response r) {
 }
 
 // public
-unsigned short nhr_response_get_status_code(nhr_response responce) {
-	return responce ? responce->status_code : 0;
+unsigned short nhr_response_get_status_code(nhr_response response) {
+	return response ? response->status_code : 0;
 }
 
-void* nhr_response_get_body(nhr_response responce) {
-	return responce ? responce->body : NULL;
+void* nhr_response_get_body(nhr_response response) {
+	return response ? response->body : NULL;
 }
 
-unsigned int nhr_response_get_body_length(nhr_response responce) {
-	return responce ? (unsigned int)responce->body_len : 0;
+unsigned int nhr_response_get_body_length(nhr_response response) {
+	return response ? (unsigned int)response->body_len : 0;
 }

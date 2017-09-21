@@ -88,13 +88,13 @@ struct nhr_request_struct {
 	_nhr_map_node * http_headers;
 	_nhr_map_node * parameters;
 
-	nhr_on_request_recvd_responce on_recvd_responce;
+	nhr_on_request_recvd_response on_recvd_response;
 	nhr_on_request_error on_error;
 
 	nhr_mutex work_mutex;
 	nhr_mutex command_mutex;
 
-	nhr_response responce;
+	nhr_response response;
 
 #if defined(NHR_GZIP)
 	nhr_bool is_gziped;
@@ -112,9 +112,9 @@ struct nhr_request_struct {
 
 nhr_bool nhr_request_send_buffer(nhr_request r, const void * data, const size_t data_size);
 
-void nhr_request_start_waiting_raw_responce(nhr_request r);
+void nhr_request_start_waiting_raw_response(nhr_request r);
 
-void nhr_request_wait_raw_responce(nhr_request r);
+void nhr_request_wait_raw_response(nhr_request r);
 
 void nhr_request_send_raw_request(nhr_request r);
 
@@ -140,10 +140,10 @@ int nhr_request_get_command(nhr_request r);
 #define NHR_COMMAND_NONE 0
 #define NHR_COMMAND_CONNECT_TO_HOST 1
 #define NHR_COMMAND_SEND_RAW_REQUEST 2
-#define NHR_COMMAND_START_WAITING_RAW_RESPONCE 3
-#define NHR_COMMAND_WAIT_RAW_RESPONCE 4
+#define NHR_COMMAND_START_WAITING_RAW_RESPONSE 3
+#define NHR_COMMAND_WAIT_RAW_RESPONSE 4
 
-#define NHR_COMMAND_INFORM_RESPONCE 5
+#define NHR_COMMAND_INFORM_RESPONSE 5
 #define NHR_COMMAND_INFORM_ERROR 6
 
 #define NHR_COMMAND_END 9999
@@ -186,5 +186,5 @@ char * nhr_request_create_header_POST(nhr_request r, size_t * header_size);
 #endif
 
 
-// request/responce body
+// request/response body
 // https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol

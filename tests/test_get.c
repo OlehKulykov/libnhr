@@ -32,7 +32,7 @@ static int test_get_error = 0;
 static nhr_bool test_get_working = 0;
 
 static void test_get_on_error(nhr_request request, nhr_error_code error_code) {
-	printf("\nResponce error: %i", (int)error_code);
+	printf("\nResponse error: %i", (int)error_code);
 	test_get_error = error_code;
 
 
@@ -78,13 +78,13 @@ static void test_get_log_body(const char * body, const unsigned int body_len) {
 	}
 }
 
-static void test_get_on_response(nhr_request request, nhr_response responce) {
-	char * body = nhr_response_get_body(responce);
-	unsigned int body_len = nhr_response_get_body_length(responce);
+static void test_get_on_response(nhr_request request, nhr_response response) {
+	char * body = nhr_response_get_body(response);
+	unsigned int body_len = nhr_response_get_body_length(response);
 	unsigned long test_number = (unsigned long)nhr_request_get_user_object(request);
 
 	test_get_error = 1;
-	printf("\nResponce #%lu:\n", test_number);
+	printf("\nResponse #%lu:\n", test_number);
 	test_get_log_body(body, body_len);
 	if (test_number == 0) {
 		test_get_error = 10;
@@ -93,13 +93,13 @@ static void test_get_on_response(nhr_request request, nhr_response responce) {
 	}
 
 	if (test_number == 4) { // status code 418
-		printf("\nGet status code: %i, need 418", (int)nhr_response_get_status_code(responce));
-		test_get_error = nhr_response_get_status_code(responce) == 418 ? 0 : 14;
+		printf("\nGet status code: %i, need 418", (int)nhr_response_get_status_code(response));
+		test_get_error = nhr_response_get_status_code(response) == 418 ? 0 : 14;
 		test_get_working = nhr_false;
 		return;
 	}
 
-	if (nhr_response_get_status_code(responce) != 200) {
+	if (nhr_response_get_status_code(response) != 200) {
 		test_get_error = 15;
 		test_get_working = nhr_false;
 		return;
@@ -169,7 +169,7 @@ static int test_get_number(unsigned long number) {
 			break;
 	}
 
-	nhr_request_set_on_recvd_responce(test_get_request, &test_get_on_response);
+	nhr_request_set_on_recvd_response(test_get_request, &test_get_on_response);
 	nhr_request_set_on_error(test_get_request, &test_get_on_error);
 	test_get_working = nhr_request_send(test_get_request);
 
@@ -188,11 +188,11 @@ static int test_get_number(unsigned long number) {
 int test_get(void) {
 	int ret = 0;
 
-	ret += test_get_number(1); // plain responce
+	ret += test_get_number(1); // plain response
 
 #if !defined(NHR_NO_GZIP)
-	ret += test_get_number(2); // deflate responce
-	ret += test_get_number(3); // gziped responce
+	ret += test_get_number(2); // deflate response
+	ret += test_get_number(3); // gziped response
 #endif
 
 	ret += test_get_number(4); // status code 418

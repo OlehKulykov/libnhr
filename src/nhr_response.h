@@ -21,8 +21,8 @@
  */
 
 
-#ifndef __NHR_RESPONCE_H__
-#define __NHR_RESPONCE_H__ 1
+#ifndef __NHR_RESPONSE_H__
+#define __NHR_RESPONSE_H__ 1
 
 #include "../libnhr.h"
 #include "nhr_common.h"

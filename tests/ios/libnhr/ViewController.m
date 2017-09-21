@@ -11,16 +11,16 @@
 @implementation ViewController
 
 static void onError(nhr_request request, nhr_error_code error_code) {
-	printf("\nResponce error: %i", (int)error_code);
+	printf("\nResponse error: %i", (int)error_code);
 }
 
-static void onResponse(nhr_request request, nhr_response responce) {
-	printf("\nResponce:\n");
-	char * body = nhr_response_get_body(responce);
-	unsigned int bodyLength = nhr_response_get_body_length(responce);
+static void onResponse(nhr_request request, nhr_response response) {
+	printf("\nResponse:\n");
+	char * body = nhr_response_get_body(response);
+	unsigned int bodyLength = nhr_response_get_body_length(response);
 	if (body && bodyLength)
 	{
-		FILE * f = fopen("/Volumes/Data/1/responce", "w+b");
+		FILE * f = fopen("/Volumes/Data/1/response", "w+b");
 		for (int i = 0; i < bodyLength; i++) {
 			printf("%c", body[i]);
 			if (f) fputc(body[i], f);
@@ -59,7 +59,7 @@ static void onResponse(nhr_request request, nhr_response responce) {
 //	nhr_request_add_parameter(request, "format", "json");
 //	nhr_request_add_parameter(request, "text", "Hello%20world");
 
-	nhr_request_set_on_recvd_responce(request, &onResponse);
+	nhr_request_set_on_recvd_response(request, &onResponse);
 	nhr_request_set_on_error(request, &onError);
 	nhr_request_send(request);
 }

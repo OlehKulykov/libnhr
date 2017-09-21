@@ -111,7 +111,7 @@ void nhr_response_parse_body(nhr_response r, char * received, const size_t recei
 	skiped = sub - received;
 	if (skiped > k_nhr_double_CRLF_length) {
 		sub += k_nhr_double_CRLF_length;
-		skiped -= k_nhr_double_CRLF_length;
+		skiped += k_nhr_double_CRLF_length;
 
 		if (r->transfer_encoding & NHR_TRANSFER_ENCODING_CHUNKED) {
 #if !defined(NHR_NO_RECV_CHUNKS)

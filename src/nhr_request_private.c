@@ -158,7 +158,7 @@ nhr_bool nhr_request_send_buffer(nhr_request r, const void * data, const size_t 
 	r->error_code = nhr_error_code_none;
 
 #if defined(NHR_OS_WINDOWS)
-	sended = send(r->socket, (const char *)data, data_size, 0);
+	send_result = send(r->socket, (const char *)data, data_size, 0);
 	error_number = WSAGetLastError();
 #else
 	send_result = (int)send(r->socket, data, (int)data_size, 0);

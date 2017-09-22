@@ -25,7 +25,7 @@
 
 #if !defined(NHR_NO_GET)
 
-char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size) {
+char * nhr_request_create_header_GET(nhr_request r, size_t * header_size) {
     size_t buff_size = 0, writed = 0, headers_len = 0, parameters_len = 0;
     char * buff = NULL, *headers = NULL, *parameters = NULL;
     

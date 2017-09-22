@@ -20,8 +20,8 @@
   - [x] Send gzip compressed url encoded request.
   - [ ] Send chunked request body.
   - [x] Send file/data.
-- [x] **Responce**
-  - [x] Process responce with chunked transfer encoding.
+- [x] **Response**
+  - [x] Process response with chunked transfer encoding.
   - [x] Process deflate compressed content encoding.
   - [x] Process gzip compressed content encoding.
 
@@ -35,10 +35,10 @@ All features are **enabled by default**. But it's possible to **disable**. See t
 | NHR_NO_GET         | NHR_OPT_NO_GET            | Send GET requests.                                                                           |
 | NHR_NO_POST        | NHR_OPT_NO_POST           | Send POST requests.                                                                          |
 | NHR_NO_POST_DATA   | NHR_OPT_NO_POST_DATA      | Send POST requests with data/file parameters.                                                |
-| NHR_NO_RECV_CHUNKS | NHR_OPT_NO_RECV_CHUNKS    | Process received responce with chunked transfer encoding, e.g. "Transfer-Encoding: chunked". |
+| NHR_NO_RECV_CHUNKS | NHR_OPT_NO_RECV_CHUNKS    | Process received response with chunked transfer encoding, e.g. "Transfer-Encoding: chunked". |
 | NHR_NO_SEND_CHUNKS | NHR_OPT_NO_SEND_CHUNKS    | Send big request as chunks.                                                                  |
 | NHR_NO_GZIP        | NHR_OPT_NO_GZIP           | Post gzip or deflate compressed url encoded parameters.                                      |
-|                    |                           | Process gzip or deflate compressed responce body.                                            |
+|                    |                           | Process gzip or deflate compressed response body.                                            |
 
 
 #### Build with CMake
@@ -113,11 +113,11 @@ nhr_request_add_header_field(request, k_nhr_content_encoding, k_nhr_deflate); //
 nhr_request_add_parameter(_request, "format", "json");
 nhr_request_add_parameter(_request, "text", "Hello%20world"); // url encoded if not POST and no data params
 
-// Add POST request with data parameters
+// Add request parameters(including data parameter). Method should be POST
+const char * fileContent = "If the user selected a second (image) file, the user agent might construct the parts as follows";
+const size_t fileContentSize = strlen(fileContent);
+nhr_request_add_data_parameter(_request, "text", "file_name.txt", fileContent, fileContentSize);
 nhr_request_add_parameter(_request, "text", "Hello world"); // not url encoded if POST with data params
-
-const char * textFile = "If the user selected a second (image) file, the user agent might construct the parts as follows";
-nhr_request_add_data_parameter(test_post_request, "text", "file1.txt", textFile, strlen(textFile));
 ```
 
 ##### Set request callbacks
@@ -127,17 +127,17 @@ static void on_request_error(nhr_request request, nhr_error_code error_code) {
 	//TODO: process `error_code`
 }
 
-static void on_request_response(nhr_request request, nhr_response responce) {
+static void on_request_response(nhr_request request, nhr_response response) {
 	_request = NULL; // Clean up previously stored request variable or field
-	char * body = nhr_response_get_body(responce);
-	unsigned int body_length = nhr_response_get_body_length(responce);
+	char * body = nhr_response_get_body(response);
+	unsigned int body_length = nhr_response_get_body_length(response);
 	if (body && body_length) {
-		//TODO: process responce body data
+		//TODO: process response body data
 	}
 }
 ..................
 // Set request callbacks
-nhr_request_set_on_recvd_responce(_request, &on_request_response);
+nhr_request_set_on_recvd_response(_request, &on_request_response);
 nhr_request_set_on_error(_request, &on_request_error);
 ```
 

@@ -66,7 +66,7 @@ typedef int nhr_socket_t;
 #endif // end POST DATA functionality
 #endif // end POST functionality
 
-typedef struct _nhr_request_struct {
+struct nhr_request_struct {
 	unsigned short port;
 
 	nhr_socket_t socket;
@@ -88,13 +88,13 @@ typedef struct _nhr_request_struct {
 	_nhr_map_node * http_headers;
 	_nhr_map_node * parameters;
 
-	nhr_on_request_recvd_responce on_recvd_responce;
+	nhr_on_request_recvd_response on_recvd_response;
 	nhr_on_request_error on_error;
 
 	nhr_mutex work_mutex;
 	nhr_mutex command_mutex;
 
-	_nhr_response * responce;
+	nhr_response response;
 
 #if defined(NHR_GZIP)
 	nhr_bool is_gziped;
@@ -108,42 +108,42 @@ typedef struct _nhr_request_struct {
 #endif
 #endif
 
-} _nhr_request;
+};
 
-nhr_bool nhr_request_send_buffer(_nhr_request * r, const void * data, const size_t data_size);
+nhr_bool nhr_request_send_buffer(nhr_request r, const void * data, const size_t data_size);
 
-void nhr_request_start_waiting_raw_responce(_nhr_request * r);
+void nhr_request_start_waiting_raw_response(nhr_request r);
 
-void nhr_request_wait_raw_responce(_nhr_request * r);
+void nhr_request_wait_raw_response(nhr_request r);
 
-void nhr_request_send_raw_request(_nhr_request * r);
+void nhr_request_send_raw_request(nhr_request r);
 
-struct addrinfo * nhr_request_connect_getaddr_info(_nhr_request * r);
+struct addrinfo * nhr_request_connect_getaddr_info(nhr_request r);
 
-void nhr_request_connect_to_host(_nhr_request * r);
+void nhr_request_connect_to_host(nhr_request r);
 
-nhr_bool nhr_request_create_start_work_thread(_nhr_request * r);
+nhr_bool nhr_request_create_start_work_thread(nhr_request r);
 
-void nhr_request_close(_nhr_request * r);
+void nhr_request_close(nhr_request r);
 
-void nhr_request_delete(_nhr_request * r);
+void nhr_request_delete(nhr_request r);
 
 void nhr_request_set_option(nhr_socket_t s, int option, int value);
 
-nhr_bool nhr_request_check_timeout(_nhr_request * r);
+nhr_bool nhr_request_check_timeout(nhr_request r);
 
-void nhr_request_set_command(_nhr_request * r, const int command);
+void nhr_request_set_command(nhr_request r, const int command);
 
-int nhr_request_get_command(_nhr_request * r);
+int nhr_request_get_command(nhr_request r);
 
 #define NHR_COMMAND_IDLE -1
 #define NHR_COMMAND_NONE 0
 #define NHR_COMMAND_CONNECT_TO_HOST 1
 #define NHR_COMMAND_SEND_RAW_REQUEST 2
-#define NHR_COMMAND_START_WAITING_RAW_RESPONCE 3
-#define NHR_COMMAND_WAIT_RAW_RESPONCE 4
+#define NHR_COMMAND_START_WAITING_RAW_RESPONSE 3
+#define NHR_COMMAND_WAIT_RAW_RESPONSE 4
 
-#define NHR_COMMAND_INFORM_RESPONCE 5
+#define NHR_COMMAND_INFORM_RESPONSE 5
 #define NHR_COMMAND_INFORM_ERROR 6
 
 #define NHR_COMMAND_END 9999
@@ -164,7 +164,7 @@ char * nhr_request_url_encoded_parameters(_nhr_map_node * map, size_t * length);
 
 #if !defined(NHR_NO_GET) // GET functionality
 
-char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size);
+char * nhr_request_create_header_GET(nhr_request r, size_t * header_size);
 
 #endif // end of the GET functionality
 
@@ -173,18 +173,18 @@ char * nhr_request_create_header_GET(_nhr_request * r, size_t * header_size);
 
 #if !defined(NHR_NO_POST_DATA) // POST DATA functionality
 
-void nhr_request_generate_new_boundary(_nhr_request * r);
+void nhr_request_generate_new_boundary(nhr_request r);
 
-void * nhr_request_create_data_parameters_POST(_nhr_request * r, size_t * parameters_len);
+void * nhr_request_create_data_parameters_POST(nhr_request r, size_t * parameters_len);
 
 #endif // end POST DATA functionality
 
-char * nhr_request_create_header_POST(_nhr_request * r, size_t * header_size);
+char * nhr_request_create_header_POST(nhr_request r, size_t * header_size);
 
 #endif // end POST functionality
 
 #endif
 
 
-// request/responce body
+// request/response body
 // https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol
